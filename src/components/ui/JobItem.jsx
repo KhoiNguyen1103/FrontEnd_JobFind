@@ -6,28 +6,33 @@ import { useState } from "react";
 import formatSalary from "../../untils/formatSalary";
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedJob, likeJob } from "../../redux/slices/jobSlice";
+// Toastify
+import { toast } from "react-toastify";
 
 const JobItem = ({ job }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Lấy user
+  const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có
+  const user = useSelector((state) => state.auths.user) || storedUser;
+
   const [isHeart, setIsHeart] = useState(false);
   const handleHeartClick = () => {
-    setIsHeart(!isHeart);
+    if (user) {
+      setIsHeart(!isHeart);
+      dispatch(likeJob(job));
+    } else {
+      toast.error("Vui lòng đăng nhập để lưu công việc");
+    }
   };
 
   // navigate to job detail
   const navigateToJobDetail = () => {
     dispatch(setSelectedJob(job));
     navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
-  };
-
-  // Save Job khi click vào trái tim
-  const handleClickIconHeart = () => {
-    // console.log(job); // in ra dc
-    dispatch(likeJob(job));
   };
 
   return (
@@ -53,15 +58,15 @@ const JobItem = ({ job }) => {
             {job.location}
           </p>
         </div>
+        {/* Button Trái tim - lưu job */}
         <div
-          className="rounded-full border border-slate-300 p-4 cursor-pointer flex justify-center items-center border-primary hover:opacity-30"
+          className={`rounded-full border border-slate-300 p-4 cursor-pointer flex justify-center items-center border-primary active:opacity-30`}
           style={{ width: "20px", height: "20px" }}
           onClick={handleHeartClick}
         >
           <FontAwesomeIcon
             icon={isHeart ? faHeart : faHeartRegular}
             className="text-lg text-primary"
-            onClick={handleClickIconHeart}
           />
         </div>
       </div>

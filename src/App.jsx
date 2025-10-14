@@ -13,6 +13,7 @@ import JobSaved from "./pages/JobSaved";
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import SearchBar from "./layouts/SearchBar";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const location = useLocation();
@@ -47,6 +48,7 @@ function App() {
       {/* Footer */}
       {/* {!hideHeaderFooter && <Footer className="justify-end" />} */}
       <Footer className="justify-end" />
+      <ToastContainer />
     </div>
   );
 }
