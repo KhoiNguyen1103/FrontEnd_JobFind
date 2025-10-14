@@ -1,10 +1,11 @@
 // https://www.topcv.vn/?ref=you
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleXmark,
   faLocationDot,
   faMagnifyingGlass,
+  faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 
 import background from "../assets/bg_search_section.jpg";
@@ -72,9 +73,25 @@ const SearchBar = () => {
 
   // Mở/Tắt model chọn tỉnh thành quận huyện
   const [isOpen, setIsOpen] = useState(false);
+
+  // Đóng model chọn location khi click bên ngoài
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div
-      className="flex justify-center items-center py-6 px-4"
+      className="flex justify-center items-center py-6 px-4 z-0"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",
@@ -109,26 +126,29 @@ const SearchBar = () => {
         <div className="relative w-1/5">
           <div
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center text-gray-600 cursor-pointer"
+            className="flex items-center justify-between text-gray-600 cursor-pointer"
           >
-            <FontAwesomeIcon
-              icon={faLocationDot}
-              className="text-xl flex-none"
-            />
-            <span className="ml-2 flex-none">
-              {citysSelected.length == 0
-                ? "Địa điểm"
-                : citysSelected[0] + " +(" + citysSelected.length + ")"}
-            </span>
+            <div className="flex items-center space-x-2">
+              <FontAwesomeIcon
+                icon={faLocationDot}
+                className="text-xl flex-none"
+              />
+              <span className="ml-2 flex-none">
+                {citysSelected.length == 0
+                  ? "Địa điểm"
+                  : citysSelected[0] + " +(" + citysSelected.length + ")"}
+              </span>
+            </div>
             {/* Biểu tượng mũi tên */}
-            <span className="ml-2 flex-auto text-2xl text-end">
-              &#9662;
-            </span>{" "}
+            <FontAwesomeIcon icon={faAngleDown} className="" />
           </div>
 
           {/* Submenu chọn địa điểm */}
           {isOpen && (
-            <div className="absolute right-0 mt-2 bg-white border border-gray-300 shadow-lg rounded-lg z-50">
+            <div
+              className="absolute right-0 mt-2 bg-white border border-gray-300 shadow-lg rounded-lg z-50"
+              ref={ref}
+            >
               <div className="flex justify-between px-4 pt-4 w-full">
                 {/* city selector */}
                 <div className="city pe-4">

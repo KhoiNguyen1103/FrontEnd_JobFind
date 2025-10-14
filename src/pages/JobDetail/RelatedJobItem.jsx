@@ -6,25 +6,37 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
 
 import formatSalary from "../../untils/formatSalary";
+import { useDispatch } from "react-redux";
 
 const JobItem = ({ job }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [isHeart, setIsHeart] = useState(false);
   const handleHeartClick = () => {
     setIsHeart(!isHeart);
   };
 
+  const navigateToJobDetail = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    dispatch(setSelectedJob(job));
+    navigate(`/job-detail/${job.id}`, { state: job });
+  };
+
   return (
-    <Link
-      to="#"
-      // target="_blank"
-      className=" flex justify-between p-4 rounded-lgcursor-pointer w-full border-base bg-green-100 bg-opacity-20 rounded-lg"
+    <div
+      className=" flex justify-between  p-4 rounded-lgcursor-pointer w-full border-base bg-green-100 bg-opacity-20 rounded-lg"
       style={{ height: "170px" }}
     >
       {/* Ảnh công ty - thông tin */}
-      <div className="flex w-full h-full">
+      <div
+        className="flex w-full h-full cursor-pointer"
+        onClick={navigateToJobDetail}
+      >
         {/* ảnh công ty */}
         <div
           className="border border-slate-300 rounded-lg p-4 bg-white"
@@ -71,7 +83,7 @@ const JobItem = ({ job }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 JobItem.propTypes = {
@@ -83,7 +95,8 @@ JobItem.propTypes = {
     location: PropTypes.string.isRequired,
     salary: PropTypes.array.isRequired,
     description: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
+    created: PropTypes.string.isRequired,
+    deadline: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
   }).isRequired,
 };

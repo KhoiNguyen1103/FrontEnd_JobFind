@@ -9,6 +9,8 @@ const initState = {
   currentPage: 1,
   filterJobs: [],
   paginationJobs: jobs.slice(0, JOBS_PER_PAGE),
+  selectedJob: null,
+  relatedJobs: [],
 };
 
 const jobSlice = createSlice({
@@ -64,9 +66,16 @@ const jobSlice = createSlice({
       state.currentPage = 1;
       state.paginationJobs = state.filterJobs.slice(0, JOBS_PER_PAGE);
     },
-    relatedJob: (state, action) => {
-      const { category } = action.payload;
-      state.filterJobs = state.jobs.filter((job) => job.category === category);
+    setSelectedJob: (state, action) => {
+      // lưu job được chọn
+      state.selectedJob = action.payload;
+
+      // lọc ra các job liên quan
+      state.relatedJobs = state.jobs.filter(
+        (job) =>
+          job.category === action.payload.category &&
+          job.id !== action.payload.id
+      );
     },
     paginateJobs: (state, action) => {
       state.currentPage = action.payload;
@@ -84,5 +93,6 @@ export const countJob = (state) => state.jobs.jobs.length;
 export const maxPage = (state) =>
   Math.ceil(state.jobs.filterJobs.length / JOBS_PER_PAGE);
 
-export const { filterJob, relatedJob, paginateJobs } = jobSlice.actions;
+export const { filterJob, relatedJob, paginateJobs, setSelectedJob } =
+  jobSlice.actions;
 export default jobSlice.reducer;

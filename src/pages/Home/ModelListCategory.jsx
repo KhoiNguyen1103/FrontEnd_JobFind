@@ -1,3 +1,5 @@
-// const ModelListCategory = ({ category }) => {};
+const ModelListCategory = () => {
+  return <div></div>;
+};
 
-// export default ModelListCategory;
+export default ModelListCategory;

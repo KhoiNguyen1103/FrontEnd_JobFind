@@ -1,15 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 
 import { useState } from "react";
+import { login } from "../../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+
+// ảnh logo test đăng nhập
+import vina68 from "../../assets/images/image_products/vina68.webp";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   // Theo dõi trạng thái form
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "abs@gmail.com",
+    password: "123456",
   });
 
   const handleChange = (e) => {
@@ -17,6 +25,23 @@ const LoginForm = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  // Submit form login
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Fake user data
+    const fakeUser = {
+      id: 1,
+      email: formData.email,
+      username: "Nguyen Van A",
+      avatar: vina68, // Tạo avatar theo username
+    };
+    const fakeToken = "fake-jwt-token-123456";
+
+    dispatch(login({ user: fakeUser, token: fakeToken }));
+    navigate("/");
   };
 
   return (
@@ -71,14 +96,17 @@ const LoginForm = () => {
           </div>
         </div>
         {/* Quên mật khẩu */}
-        <Link to="/" className="text-primary text-right block">
+        <Link to="/" className="text-primary text-right">
           Quên mật khẩu
         </Link>
         {/* Button Submit */}
-        <div className="w-full rounded-lg bg-primary mt-3 py-3 hover:opacity-80">
+        <div
+          className="w-full rounded-lg bg-primary mt-3 py-3 hover:opacity-80 cursor-pointer"
+          onClick={handleSubmit}
+        >
           <button
             type="submit"
-            className="btn btn-primary w-full text-white text-xl"
+            className="btn btn-primary w-full text-white text-xl block text-center"
           >
             Đăng nhập
           </button>

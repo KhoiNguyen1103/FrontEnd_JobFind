@@ -3,21 +3,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
-// format
 import formatSalary from "../../untils/formatSalary";
+import { useNavigate } from "react-router-dom";
+import createSlug from "../../untils/createSlug";
+import { useDispatch } from "react-redux";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
 
 const JobItem = ({ job }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [isHeart, setIsHeart] = useState(false);
   const handleHeartClick = () => {
     setIsHeart(!isHeart);
   };
 
+  // navigate to job detail
+  const navigateToJobDetail = () => {
+    // console.log(job);
+    dispatch(setSelectedJob(job));
+    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+  };
+
   return (
-    <Link
-      to="/job-detail"
-      target="_blank"
+    <div
+      // to={`/job-detail/${createSlug(job.title)}?data=${jobData}`}
+      onClick={navigateToJobDetail}
       className="p-4 rounded-md border border-gray-300 bg-white cursor-pointer border-primary"
     >
       <div className="flex">
@@ -56,7 +67,7 @@ const JobItem = ({ job }) => {
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 JobItem.propTypes = {
@@ -68,7 +79,8 @@ JobItem.propTypes = {
     location: PropTypes.string.isRequired,
     salary: PropTypes.array.isRequired,
     description: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
+    created: PropTypes.string.isRequired,
+    deadline: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
   }).isRequired,
 };

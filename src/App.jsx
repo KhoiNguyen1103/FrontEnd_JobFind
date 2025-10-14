@@ -23,14 +23,14 @@ function App() {
       {!hideHeaderFooter && <Header />}
 
       {/* Search bar */}
-      <SearchBar />
+      {!hideHeaderFooter && <SearchBar />}
 
       {/* Content */}
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path="/company-detail" element={<CompanyDetail />}></Route>
+        <Route path="/company-detail/:id" element={<CompanyDetail />}></Route>
         <Route path="/company-list" element={<CompanyList />}></Route>
-        <Route path="/job-detail" element={<JobDetail />}></Route>
+        <Route path="/job-detail/:id" element={<JobDetail />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/search-result" element={<SearchResult />}></Route>

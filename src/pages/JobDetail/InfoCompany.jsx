@@ -7,8 +7,9 @@ import {
 import vina68 from "../../assets/images/image_products/vina68.webp";
 
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-const InfoCompany = () => {
+const InfoCompany = ({ job }) => {
   return (
     <div>
       {/* Thông tin công ty */}
@@ -20,7 +21,7 @@ const InfoCompany = () => {
           >
             <img src={vina68} alt="ảnh công ty" />
           </div>
-          <p className="ps-4 font-bold text-lg">Công ty Hoàng Phúc</p>
+          <p className="ps-4 font-bold text-lg">Công ty {job.company}</p>
         </div>
         <div className="flex items-center pt-4">
           <FontAwesomeIcon
@@ -28,7 +29,7 @@ const InfoCompany = () => {
             className="text-slate-500 pe-2"
           />
           <p className="text-slate-500 pe-2">Địa điểm: </p>
-          <p>123 Gò Vấp</p>
+          <p>{job.location}</p>
         </div>
         <Link
           to="#"
@@ -91,6 +92,12 @@ const InfoCompany = () => {
       </div>
     </div>
   );
+};
+InfoCompany.propTypes = {
+  job: PropTypes.shape({
+    company: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default InfoCompany;
