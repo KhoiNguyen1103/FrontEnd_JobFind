@@ -13,7 +13,7 @@ const JobInfo = () => {
   return (
     <>
       {/* Thông tin job */}
-      <div>
+      <div className="p-4 rounded-lg bg-white ">
         {/* Tên công việc */}
         <p className="text-2xl font-bold pb-4">
           Giám sát bán hàng/Sale Supervisior

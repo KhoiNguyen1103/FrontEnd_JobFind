@@ -10,52 +10,12 @@ import {
 
 import JobItem from "../../components/ui/JobItem";
 import { useSelector, useDispatch } from "react-redux";
-import { filterJob } from "../../redux/slices/jobSlice";
-
-const filters = [
-  {
-    key: "Địa điểm",
-    list: ["Tất cả", "Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng"],
-  },
-  {
-    key: "Mức lương",
-    list: [
-      "Tất cả",
-      "Dưới 5 triệu",
-      "5 - 10 triệu",
-      "10 - 20 triệu",
-      "Trên 20 triệu",
-    ],
-  },
-  {
-    key: "Kinh nghiệm",
-    list: [
-      "Tất cả",
-      "Chưa có kinh nghiệm",
-      "Dưới 1 năm",
-      "1 - 2 năm",
-      "Trên 2 năm",
-    ],
-  },
-  {
-    key: "Ngành nghề",
-    list: [
-      "Tất cả",
-      "IT - Phần mềm",
-      "IT - Phần cứng",
-      "Kinh doanh",
-      "Marketing",
-      "IT",
-      " Phần cứng",
-      "K doanh",
-      "Mketing",
-      "Dev java",
-      " Python",
-      "React",
-      "Mobile",
-    ],
-  },
-];
+import { filterJob, paginateJobs, maxPage } from "../../redux/slices/jobSlice";
+import filters from "../../data/filters";
+import {
+  convertSalaryDisplay,
+  convertExperienceDisplay,
+} from "../../untils/convertSalaryDisplay";
 
 const BestJob = () => {
   // Mở model bộ lọc
@@ -117,8 +77,40 @@ const BestJob = () => {
     }
   };
 
-  // get job list
-  // const jobs = useSelector((state) => state.jobs.jobs);
+  // format lại cho đẹp để hiển thị danh sách filter item
+  const formatedFilterItems = () => {
+    if (filterSelected.key === "Mức lương") {
+      return convertSalaryDisplay(filterSelected.list);
+    } else if (filterSelected.key === "Kinh nghiệm") {
+      return convertExperienceDisplay(filterSelected.list);
+    } else {
+      return filterSelected.list;
+    }
+  };
+
+  // console.log(formatedFilterItems());
+
+  // Phân trang
+  const [pagination, setPagination] = useState(1);
+  const maxPageCount = useSelector(maxPage);
+  const paginationJobs = useSelector((state) => state.jobs.paginationJobs);
+
+  // Tăng giảm phân trang
+  const increasePagination = () => {
+    if (pagination < maxPageCount) {
+      setPagination(pagination + 1);
+    }
+  };
+
+  const decreasePagination = () => {
+    if (pagination > 1) {
+      setPagination(pagination - 1);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(paginateJobs(pagination));
+  }, [pagination, dispatch]);
 
   return (
     <div className="pt-6 pb-6" style={{ backgroundColor: "#f3f5f7" }}>
@@ -130,16 +122,6 @@ const BestJob = () => {
             <p className="pe-4 underline text-sm cursor-pointer hover:no-underline">
               Xem tất cả
             </p>
-            <div className="">
-              <FontAwesomeIcon
-                icon={faAngleLeft}
-                className="me-4 btn-circle text-xl"
-              />
-              <FontAwesomeIcon
-                icon={faAngleRight}
-                className="btn-circle text-xl"
-              />
-            </div>
           </div>
         </div>
         {/* end: header */}
@@ -183,7 +165,7 @@ const BestJob = () => {
                   >
                     <span
                       className={
-                        filterSelected.key == filter.key && "text-primary"
+                        filterSelected.key == filter.key ? "text-primary" : ""
                       }
                     >
                       {filter.key}
@@ -195,7 +177,7 @@ const BestJob = () => {
             {/* end: model selector */}
           </div>
 
-          {/* filter item */}
+          {/* filter item list */}
           <div className="flex justify-between items-center">
             <FontAwesomeIcon
               icon={faAngleLeft}
@@ -212,7 +194,7 @@ const BestJob = () => {
               }}
               ref={listFilterRef}
             >
-              {filterSelected.list.map((v, index) => (
+              {formatedFilterItems().map((v, index) => (
                 <div
                   key={index}
                   className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${
@@ -238,9 +220,15 @@ const BestJob = () => {
         {/* end: filter */}
 
         {/* start: list job */}
-        <div className={filterJobs.length > 0 && `pt-6 grid grid-cols-3 gap-4`}>
-          {filterJobs.length !== 0 ? (
-            filterJobs.map((job) => <JobItem key={job.id} job={job} />)
+        <div
+          className={
+            filterJobs.length > 0
+              ? `pt-6 grid grid-cols-3 gap-4 grid-rows-2 overflow-hidden`
+              : ""
+          }
+        >
+          {paginationJobs.length !== 0 ? (
+            paginationJobs.map((job) => <JobItem key={job.id} job={job} />)
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">
               Không tìm thấy job nào huhu
@@ -256,13 +244,22 @@ const BestJob = () => {
         >
           <FontAwesomeIcon
             icon={faAngleLeft}
-            className="me-4 btn-circle text-xl"
+            className={
+              pagination > 1
+                ? "me-4 btn-circle text-xl"
+                : "me-4 btn-circle text-xl opacity-50"
+            }
+            onClick={() => decreasePagination()}
           />
           <p>
-            <span className="text-primary">1</span> /{" "}
-            <span className="text-slate-500">84 trang</span>
+            <span className="text-primary">{pagination}</span> /{" "}
+            <span className="text-slate-500">{maxPageCount} trang</span>
           </p>
-          <FontAwesomeIcon icon={faAngleRight} className="btn-circle text-xl" />
+          <FontAwesomeIcon
+            icon={faAngleRight}
+            className="btn-circle text-xl"
+            onClick={() => increasePagination()}
+          />
         </div>
       </div>
     </div>
