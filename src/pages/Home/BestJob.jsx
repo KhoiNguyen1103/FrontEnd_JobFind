@@ -129,9 +129,10 @@ const BestJob = () => {
         {/* start: filter */}
         <div className="pt-6 flex justify-between ">
           <div className="relative" ref={ref}>
-            {/* filter selector */}
+            {/* label filter selector */}
             <div
-              className="flex justify-between items-center border border-slate-300 rounded-md px-4 py-2 cursor-pointer"
+              className="flex justify-between items-center 
+              border border-slate-300 rounded-md px-4 py-2 cursor-pointer bg-white"
               onClick={toggleFilterModal}
             >
               <FontAwesomeIcon
@@ -152,9 +153,9 @@ const BestJob = () => {
                 />
               </div>
             </div>
-            {/* end: filter selector */}
+            {/* end: label filter selector */}
 
-            {/* model filter selector */}
+            {/* menu filter selector */}
             {isOpenFilter && (
               <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 w-2/3 py-2 mt-0.5">
                 {filters.map((filter) => (
@@ -174,7 +175,7 @@ const BestJob = () => {
                 ))}
               </div>
             )}
-            {/* end: model selector */}
+            {/* end: menu selector */}
           </div>
 
           {/* filter item list */}

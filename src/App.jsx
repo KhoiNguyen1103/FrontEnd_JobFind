@@ -8,6 +8,7 @@ import Login from "./pages/Login/index";
 import Signup from "./pages/Signup/index";
 import SearchResult from "./pages/SearchResult/index";
 import TemplateCV from "./pages/TemplateCV/index";
+import JobSaved from "./pages/JobSaved";
 
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -18,7 +19,7 @@ function App() {
   const hideHeaderFooter = ["/login", "/signup"].includes(location.pathname);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {/* Header */}
       {!hideHeaderFooter && <Header />}
 
@@ -26,23 +27,27 @@ function App() {
       {!hideHeaderFooter && <SearchBar />}
 
       {/* Content */}
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/company-detail/:id" element={<CompanyDetail />}></Route>
-        <Route path="/company-list" element={<CompanyList />}></Route>
-        <Route path="/job-detail/:id" element={<JobDetail />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/signup" element={<Signup />}></Route>
-        <Route path="/search-result" element={<SearchResult />}></Route>
-        <Route path="/template-cv" element={<TemplateCV />}></Route>
+      <div className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />}></Route>
+          <Route path="/company-detail/:id" element={<CompanyDetail />}></Route>
+          <Route path="/company-list" element={<CompanyList />}></Route>
+          <Route path="/job-detail/:id" element={<JobDetail />}></Route>
+          <Route path="/job-saved" element={<JobSaved />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/search-result" element={<SearchResult />}></Route>
+          <Route path="/template-cv" element={<TemplateCV />}></Route>
 
-        {/* 404 thì quay về Home */}
-        <Route path="*" element={<Navigate to="/" replace />}></Route>
-      </Routes>
+          {/* 404 thì quay về Home */}
+          <Route path="*" element={<Navigate to="/" replace />}></Route>
+        </Routes>
+      </div>
 
       {/* Footer */}
-      {!hideHeaderFooter && <Footer />}
-    </>
+      {/* {!hideHeaderFooter && <Footer className="justify-end" />} */}
+      <Footer className="justify-end" />
+    </div>
   );
 }
 

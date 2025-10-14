@@ -7,7 +7,7 @@ import formatSalary from "../../untils/formatSalary";
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 import { useDispatch } from "react-redux";
-import { setSelectedJob } from "../../redux/slices/jobSlice";
+import { setSelectedJob, likeJob } from "../../redux/slices/jobSlice";
 
 const JobItem = ({ job }) => {
   const navigate = useNavigate();
@@ -20,18 +20,19 @@ const JobItem = ({ job }) => {
 
   // navigate to job detail
   const navigateToJobDetail = () => {
-    // console.log(job);
     dispatch(setSelectedJob(job));
     navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
   };
 
+  // Save Job khi click vào trái tim
+  const handleClickIconHeart = () => {
+    // console.log(job); // in ra dc
+    dispatch(likeJob(job));
+  };
+
   return (
-    <div
-      // to={`/job-detail/${createSlug(job.title)}?data=${jobData}`}
-      onClick={navigateToJobDetail}
-      className="p-4 rounded-md border border-gray-300 bg-white cursor-pointer border-primary"
-    >
-      <div className="flex">
+    <div className="p-4 rounded-md border border-gray-300 bg-white border-primary">
+      <div className="flex cursor-pointer" onClick={navigateToJobDetail}>
         <div
           className="border border-slate-300 rounded-lg p-1"
           style={{ width: "62px", height: "62px" }}
@@ -53,18 +54,15 @@ const JobItem = ({ job }) => {
           </p>
         </div>
         <div
-          className="rounded-full border border-slate-300 p-4 flex justify-center items-center border-primary hover:opacity-30"
+          className="rounded-full border border-slate-300 p-4 cursor-pointer flex justify-center items-center border-primary hover:opacity-30"
           style={{ width: "20px", height: "20px" }}
           onClick={handleHeartClick}
         >
-          {isHeart ? (
-            <FontAwesomeIcon icon={faHeart} className="text-lg text-primary" />
-          ) : (
-            <FontAwesomeIcon
-              icon={faHeartRegular}
-              className="text-lg text-primary"
-            />
-          )}
+          <FontAwesomeIcon
+            icon={isHeart ? faHeart : faHeartRegular}
+            className="text-lg text-primary"
+            onClick={handleClickIconHeart}
+          />
         </div>
       </div>
     </div>

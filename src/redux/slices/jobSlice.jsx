@@ -11,6 +11,7 @@ const initState = {
   paginationJobs: jobs.slice(0, JOBS_PER_PAGE),
   selectedJob: null,
   relatedJobs: [],
+  jobsSaved: [],
 };
 
 const jobSlice = createSlice({
@@ -85,6 +86,19 @@ const jobSlice = createSlice({
         start + JOBS_PER_PAGE
       );
     },
+    likeJob: (state, action) => {
+      const job = action.payload;
+      // console.log(job); // in ra dc
+      if (state.jobsSaved.some((j) => j.id === job.id)) {
+        state.jobsSaved = state.jobsSaved.filter((j) => j.id !== job.id);
+      } else {
+        state.jobsSaved = [...state.jobsSaved, job];
+      }
+    },
+    unSaveJob: (state, action) => {
+      const job_id = action.payload;
+      state.jobsSaved = state.jobsSaved.filter((j) => j.id !== job_id);
+    },
   },
 });
 
@@ -93,6 +107,12 @@ export const countJob = (state) => state.jobs.jobs.length;
 export const maxPage = (state) =>
   Math.ceil(state.jobs.filterJobs.length / JOBS_PER_PAGE);
 
-export const { filterJob, relatedJob, paginateJobs, setSelectedJob } =
-  jobSlice.actions;
+export const {
+  filterJob,
+  relatedJob,
+  paginateJobs,
+  setSelectedJob,
+  likeJob,
+  unSaveJob,
+} = jobSlice.actions;
 export default jobSlice.reducer;

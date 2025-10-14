@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {} from "@fortawesome/free-solid-svg-icons";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
+// import { faBell } from "@fortawesome/free-regular-svg-icons";
 
 const tags = [
   "Bán hàng",
@@ -26,10 +26,10 @@ const JobDescription = () => {
           <div className="bg-primary py-4 px-1 me-2"></div>
           <p className="font-bold text-lg">Chi tiết tin tuyển dụng</p>
         </div>
-        <button className="border rounded-lg border-primary py-2 px-4 text-primary font-bold">
+        {/* <button className="border rounded-lg border-primary py-2 px-4 text-primary font-bold">
           <FontAwesomeIcon icon={faBell} className="pe-4" />
           <Link to="#">Gửi tôi việc làm tương tự</Link>
-        </button>
+        </button> */}
       </div>
       {/* End: Header */}
 

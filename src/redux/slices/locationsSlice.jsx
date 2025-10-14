@@ -29,6 +29,8 @@ const initState = {
     },
   ],
   searchResults: [],
+  citySelected: [], // Mảng chứa name tỉnh/thành
+  districtsSelected: [],
 };
 
 const locationSlice = createSlice({
@@ -44,9 +46,51 @@ const locationSlice = createSlice({
               location.name.toLowerCase().includes(keyword)
             );
     },
+    saveCitySelected: (state, action) => {
+      state.city = action.payload;
+
+      if (state.citySelected.includes(state.city.name)) {
+        state.citySelected = state.citySelected.filter(
+          (c) => c !== state.city.name
+        );
+        state.districtsSelected = state.districtsSelected.filter((d) => {
+          return !state.city.districts.includes(d);
+        });
+      } else {
+        state.citySelected.push(state.city.name);
+        state.districtsSelected = [
+          ...state.districtsSelected,
+          ...state.city.districts,
+        ];
+      }
+    },
+    clearCitysSelected: (state) => {
+      state.citySelected = [];
+      state.districtsSelected = [];
+    },
+    saveDistrictSelected: (state, action) => {
+      state.district = action.payload;
+
+      if (state.districtsSelected.includes(state.district)) {
+        state.districtsSelected = state.districtsSelected.filter(
+          (d) => d !== state.district
+        );
+      } else {
+        state.districtsSelected.push(state.district);
+      }
+    },
+    clearDistrictsSelected: (state) => {
+      state.districtsSelected = [];
+    },
   },
 });
 
-export const { searchLocation } = locationSlice.actions;
+export const {
+  searchLocation,
+  saveCitySelected,
+  saveDistrictSelected,
+  clearCitysSelected,
+  clearDistrictsSelected,
+} = locationSlice.actions;
 export const selectSearchLocations = (state) => state.locations.searchResults;
 export default locationSlice.reducer;
