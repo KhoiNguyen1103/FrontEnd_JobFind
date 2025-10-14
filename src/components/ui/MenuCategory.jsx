@@ -1,40 +1,50 @@
-import categories from "../../data/categories";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { selectCategory } from "../../redux/slices/categorySlice";
+import { saveSubCategories } from "../../redux/slices/categorySlice";
 
-const MenuCategory = () => {
+const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
 
-  // Danh sách category đã chọn từ Redux store
-  const selectedCategories = useSelector(
+  // Lấy danh sách category từ Redux store
+  const categories = useSelector((state) => state.categories.categories);
+
+  // Lấy danh sách subcategories đã chọn từ Redux store
+  const selectedSubcategoriesFromStore = useSelector(
     (state) => state.categories.selectedCategories
   );
 
-  // Lưu category đang chọn để hiển thị subcategories
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  // Lưu category đang chọn
+  const [selectedCategoryCurrent, setSelectedCategoryCurrent] = useState(null);
+  const saveCategoryCurrent = (category) => {
+    setSelectedCategoryCurrent(category);
+  };
 
+  // Lưu danh sách subcategory đã chọn
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+
+  // Khi mở lại MenuCategory, cập nhật selectedSubcategories từ Redux
   useEffect(() => {
-    console.log("Danh sách category đã chọn:", selectedCategories);
-  }, [selectedCategories]);
+    setSelectedSubcategories(selectedSubcategoriesFromStore);
+  }, [selectedSubcategoriesFromStore]);
 
-  // Click vào một nghề => thêm/xóa nghề khỏi danh sách
-  const handleClickCategory = (category) => {
-    dispatch(selectCategory(category));
-
-    // Nếu đã chọn, bỏ chọn; nếu chưa chọn, thêm vào danh sách
-    if (selectedCategories.some((c) => c.id === category.id)) {
-      setSelectedCategory(null);
+  // Xử lý chọn subcategory
+  const saveSubcategory = (subcategory) => {
+    if (selectedSubcategories.includes(subcategory)) {
+      setSelectedSubcategories((prev) =>
+        prev.filter((sub) => sub !== subcategory)
+      );
     } else {
-      setSelectedCategory(category);
+      setSelectedSubcategories((prev) => [...prev, subcategory]);
     }
   };
 
-  // Click vào một vị trí chuyên môn => thêm/xóa vị trí khỏi danh sách
-  const toggleSubCategory = (categoryId, subcategory) => {
-    console.log(`Toggle subcategory: ${subcategory} của nghề ${categoryId}`);
+  // button áp dụng
+  const handleSaveSubCategories = () => {
+    dispatch(saveSubCategories(selectedSubcategories));
+    setIsOpen(false);
   };
 
   return (
@@ -47,41 +57,31 @@ const MenuCategory = () => {
             <div
               key={category.id}
               className={`py-2 cursor-pointer hover:bg-slate-200 px-4 flex items-center whitespace-nowrap ${
-                selectedCategories.some((c) => c.id === category.id) &&
-                "bg-slate-200"
+                selectedCategoryCurrent?.id === category.id
+                  ? "bg-slate-200"
+                  : ""
               }`}
-              onClick={() => handleClickCategory(category)}
+              onClick={() => saveCategoryCurrent(category)}
             >
-              <input
-                type="checkbox"
-                className="w-4 h-4"
-                checked={selectedCategories.some((c) => c.id === category.id)}
-                onChange={() => handleClickCategory(category)}
-              />
-              <p className="ps-4">{category.name}</p>
+              <p className="">{category.name}</p>
             </div>
           ))}
         </div>
         {/* end: Nhóm nghề */}
 
-        {/* Nghề - Vị trí chuyên môn */}
+        {/* subcategory - Vị trí chuyên môn */}
         <div className="px-4 w-full">
           <p className="font-bold pb-2 border-b-2">Vị trí chuyên môn</p>
-          {selectedCategory?.subcategories.map((subcategory) => (
+          {selectedCategoryCurrent?.subcategories.map((subcategory) => (
             <div
               key={subcategory}
               className="flex items-center py-2 cursor-pointer px-4 whitespace-nowrap"
+              onClick={() => saveSubcategory(subcategory)}
             >
               <input
                 type="checkbox"
-                checked={selectedCategories.some(
-                  (category) =>
-                    category.id === selectedCategory.id &&
-                    category.subcategories.includes(subcategory)
-                )}
-                onChange={() =>
-                  toggleSubCategory(selectedCategory.id, subcategory)
-                }
+                checked={selectedSubcategories.includes(subcategory)}
+                onChange={() => saveSubcategory(subcategory)}
                 className="w-4 h-4"
               />
               <p className="ps-2">{subcategory}</p>
@@ -90,8 +90,21 @@ const MenuCategory = () => {
         </div>
         {/* end: Nghề - vị trí chuyên môn */}
       </div>
+      {/* Button Áp dụng */}
+      <div
+        className="flex justify-end items-center p-4"
+        onClick={handleSaveSubCategories}
+      >
+        <button className="bg-primary rounded-lg text-white active:opacity-80 px-4 py-2 mt-4">
+          Áp dụng
+        </button>
+      </div>
     </div>
   );
+};
+
+MenuCategory.propTypes = {
+  setIsOpen: PropTypes.func.isRequired,
 };
 
 export default MenuCategory;

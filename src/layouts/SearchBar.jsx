@@ -15,7 +15,12 @@ import MenuCategory from "../components/ui/MenuCategory";
 import { useSelector } from "react-redux";
 
 const SearchBar = () => {
+  // redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
+  const categoriesSelected = useSelector(
+    (state) => state.categories.selectedCategories
+  );
+  // end: redux
 
   // track search text
   const [searchText, setSearchText] = useState("kế toán");
@@ -78,7 +83,7 @@ const SearchBar = () => {
             style={{ width: "250px" }}
           >
             <FontAwesomeIcon icon={faList} />
-            <p>Danh mục nghề</p>
+            <p>Danh mục nghề {"(" + categoriesSelected.length + ")"}</p>
             <FontAwesomeIcon icon={faAngleDown} />
           </div>
           {/* end: label danh mục nghề */}
@@ -87,7 +92,7 @@ const SearchBar = () => {
 
         {/* Menu danh mục nghề */}
         <div className="w-1/2 absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
-          {isOpenCategory && <MenuCategory />}
+          {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
         </div>
         {/* end: Menu danh mục nghề */}
 
