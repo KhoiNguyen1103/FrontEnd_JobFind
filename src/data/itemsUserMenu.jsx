@@ -25,7 +25,7 @@ const items = [
   {
     title: "Cài đặt thông tin cá nhân",
     icon: faPenToSquare,
-    path: "#",
+    path: "/user-info/1",
   },
   {
     title: "Đổi mật khẩu",
