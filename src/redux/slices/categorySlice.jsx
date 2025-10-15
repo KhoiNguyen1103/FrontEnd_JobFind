@@ -12,6 +12,7 @@ const categorySlice = createSlice({
   reducers: {
     saveSubCategories: (state, action) => {
       const subcategories = action.payload;
+      // console.log(subcategories);
       state.selectedCategories = subcategories;
     },
   },

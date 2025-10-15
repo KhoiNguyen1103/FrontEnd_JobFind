@@ -8,8 +8,9 @@ import { Link } from "react-router-dom";
 
 const DropDownUserMenu = ({ user }) => {
   const dispatch = useDispatch();
+  const { name, id } = user;
 
-  console.log(user);
+  // console.log(user);
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -22,10 +23,10 @@ const DropDownUserMenu = ({ user }) => {
           <img src="" alt="logo" />
         </div>
         <div>
-          <p className="font-bold text-lg">Nhật Nguyễn</p>
+          <p className="font-bold text-lg">{name}</p>
           <p>
             {" "}
-            <span className="text-slate-500">Mã ứng viên:</span> #656231
+            <span className="text-slate-500">Mã ứng viên:</span> #{id}
           </p>
         </div>
       </div>

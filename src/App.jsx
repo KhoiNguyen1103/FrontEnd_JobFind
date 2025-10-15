@@ -37,7 +37,7 @@ function App() {
           <Route path="/job-saved" element={<JobSaved />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/search-result" element={<SearchResult />}></Route>
+          <Route path="/search/:slug" element={<SearchResult />}></Route>
           <Route path="/template-cv" element={<TemplateCV />}></Route>
 
           {/* 404 thì quay về Home */}

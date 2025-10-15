@@ -4,9 +4,14 @@ import PropTypes from "prop-types";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { saveSubCategories } from "../../redux/slices/categorySlice";
+import { useNavigate } from "react-router-dom";
+
+// utils
+import createSlug from "../../untils/createSlug";
 
 const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Lấy danh sách category từ Redux store
   const categories = useSelector((state) => state.categories.categories);
@@ -45,6 +50,10 @@ const MenuCategory = ({ setIsOpen }) => {
   const handleSaveSubCategories = () => {
     dispatch(saveSubCategories(selectedSubcategories));
     setIsOpen(false);
+    navigate("/search/" + createSlug(selectedSubcategories.join("-")), {
+      state: { selectedSubcategories },
+    });
+    console.log(selectedSubcategories);
   };
 
   return (

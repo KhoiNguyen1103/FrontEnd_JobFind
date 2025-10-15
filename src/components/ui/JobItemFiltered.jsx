@@ -4,19 +4,12 @@ import PropTypes from "prop-types";
 import formarSalary from "../../untils/formatSalary";
 
 // redux
-import { useDispatch } from "react-redux";
-import { unSaveJob } from "../../redux/slices/jobSlice";
 
 // component
 import ButtonApply from "../button/ButtonApply";
-import ButtonUnsaved from "../button/ButtonUnsaved";
+import ButtonSave from "../button/ButtonSave";
 
 const JobItemSaved = ({ job }) => {
-  const dispatch = useDispatch();
-  const handleUnSaveJob = () => {
-    dispatch(unSaveJob(job.id));
-  };
-
   return (
     <div className="flex justify-between items-center border border-slate-200 rounded-lg p-4 mb-4 h-40">
       <div className="">
@@ -26,7 +19,6 @@ const JobItemSaved = ({ job }) => {
       <div className="grow ps-4">
         <p className="font-bold pb-4">{job.title}</p>
         <p className="pb-2">{job.company}</p>
-        <p className="pb-4">Đã lưu: 11h</p>
         <div>
           <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap">
             {job.location}
@@ -40,7 +32,7 @@ const JobItemSaved = ({ job }) => {
         <p className="text-primary font-bold">{formarSalary(job.salary)}</p>
         <div className="flex justify-between items-center">
           <ButtonApply />
-          <ButtonUnsaved handleUnSaveJob={handleUnSaveJob} />
+          <ButtonSave job={job} />
         </div>
       </div>
     </div>

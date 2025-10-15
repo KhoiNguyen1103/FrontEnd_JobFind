@@ -1,33 +1,16 @@
 import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import { useState } from "react";
 import formatSalary from "../../untils/formatSalary";
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedJob, likeJob } from "../../redux/slices/jobSlice";
-// Toastify
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
+
+// component
+import ButtonSave from "../button/ButtonSave";
 
 const JobItem = ({ job }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Lấy user
-  const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có
-  const user = useSelector((state) => state.auths.user) || storedUser;
-
-  const [isHeart, setIsHeart] = useState(false);
-  const handleHeartClick = () => {
-    if (user) {
-      setIsHeart(!isHeart);
-      dispatch(likeJob(job));
-    } else {
-      toast.error("Vui lòng đăng nhập để lưu công việc");
-    }
-  };
 
   // navigate to job detail
   const navigateToJobDetail = () => {
@@ -59,16 +42,7 @@ const JobItem = ({ job }) => {
           </p>
         </div>
         {/* Button Trái tim - lưu job */}
-        <div
-          className={`rounded-full border border-slate-300 p-4 cursor-pointer flex justify-center items-center border-primary active:opacity-30`}
-          style={{ width: "20px", height: "20px" }}
-          onClick={handleHeartClick}
-        >
-          <FontAwesomeIcon
-            icon={isHeart ? faHeart : faHeartRegular}
-            className="text-lg text-primary"
-          />
-        </div>
+        <ButtonSave job={job} />
       </div>
     </div>
   );

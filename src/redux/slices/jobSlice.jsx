@@ -88,7 +88,7 @@ const jobSlice = createSlice({
     },
     likeJob: (state, action) => {
       const job = action.payload;
-      // console.log(job); // in ra dc
+      console.log(job); // in ra dc
       if (state.jobsSaved.some((j) => j.id === job.id)) {
         state.jobsSaved = state.jobsSaved.filter((j) => j.id !== job.id);
       } else {
@@ -98,6 +98,14 @@ const jobSlice = createSlice({
     unSaveJob: (state, action) => {
       const job_id = action.payload;
       state.jobsSaved = state.jobsSaved.filter((j) => j.id !== job_id);
+    },
+    filterJobByCategory: (state, action) => {
+      const categories = action.payload; // danh sách subcategories đã chọn
+      // console.log(categories);
+      state.filterJobs = state.jobs.filter((job) =>
+        categories.includes(job.category)
+      );
+      // console.log(state.filterJobs);
     },
   },
 });
@@ -114,5 +122,6 @@ export const {
   setSelectedJob,
   likeJob,
   unSaveJob,
+  filterJobByCategory,
 } = jobSlice.actions;
 export default jobSlice.reducer;

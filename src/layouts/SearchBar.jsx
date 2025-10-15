@@ -9,9 +9,14 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 
+// image
 import background from "../assets/bg_search_section.jpg";
+
+// component
 import MenuLocation from "../components/ui/MenuLocation";
 import MenuCategory from "../components/ui/MenuCategory";
+
+// redux
 import { useSelector } from "react-redux";
 
 const SearchBar = () => {
@@ -83,7 +88,7 @@ const SearchBar = () => {
             style={{ width: "250px" }}
           >
             <FontAwesomeIcon icon={faList} />
-            <p>Danh mục nghề {"(" + categoriesSelected.length + ")"}</p>
+            <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
             <FontAwesomeIcon icon={faAngleDown} />
           </div>
           {/* end: label danh mục nghề */}
