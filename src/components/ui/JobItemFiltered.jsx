@@ -23,6 +23,15 @@ const JobItemSaved = ({ job }) => {
           <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap">
             {job.location}
           </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.experience} năm kinh nghiệm
+          </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.position}
+          </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.workType}
+          </span>
         </div>
       </div>
       {/* end: thông tin job */}
@@ -51,6 +60,9 @@ JobItemSaved.propTypes = {
     created: PropTypes.string.isRequired,
     deadline: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
+    experience: PropTypes.number.isRequired,
+    position: PropTypes.string.isRequired,
+    workType: PropTypes.string.isRequired,
   }).isRequired,
 };
 

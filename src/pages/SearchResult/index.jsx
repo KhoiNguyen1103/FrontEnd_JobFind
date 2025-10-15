@@ -18,14 +18,28 @@ const SearchResult = () => {
   }, [dispatch, selectedCategories]);
 
   return (
-    <div className="container mx-auto py-4 flex justify-between">
-      {/* Filter Side Bar */}
-      <div className="w-1/4">
-        <FilterSideBar />
+    <div className="container mx-auto py-4">
+      <div className="py-4 flex items-center">
+        {selectedCategories.map((c) => {
+          return (
+            <p
+              key={c}
+              className="py-1 px-4 bg-primary rounded-full me-4 text-white"
+            >
+              {c}
+            </p>
+          );
+        })}
       </div>
-      {/* List Job */}
-      <div className="w-3/4">
-        <ListJobFiltered />
+      <div className="flex justify-between">
+        {/* Filter Side Bar */}
+        <div className="w-1/4">
+          <FilterSideBar />
+        </div>
+        {/* List Job */}
+        <div className="w-3/4">
+          <ListJobFiltered />
+        </div>
       </div>
     </div>
   );

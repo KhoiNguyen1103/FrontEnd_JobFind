@@ -61,6 +61,14 @@ const jobSlice = createSlice({
         if (key === "Ngành nghề") {
           return value === "Tất cả" ? true : job.category === value;
         }
+        // lọc vị trí
+        if (key === 5) {
+          return value.id === 1 ? true : job.position === value.name;
+        }
+        // lọc hình thức làm việc
+        if (key === 6) {
+          return value.id === 3 ? true : job.workType === value.name;
+        }
         return true;
       });
       // Reset lại trang khi filter

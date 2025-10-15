@@ -1,84 +1,73 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { filterJob } from "../../redux/slices/jobSlice";
+import { useDispatch } from "react-redux";
 
-const experience = [
-  "Tất cả",
-  "Không yêu cầu",
-  "Dưới 1 năm",
-  "1 năm",
-  "2 năm",
-  "3 năm",
-  "4 năm",
-  "5 năm",
-  "Trên 5 năm",
-];
-
-const position = ["Tất cả", "Nhân viên", "Trưởng nhóm", "Quản lý"];
-
-const workType = ["Bán thời gian", "Toàn thời gian"];
+import filters from "../../data/filters";
 
 const FilterSideBar = () => {
+  const dispatch = useDispatch();
+  // Lấy lọc theo kinh nghiệm / vị trí / hình thức làm việc
+  const filter = filters.filter(
+    (f) => f.key === "Vị trí" || f.key === "Hình thức làm việc"
+  );
+
   const [selectedExperience, setSelectedExperience] = useState("Tất cả");
   const [selectedPosition, setSelectedPosition] = useState("Tất cả");
-  const [selectedWorkType, setSelectedWorkType] = useState("Toàn thời gian");
+  const [selectedWorkType, setSelectedWorkType] = useState("Tất cả");
+
+  useEffect(() => {
+    // console.log(selectedExperience, selectedPosition, selectedWorkType);
+  }, [selectedExperience, selectedPosition, selectedWorkType]);
+
+  const handleFilter = (key, value) => {
+    if (key === "Kinh nghiệm") {
+      setSelectedExperience(value.name);
+      dispatch(filterJob({ key, value }));
+    }
+    // Vị trí
+    if (key === 5) {
+      setSelectedPosition(value.name);
+      dispatch(filterJob({ key, value }));
+    }
+    // Hình thức làm việc
+    if (key === 6) {
+      setSelectedWorkType(value.name);
+      dispatch(filterJob({ key, value }));
+    }
+  };
 
   return (
     <div>
-      {/* Kinh nghiệm */}
-      <div>
-        <p className="text-primary font-bold pb-2">Kinh nghiệm</p>
-        <div className="grid grid-cols-2 gap-2">
-          {experience.map((option) => (
-            <div key={option} className="flex items-center">
-              <input
-                type="radio"
-                className="w-5 h-5"
-                value={option}
-                checked={selectedExperience === option}
-                onChange={(e) => setSelectedExperience(e.target.value)}
-              />
-              <span className="ps-2">{option}</span>
-            </div>
-          ))}
+      {filter.map((f) => (
+        <div key={f.id} className="pb-4">
+          <p className="text-primary font-bold pb-2">{f.key}</p>
+          <div className="grid grid-cols-2 gap-2">
+            {f.list.map((option) => (
+              <div
+                key={option.id}
+                className="flex items-center cursor-pointer"
+                onClick={() => handleFilter(f.id, option)}
+              >
+                <input
+                  type="radio"
+                  className="w-5 h-5"
+                  value={option.name}
+                  checked={
+                    f.id === 3
+                      ? selectedExperience === option.name
+                      : f.id === 5
+                      ? selectedPosition === option.name
+                      : selectedWorkType === option.name
+                  }
+                  onChange={() => {}}
+                />
+                {/* <p>{option.name}</p> */}
+                <span className="ps-2">{option.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Vị trí */}
-      <div className="mt-4">
-        <p className="text-primary font-bold pb-2">Vị trí</p>
-        <div className="grid grid-cols-2 gap-2">
-          {position.map((option) => (
-            <div key={option} className="flex items-center">
-              <input
-                type="radio"
-                className="w-5 h-5"
-                value={option}
-                checked={selectedPosition === option}
-                onChange={(e) => setSelectedPosition(e.target.value)}
-              />
-              <span className="ps-2">{option}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Hình thức làm việc */}
-      <div className="mt-4">
-        <p className="text-primary font-bold pb-2">Hình thức làm việc</p>
-        <div className="grid grid-cols-2 gap-2">
-          {workType.map((option) => (
-            <div key={option} className="flex items-center">
-              <input
-                type="radio"
-                className="w-5 h-5"
-                value={option}
-                checked={selectedWorkType === option}
-                onChange={(e) => setSelectedWorkType(e.target.value)}
-              />
-              <span className="ps-2">{option}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      ))}
     </div>
   );
 };
