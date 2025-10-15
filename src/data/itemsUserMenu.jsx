@@ -20,7 +20,7 @@ const items = [
   {
     title: "Việc làm đã ứng tuyển",
     icon: faBriefcase,
-    path: "#",
+    path: "/",
   },
   {
     title: "Cài đặt thông tin cá nhân",
@@ -30,7 +30,7 @@ const items = [
   {
     title: "Đổi mật khẩu",
     icon: faLock,
-    path: "#",
+    path: "/tai-khoan/mat-khau",
   },
 ];
 

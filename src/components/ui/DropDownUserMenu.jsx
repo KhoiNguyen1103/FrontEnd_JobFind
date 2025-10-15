@@ -8,9 +8,8 @@ import { Link } from "react-router-dom";
 
 const DropDownUserMenu = ({ user }) => {
   const dispatch = useDispatch();
-  const { username, id } = user;
+  const { username, id, avatar } = user;
 
-  // console.log(user);
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -19,8 +18,8 @@ const DropDownUserMenu = ({ user }) => {
     <div className="font-norma">
       {/* header */}
       <div className="flex items-center pb-4">
-        <div className="pe-4">
-          <img src="" alt="logo" />
+        <div className="pe-4 p-1">
+          <img src={avatar} alt="logo" className=" w-12 h-12 rounded-full" />
         </div>
         <div>
           <p className="font-bold text-lg">{username}</p>

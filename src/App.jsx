@@ -11,6 +11,7 @@ import TemplateCV from "./pages/TemplateCV/index";
 import JobSaved from "./pages/JobSaved";
 import UserInfo from "./pages/UserInfo";
 import MyCV from "./pages/MyCV/index";
+import ChangePassword from "./pages/ChangePassword";
 
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -43,6 +44,10 @@ function App() {
           <Route path="/template-cv" element={<TemplateCV />}></Route>
           <Route path="/user-info/:id" element={<UserInfo />}></Route>
           <Route path="/my-cv/:id" element={<MyCV />}></Route>
+          <Route
+            path="/tai-khoan/mat-khau"
+            element={<ChangePassword />}
+          ></Route>
 
           {/* 404 thì quay về Home */}
           <Route path="*" element={<Navigate to="/" replace />}></Route>

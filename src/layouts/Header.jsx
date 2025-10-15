@@ -53,7 +53,20 @@ const Header = () => {
     setIsOpenDropDownUserMenu(!isOpenDropDownUserMenu);
   };
 
-  // console.log(navItems);
+  // Đóng MenuUser khi click bên ngoài
+  const menuRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpenDropDownUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className=" header flex justify-between items-center px-4 font-medium shadow">
@@ -131,11 +144,12 @@ const Header = () => {
           {/* avatar */}
           <div
             className="relative flex items-center justify-center cursor-pointer"
-            onClick={openDropDownUserMenu}
+            ref={menuRef}
           >
             <div
               className="border border-slate-300 rounded-full p-1 me-2  "
               style={{ width: "40px", height: "40px" }}
+              onClick={openDropDownUserMenu}
             >
               <img src={user.avatar} alt="avatar" className="h-full" />
             </div>
