@@ -10,7 +10,7 @@ const items = [
   {
     title: "CV của tôi",
     icon: faFile,
-    path: "#",
+    path: "/my-cv/1",
   },
   {
     title: "Việc làm đã lưu",

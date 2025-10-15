@@ -10,6 +10,7 @@ import SearchResult from "./pages/SearchResult/index";
 import TemplateCV from "./pages/TemplateCV/index";
 import JobSaved from "./pages/JobSaved";
 import UserInfo from "./pages/UserInfo";
+import MyCV from "./pages/MyCV/index";
 
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -41,6 +42,7 @@ function App() {
           <Route path="/search/:slug" element={<SearchResult />}></Route>
           <Route path="/template-cv" element={<TemplateCV />}></Route>
           <Route path="/user-info/:id" element={<UserInfo />}></Route>
+          <Route path="/my-cv/:id" element={<MyCV />}></Route>
 
           {/* 404 thì quay về Home */}
           <Route path="*" element={<Navigate to="/" replace />}></Route>

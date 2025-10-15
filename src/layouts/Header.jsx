@@ -18,8 +18,7 @@ import { useSelector } from "react-redux";
 const Header = () => {
   // lấy token user từ localstorage
   // dùng useSelector để theo dõi sự thay đổi user khi logout
-  const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có
-  const user = useSelector((state) => state.auths.user) || storedUser;
+  const user = useSelector((state) => state.auths.user);
   const token = useSelector((state) => state.auths.token);
   const [isLogin, setIsLogin] = useState(!!token);
 
@@ -138,7 +137,7 @@ const Header = () => {
               className="border border-slate-300 rounded-full p-1 me-2  "
               style={{ width: "40px", height: "40px" }}
             >
-              {/* <img src={user.avatar} alt="avatar" className="h-full" /> */}
+              <img src={user.avatar} alt="avatar" className="h-full" />
             </div>
             <FontAwesomeIcon
               icon={faAngleDown}
