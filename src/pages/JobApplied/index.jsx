@@ -1,4 +1,4 @@
-import JobItemFiltered from "../../components/ui/JobItemFiltered";
+import JobItemv2 from "../../components/ui/JobItemv2";
 
 // test UI
 import data from "../../data/jobs";
@@ -10,12 +10,7 @@ const JobApplied = () => {
         Công việc đã ứng tuyển
       </p>
       {data.map((item, index) => (
-        <JobItemFiltered
-          key={index}
-          job={item}
-          iconHeart={false}
-          isApply={true}
-        />
+        <JobItemv2 key={index} job={item} iconHeart={false} isApply={true} />
       ))}
     </div>
   );

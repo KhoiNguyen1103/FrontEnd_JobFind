@@ -188,7 +188,7 @@ const Header = () => {
             Đăng ký
           </Link>
           <Link
-            to="/"
+            to="/recruiter/login"
             className="header-button border-2 border-solid px-4 py-2 rounded-md ml-4 text-white"
           >
             Đăng tuyển & tìm hồ sơ

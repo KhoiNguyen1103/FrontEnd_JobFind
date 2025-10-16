@@ -14,6 +14,9 @@ import MyCV from "./pages/MyCV/index";
 import ChangePassword from "./pages/ChangePassword";
 import JobApplied from "./pages/JobApplied";
 
+// Nhà tuyển dụng
+import { recruiterRoutes } from "./routes/recruiterRoutes";
+
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import SearchBar from "./layouts/SearchBar";
@@ -21,7 +24,12 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   const location = useLocation();
-  const hideHeaderFooter = ["/login", "/signup"].includes(location.pathname);
+  const hideHeaderFooter = [
+    "/login",
+    "/signup",
+    "/recruiter/login",
+    "/recruiter/register",
+  ].includes(location.pathname);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,14 +59,23 @@ function App() {
             element={<ChangePassword />}
           ></Route>
 
+          {/* Các route dành cho Nhà Tuyển Dụng */}
+          {recruiterRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.component}
+            />
+          ))}
+
           {/* 404 thì quay về Home */}
           <Route path="*" element={<Navigate to="/" replace />}></Route>
         </Routes>
       </div>
 
       {/* Footer */}
-      {/* {!hideHeaderFooter && <Footer className="justify-end" />} */}
-      <Footer className="justify-end" />
+      {!hideHeaderFooter && <Footer className="justify-end" />}
+      {/* <Footer className="justify-end" /> */}
       <ToastContainer />
     </div>
   );
