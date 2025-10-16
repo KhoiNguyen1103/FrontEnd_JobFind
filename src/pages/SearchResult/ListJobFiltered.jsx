@@ -1,14 +1,15 @@
 import { useSelector } from "react-redux";
-import JobItemFiltered from "../../components/ui/JobItemFiltered";
+import JobItemv2 from "../../components/ui/JobItemv2";
 
 const ListJob = () => {
-  const jobsFiltered = useSelector((state) => state.jobs.filterJobs);
+  // const jobsFiltered = useSelector((state) => state.jobs.filterJobs);
+  const jobs = useSelector((state) => state.jobs.jobs);
   // console.log(jobsFiltered);
 
   return (
     <div>
-      {jobsFiltered.map((job) => (
-        <JobItemFiltered job={job} key={job.id} />
+      {jobs.map((job) => (
+        <JobItemv2 job={job} key={job.job_id} isApply={false} />
       ))}
     </div>
   );

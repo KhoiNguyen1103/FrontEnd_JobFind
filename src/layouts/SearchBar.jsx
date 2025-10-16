@@ -8,27 +8,41 @@ import {
   faAngleDown,
   faList,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 // image
 import background from "../assets/bg_search_section.jpg";
 
 // component
-import MenuLocation from "../components/ui/MenuLocation";
+import MenuLocation from "../components/Menu/MenuLocation";
 import MenuCategory from "../components/Menu/MenuCategory";
 
 // redux
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedCategories } from "../redux/slices/categorySlice";
 
 const SearchBar = () => {
-  // redux
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Lấy dữ liệu từ redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
   const categoriesSelected = useSelector(
     (state) => state.categories.selectedCategories
   );
-  // end: redux
 
   // track search text
-  const [searchText, setSearchText] = useState("kế toán");
+  const [searchText, setSearchText] = useState("");
+
+  // Lấy dữu liệu search Text từ localstorage
+  useEffect(() => {
+    const savedSearchData = JSON.parse(localStorage.getItem("searchData"));
+
+    if (savedSearchData) {
+      setSearchText(savedSearchData.keyword);
+      dispatch(setSelectedCategories(savedSearchData.categories));
+    }
+  }, []);
 
   // Mở/Tắt model chọn tỉnh thành quận huyện
   const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +78,32 @@ const SearchBar = () => {
     };
   }, []);
 
+  // handle button Search
+  const handleButtonSearch = () => {
+    const queryParams = new URLSearchParams();
+
+    // thêm keyword
+    if (searchText) queryParams.append("keyword", searchText);
+
+    // Thêm các category đã chọn (nối bằng dấu phẩy)
+    if (categoriesSelected.length > 0) {
+      const categoryIds = categoriesSelected.map((cat) => cat.id).join(",");
+      queryParams.append("category", categoryIds);
+    }
+
+    // Thêm các địa điểm đã chọn (nối bằng dấu phẩy)
+    if (citysSelected.length > 0) {
+      const cities = citysSelected.join(",");
+      queryParams.append("location", cities);
+    }
+
+    // lưu vào localstorage
+    localStorage.setItem("searchText", JSON.stringify(searchText));
+
+    // Chuyển hướng đến trang search với các tham số
+    navigate(`/search?${queryParams.toString()}`);
+  };
+
   return (
     <div
       className="flex justify-center items-center py-6 px-4 z-50"
@@ -77,14 +117,13 @@ const SearchBar = () => {
         className="relative container flex justify-between items-center rounded-full shadow-lg bg-white"
         ref={refCategory}
       >
-        {/* Danh mục nghề */}
         <div
           className="relative"
           onClick={() => setIsOpenCategory(!isOpenCategory)}
         >
           {/* Label danh mục nghề */}
           <div
-            className="ps-4 flex items-center justify-between flex-nowrap me-4 bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
+            className="ps-4 flex items-center justify-between flex-nowrap bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
             style={{ width: "250px" }}
           >
             <FontAwesomeIcon icon={faList} />
@@ -93,7 +132,6 @@ const SearchBar = () => {
           </div>
           {/* end: label danh mục nghề */}
         </div>
-        {/* end: danh mục nghề */}
 
         {/* Menu danh mục nghề */}
         <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
@@ -101,7 +139,7 @@ const SearchBar = () => {
         </div>
         {/* end: Menu danh mục nghề */}
 
-        {/* Ô nhập công việc */}
+        {/* Search text input */}
         <div className="flex grow justify-between items-center bg-white rounded-l-full px-4 py-3 w-3/5">
           {/* input nhập */}
           <input
@@ -121,7 +159,7 @@ const SearchBar = () => {
             </button>
           )}
         </div>
-        {/* end: ô nhập công việc */}
+        {/* end: Search text input */}
 
         {/* Phân cách */}
         <div className="border-l h-6 mx-3"></div>
@@ -165,6 +203,7 @@ const SearchBar = () => {
         <button
           className="btn-search text-white flex items-center justify-center py-2 rounded-full me-3"
           style={{ width: "10%" }}
+          onClick={handleButtonSearch}
         >
           <FontAwesomeIcon icon={faMagnifyingGlass} className="pe-2" />
           Tìm kiếm

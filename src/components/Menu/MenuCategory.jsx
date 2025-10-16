@@ -28,6 +28,10 @@ const MenuCategory = ({ setIsOpen }) => {
 
   // button áp dụng
   const handleSaveSubCategories = () => {
+    localStorage.setItem(
+      "selectedCategories",
+      JSON.stringify(selectedCategories)
+    );
     setIsOpen(false);
   };
 

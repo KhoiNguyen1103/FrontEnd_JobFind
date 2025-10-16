@@ -1,16 +1,31 @@
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import FilterSideBar from "./FilterSideBar";
 import ListJobFiltered from "./ListJobFiltered";
 
 // redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { filterJobByCategory } from "../../redux/slices/jobSlice";
 import { useEffect } from "react";
 
 const SearchResult = () => {
+  // Lấy dữu liệu từ queryParam
+  // const location = useLocation();
+  // // const queryParams = new URLSearchParams(location.search);
+
+  // // const keyword = queryParams.get("keyword");
+  // // const category = queryParams.get("category")?.split(",") || [];
+  // // const locationSelected = queryParams.get("location")?.split(",") || [];
+
+  // console.log("Keyword:", keyword);
+  // console.log("Category:", category);
+  // console.log("Location:", locationSelected);
+
+  // Lấy danh sách categories đã chọn từ slice
+  const selectedCategories = useSelector(
+    (state) => state.categories.selectedCategories
+  );
+
   const dispatch = useDispatch();
-  const location = useLocation();
-  const selectedCategories = location.state?.selectedSubcategories;
   useEffect(() => {
     if (selectedCategories) {
       dispatch(filterJobByCategory(selectedCategories));
@@ -19,18 +34,6 @@ const SearchResult = () => {
 
   return (
     <div className="container mx-auto py-4">
-      <div className="py-4 flex items-center">
-        {selectedCategories.map((c) => {
-          return (
-            <p
-              key={c}
-              className="py-1 px-4 bg-primary rounded-full me-4 text-white"
-            >
-              {c}
-            </p>
-          );
-        })}
-      </div>
       <div className="flex justify-between">
         {/* Filter Side Bar */}
         <div className="w-1/4">

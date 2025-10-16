@@ -41,7 +41,7 @@ function App() {
           <Route path="/job-saved" element={<JobSaved />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/search/:slug" element={<SearchResult />}></Route>
+          <Route path="/search" element={<SearchResult />}></Route>
           <Route path="/template-cv" element={<TemplateCV />}></Route>
           <Route path="/user-info/:id" element={<UserInfo />}></Route>
           <Route path="/my-cv/:id" element={<MyCV />}></Route>

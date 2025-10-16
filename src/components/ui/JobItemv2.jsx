@@ -34,7 +34,10 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         <img src={job.image} alt="logo" className="h-32 w-32" />
       </div>
       {/* Thông tin job */}
-      <div className="grow ps-4 h-full">
+      <div
+        className="grow ps-4 h-full cursor-pointer"
+        onClick={navigateToJobDetail}
+      >
         <p className="font-bold pb-4">{job.title}</p>
         <p className="pb-2">{job.company}</p>
         <div>
