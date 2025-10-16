@@ -1,6 +1,6 @@
 const jobs = [
   {
-    id: 1,
+    job_id: 1,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "Software Engineer",
@@ -20,7 +20,7 @@ const jobs = [
     deadline: "2025-03-31",
   },
   {
-    id: 2,
+    job_id: 2,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "Frontend Developer",
@@ -40,7 +40,7 @@ const jobs = [
     deadline: "2025-04-01",
   },
   {
-    id: 3,
+    job_id: 3,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "Data Engineer",
@@ -60,7 +60,7 @@ const jobs = [
     deadline: "2025-04-03",
   },
   {
-    id: 4,
+    job_id: 4,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "QA Engineer",
@@ -80,7 +80,7 @@ const jobs = [
     deadline: "2025-04-04",
   },
   {
-    id: 5,
+    job_id: 5,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "UI/UX Designer",
@@ -100,7 +100,7 @@ const jobs = [
     deadline: "2025-04-05",
   },
   {
-    id: 6,
+    job_id: 6,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "System Administrator",
@@ -120,7 +120,7 @@ const jobs = [
     deadline: "2025-04-06",
   },
   {
-    id: 7,
+    job_id: 7,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "AI/ML Engineer",
@@ -140,7 +140,7 @@ const jobs = [
     deadline: "2025-04-07",
   },
   {
-    id: 8,
+    job_id: 8,
     image:
       "https://res.cloudinary.com/dz1nfbpra/image/upload/v1741527786/vina68_vepysq.webp",
     title: "Mobile Developer",

@@ -69,7 +69,9 @@ const InfoCompany = ({ job }) => {
           </div>
           <div>
             <p className="text-slate-500">Hình thức làm việc</p>
-            <p className="font-bold">{job.workType}</p>
+            <p className="font-bold">
+              {job.workType === 1 ? "Toàn thời gian" : "Bán thời gian"}
+            </p>
           </div>
         </div>
         {/* end: Hình thức làm việc */}

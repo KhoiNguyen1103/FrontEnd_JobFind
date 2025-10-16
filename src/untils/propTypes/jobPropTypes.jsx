@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 const jobPropTypes = PropTypes.shape({
-  id: PropTypes.number.isRequired,
+  job_id: PropTypes.number.isRequired,
   image: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   company_id: PropTypes.number.isRequired,

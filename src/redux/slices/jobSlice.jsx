@@ -95,7 +95,7 @@ const jobSlice = createSlice({
     },
     likeJob: (state, action) => {
       const job = action.payload;
-      console.log(job); // in ra dc
+      // console.log(job); // in ra dc
       if (state.jobsSaved.some((j) => j.id === job.id)) {
         state.jobsSaved = state.jobsSaved.filter((j) => j.id !== job.id);
       } else {

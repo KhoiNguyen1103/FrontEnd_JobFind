@@ -7,6 +7,9 @@ import JobItemv2 from "../../components/ui/JobItemv2";
 import InfoCompany from "./InfoCompany";
 import { useSelector } from "react-redux";
 
+// test công việc liên quan
+// import jobs from '../../data/jobs'
+
 const JobDetail = () => {
   // Lấy dữ liệu từ job truyền qua navigate
   const location = useLocation();
@@ -43,7 +46,7 @@ const JobDetail = () => {
           {/* Thông tin job - mô tả công việc */}
           <div style={{ width: "70%" }}>
             <JobInfo job={job} />
-            <JobDescription />
+            <JobDescription job={job} />
 
             {/* Công việc liên quan */}
             <div className="bg-white p-4 mt-4">

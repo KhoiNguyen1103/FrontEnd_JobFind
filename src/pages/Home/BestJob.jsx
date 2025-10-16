@@ -230,7 +230,7 @@ const BestJob = () => {
           }
         >
           {paginationJobs.length !== 0 ? (
-            paginationJobs.map((job) => <JobItem key={job.id} job={job} />)
+            paginationJobs.map((job) => <JobItem key={job.job_id} job={job} />)
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">
               Không tìm thấy job nào

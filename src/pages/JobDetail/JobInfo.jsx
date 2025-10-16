@@ -3,9 +3,11 @@ import {
   faClock,
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
-import PropTypes from "prop-types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// propTypes
+import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 // component
 import ButtonApply from "../../components/button/ButtonApply";
@@ -13,7 +15,7 @@ import ButtonSave from "../../components/button/ButtonSave";
 
 const JobInfo = ({ job }) => {
   // console.log(job);
-  const { title, salary, location, experience, deadline } = job;
+  const { title, location, experience, deadline } = job;
 
   return (
     <>
@@ -35,7 +37,7 @@ const JobInfo = ({ job }) => {
             <div className="ps-4">
               <p className="text-sm text-slate-500">Thu nhập</p>
               <p className="font-bold">
-                {salary[0]} - {salary[1]} tr
+                {job.salary_min + " - " + job.salary_max + " triệu"}
               </p>
             </div>
           </div>
@@ -98,13 +100,7 @@ const JobInfo = ({ job }) => {
   );
 };
 JobInfo.propTypes = {
-  job: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    salary: PropTypes.array.isRequired,
-    location: PropTypes.string.isRequired,
-    experience: PropTypes.number.isRequired,
-    deadline: PropTypes.string.isRequired,
-  }).isRequired,
+  job: jobPropTypes.isRequired,
 };
 
 export default JobInfo;

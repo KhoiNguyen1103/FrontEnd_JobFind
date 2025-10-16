@@ -1,23 +1,7 @@
-import { Link } from "react-router-dom";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {} from "@fortawesome/free-solid-svg-icons";
-// import { faBell } from "@fortawesome/free-regular-svg-icons";
+// propTypes
+import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
-const tags = [
-  "Bán hàng",
-  "Marketing",
-  "Kinh doanh",
-  "Tư vấn",
-  "Nhân sự",
-  "IT",
-  "Thực tập",
-  "Hành chính",
-  "Tài chính",
-  "Quản lý",
-  "Khác",
-];
-
-const JobDescription = () => {
+const JobDescription = ({ job }) => {
   return (
     <div className="p-4 rounded-lg bg-white mt-6">
       {/* Header */}
@@ -29,24 +13,10 @@ const JobDescription = () => {
       </div>
       {/* End: Header */}
 
-      {/* Tag list */}
-      <div className="flex flex-wrap w-3/5">
-        {tags.map((tag, index) => (
-          <Link
-            to="#"
-            key={index}
-            className="bg-gray-200 rounded-full me-2 mt-4 px-2 py-1 hover:opacity-50"
-          >
-            {tag}
-          </Link>
-        ))}
-      </div>
-      {/* end: tag list */}
-
       {/* Mô tả công việc */}
       <div className="pt-4">
         <p className="font-bold">Mô tả công việc</p>
-        <p>- Không áp dụng doanh số</p>
+        <p>- {job.description}</p>
       </div>
 
       {/* Yêu cầu ứng viên */}
@@ -70,6 +40,10 @@ const JobDescription = () => {
       </div>
     </div>
   );
+};
+
+JobDescription.propTypes = {
+  job: jobPropTypes.isRequired,
 };
 
 export default JobDescription;

@@ -4,6 +4,7 @@ import locationReducer from "./slices/locationsSlice";
 import authReducer from "./slices/authSlice";
 import categorySlice from "../redux/slices/categorySlice";
 import cvReducer from "./slices/cvSlice";
+import savedJobReducer from "./slices/savedJobSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     auths: authReducer,
     categories: categorySlice,
     cv: cvReducer,
+    savedJob: savedJobReducer,
   },
 });
 

@@ -1,18 +1,18 @@
 import PropTypes from "prop-types";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
-// utils
-import formarSalary from "../../untils/formatSalary";
-
 // component
 import ButtonApply from "../button/ButtonApply";
 import ButtonSave from "../button/ButtonSave";
+import ButtonUnsaved from "../button/ButtonUnsaved";
+
+// redux
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setSelectedJob } from "../../redux/slices/jobSlice";
 import createSlug from "../../untils/createSlug";
 
-const JobItemSaved = ({ job, iconHeart, isApply }) => {
+const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -56,20 +56,24 @@ const JobItemSaved = ({ job, iconHeart, isApply }) => {
 
       {/* Button */}
       <div className="flex flex-col justify-between items-end h-full">
-        <p className="text-primary font-bold">{formarSalary(job.salary)}</p>
+        <p className="text-primary font-bold">
+          {job.salary_min + " - " + job.salary_max + " triệu"}
+        </p>
         <div className="flex justify-between items-center">
           <ButtonApply isApply={isApply} />
           {iconHeart && <ButtonSave job={job} />}
+          {isButtonSave && <ButtonUnsaved job={job} />}
         </div>
       </div>
     </div>
   );
 };
 
-JobItemSaved.propTypes = {
+JobItemv2.propTypes = {
   iconHeart: PropTypes.bool,
   isApply: PropTypes.bool,
+  isButtonSave: PropTypes.bool,
   job: jobPropTypes.isRequired,
 };
 
-export default JobItemSaved;
+export default JobItemv2;

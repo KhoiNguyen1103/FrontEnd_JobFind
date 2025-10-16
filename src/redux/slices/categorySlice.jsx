@@ -10,13 +10,25 @@ const categorySlice = createSlice({
   name: "categories",
   initialState,
   reducers: {
-    saveSubCategories: (state, action) => {
-      const subcategories = action.payload;
-      // console.log(subcategories);
-      state.selectedCategories = subcategories;
+    saveCategory: (state, action) => {
+      const category = action.payload;
+      // Kiểm tra tồn tại
+      const exists = state.selectedCategories.find(
+        (item) => item.id === category.id
+      );
+      if (exists) {
+        state.selectedCategories = state.selectedCategories.filter(
+          (item) => item.id !== category.id
+        );
+      } else {
+        state.selectedCategories = [...state.selectedCategories, category];
+      }
+    },
+    clearSelectedCategories: (state) => {
+      state.selectedCategories = [];
     },
   },
 });
 
-export const { saveSubCategories } = categorySlice.actions;
+export const { saveCategory, clearSelectedCategories } = categorySlice.actions;
 export default categorySlice.reducer;
