@@ -12,6 +12,7 @@ import JobSaved from "./pages/JobSaved";
 import UserInfo from "./pages/UserInfo";
 import MyCV from "./pages/MyCV/index";
 import ChangePassword from "./pages/ChangePassword";
+import JobApplied from "./pages/JobApplied";
 
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/template-cv" element={<TemplateCV />}></Route>
           <Route path="/user-info/:id" element={<UserInfo />}></Route>
           <Route path="/my-cv/:id" element={<MyCV />}></Route>
+          <Route path="/job-applied" element={<JobApplied />}></Route>
           <Route
             path="/tai-khoan/mat-khau"
             element={<ChangePassword />}

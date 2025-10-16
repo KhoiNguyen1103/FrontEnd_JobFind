@@ -39,7 +39,7 @@ const JobItemSaved = ({ job }) => {
       <div className="flex flex-col justify-between items-end h-full">
         <p className="text-primary font-bold">{formarSalary(job.salary)}</p>
         <div className="flex justify-between items-center">
-          <ButtonApply />
+          <ButtonApply isApply={false} />
           <ButtonUnsaved handleUnSaveJob={handleUnSaveJob} />
         </div>
       </div>

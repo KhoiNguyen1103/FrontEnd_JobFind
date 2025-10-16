@@ -11,9 +11,12 @@ import { useState, useEffect, useRef } from "react";
 
 // import data
 import navItems from "../data/header_submenu";
-import ModelNotification from "../components/ui/modelNotification";
+import MenuNotification from "../components/Menu/MenuNotification";
 import DropDownUserMenu from "../components/ui/DropDownUserMenu";
 import { useSelector } from "react-redux";
+
+// component
+import ButtonRecruiter from "../components/button/ButtonRecruiter";
 
 const Header = () => {
   // lấy token user từ localstorage
@@ -98,18 +101,15 @@ const Header = () => {
       {isLogin ? (
         // Đã đăng nhập
         <div className="button-group-login flex justify-end items-center">
-          <Link
-            to="/"
-            className="border-2 border-solid px-4 py-2 me-4 rounded-md ml-4 text-white bg-primary"
-          >
-            Đăng tuyển & tìm hồ sơ
-          </Link>
-          {/* icon chuông thông báo */}
+          {/* Nút đăng tuyển và tìm hồ sơ */}
+          <ButtonRecruiter />
+
+          {/* start: thông báo */}
           <div className="relative">
             <div
-              className="bg-slate-100 rounded-full flex items-center justify-center me-4 cursor-pointer"
-              style={{ width: "40px", height: "40px" }}
+              className="btn-header"
               onClick={openModelNotification}
+              ref={ref}
             >
               <FontAwesomeIcon icon={faBell} className="text-xl text-primary" />
             </div>
@@ -125,17 +125,15 @@ const Header = () => {
               <div
                 className="absolute top-full right-0 mt-6 p-4 bg-white rounded-lg shadow-lg z-[999]"
                 style={{ width: "300px" }}
-                ref={ref}
               >
-                <ModelNotification />
+                <MenuNotification />
               </div>
             )}
           </div>
+          {/* end: thông báo */}
+
           {/* icon tin nhắn: click vào thì mở trang chat với nhà tuyển dụng */}
-          <div
-            className="bg-slate-100 rounded-full flex items-center justify-center me-4 cursor-pointer"
-            style={{ width: "40px", height: "40px" }}
-          >
+          <div className="btn-header">
             <FontAwesomeIcon
               icon={faMessage}
               className="text-xl text-primary"
@@ -151,19 +149,24 @@ const Header = () => {
               style={{ width: "40px", height: "40px" }}
               onClick={openDropDownUserMenu}
             >
-              <img src={user.avatar} alt="avatar" className="h-full" />
+              <img
+                src={user?.avatar || "/image_user_default.jpg"}
+                alt="avatar"
+                className="h-full"
+              />
             </div>
             <FontAwesomeIcon
               icon={faAngleDown}
               className="text-lg text-primary"
             />
             {/* Dropdown user menu */}
-            {isOpenDropDownUserMenu && (
+            {isOpenDropDownUserMenu && user && (
               <div
                 className="absolute top-full right-0 mt-6 p-4 bg-white rounded-lg shadow-lg z-[999]"
                 style={{ width: "400px" }}
               >
                 <DropDownUserMenu user={user} />
+                {/* <DropDownUserMenu user={data[0]} /> */}
               </div>
             )}
           </div>

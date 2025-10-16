@@ -20,7 +20,7 @@ const items = [
   {
     title: "Việc làm đã ứng tuyển",
     icon: faBriefcase,
-    path: "/",
+    path: "/job-applied",
   },
   {
     title: "Cài đặt thông tin cá nhân",

@@ -45,7 +45,7 @@ const DropDownUserMenu = ({ user }) => {
           </Link>
         ))}
 
-        {/* Đăgn xuất */}
+        {/* Đăng xuất */}
         <div
           className="flex items-center py-4 px-4 rounded-lg mb-4 bg-slate-100"
           onClick={handleLogout}

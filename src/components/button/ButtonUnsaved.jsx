@@ -6,11 +6,11 @@ import PropTyes from "prop-types";
 const ButtonUnsaved = ({ handleUnSaveJob }) => {
   return (
     <div
-      className="py-1 px-2 rounded-md bg-slate-200 font-sm flex justify-between items-center cursor-pointer"
+      className="py-1 px-2 ms-4 rounded-md bg-slate-200 font-sm flex justify-between items-center cursor-pointer"
       onClick={handleUnSaveJob}
     >
       <FontAwesomeIcon icon={faTrash} />
-      <p className="ps-2">Bỏ lưu</p>
+      <p className="ps-2 whitespace-nowrap">Bỏ lưu</p>
     </div>
   );
 };

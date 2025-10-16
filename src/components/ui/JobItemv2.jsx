@@ -1,22 +1,40 @@
 import PropTypes from "prop-types";
+import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 // utils
 import formarSalary from "../../untils/formatSalary";
 
-// redux
-
 // component
 import ButtonApply from "../button/ButtonApply";
 import ButtonSave from "../button/ButtonSave";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
+import createSlug from "../../untils/createSlug";
 
 const JobItemSaved = ({ job, iconHeart, isApply }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // navigate to job detail
+  const navigateToJobDetail = () => {
+    dispatch(setSelectedJob(job));
+    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    scrollTop();
+  };
+
+  // scroll lên đầu trang
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <div className="flex justify-between items-center border border-slate-200 rounded-lg p-4 mb-4 h-40">
-      <div className="">
+    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-40">
+      <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img src={job.image} alt="logo" className="h-32 w-32" />
       </div>
       {/* Thông tin job */}
-      <div className="grow ps-4">
+      <div className="grow ps-4 h-full">
         <p className="font-bold pb-4">{job.title}</p>
         <p className="pb-2">{job.company}</p>
         <div>
@@ -51,21 +69,7 @@ const JobItemSaved = ({ job, iconHeart, isApply }) => {
 JobItemSaved.propTypes = {
   iconHeart: PropTypes.bool,
   isApply: PropTypes.bool,
-  job: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    company: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
-    salary: PropTypes.array.isRequired,
-    description: PropTypes.string.isRequired,
-    created: PropTypes.string.isRequired,
-    deadline: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    experience: PropTypes.number.isRequired,
-    position: PropTypes.string.isRequired,
-    workType: PropTypes.string.isRequired,
-  }).isRequired,
+  job: jobPropTypes.isRequired,
 };
 
 export default JobItemSaved;

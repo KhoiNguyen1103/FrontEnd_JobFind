@@ -2,22 +2,18 @@ import {
   faLocationDot,
   faClock,
   faDollarSign,
-  faPaperPlane,
-  faHeart as faHeartSolid,
 } from "@fortawesome/free-solid-svg-icons";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useState } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// component
+import ButtonApply from "../../components/button/ButtonApply";
+import ButtonSave from "../../components/button/ButtonSave";
 
 const JobInfo = ({ job }) => {
   // console.log(job);
   const { title, salary, location, experience, deadline } = job;
-
-  // Lưu tin icon change
-  const [isSave, setIsSave] = useState(false);
 
   return (
     <>
@@ -86,23 +82,14 @@ const JobInfo = ({ job }) => {
         {/* end: Hạn nộp */}
 
         {/* Ứng tuyển ngay - Lưu tin */}
-        <div className="pt-6 flex">
-          <button className="bg-primary text-white rounded-md px-6 py-3 mt-4 grow text-center hover:opacity-80">
-            <Link to="#">
-              <FontAwesomeIcon icon={faPaperPlane} className="pe-4" />
-              Ứng tuyển ngay
-            </Link>
-          </button>
+        <div className="pt-6 flex items-center mt-4" style={{ height: "72px" }}>
+          <div className="w-full h-full">
+            <ButtonApply isApply={false} />
+          </div>
 
-          <button className=" text-slate-600 rounded-md px-6 py-3 ms-2 mt-4 bg-white border border-primary">
-            <div onClick={() => setIsSave(!isSave)} className="text-primary">
-              <FontAwesomeIcon
-                icon={isSave ? faHeartSolid : faHeart}
-                className="pe-2"
-              />
-              Lưu tin
-            </div>
-          </button>
+          <div className="ps-4">
+            <ButtonSave job={job} />
+          </div>
         </div>
         {/* end: ứng tuyển ngay - lưu tin */}
       </div>

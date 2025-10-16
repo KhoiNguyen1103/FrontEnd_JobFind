@@ -1,21 +1,43 @@
 const categories = [
   {
-    id: "101",
-    name: "Phát triển phần mềm",
-    subcategories: ["Lập trình viên Backend", "Lập trình viên Frontend"],
+    id: 1,
+    name: "Lập trình viên Backend",
   },
   {
-    id: "102",
-    name: "Kiểm thử phần mềm",
-    subcategories: [
-      "Kiểm thử tự động (Automation Testing)",
-      "Kiểm thử thủ công (Manual Testing)",
-    ],
+    id: 2,
+    name: "Lập trình viên Frontend",
   },
   {
-    id: "201",
-    name: "Quản lý kinh doanh",
-    subcategories: ["Quản lý dự án kinh doanh", "Phát triển thị trường"],
+    id: 3,
+    name: "Kỹ sư dữ liệu",
+  },
+  {
+    id: 4,
+    name: "Chuyên viên kiểm thử phần mềm",
+  },
+  {
+    id: 5,
+    name: "Chuyên viên UI/UX",
+  },
+  {
+    id: 6,
+    name: "Quản trị viên hệ thống",
+  },
+  {
+    id: 7,
+    name: "Chuyên gia AI/ML",
+  },
+  {
+    id: 8,
+    name: "Lập trình viên Mobile",
+  },
+  {
+    id: 9,
+    name: "Kỹ sư DevOps",
+  },
+  {
+    id: 10,
+    name: "Chuyên viên an ninh mạng",
   },
 ];
 

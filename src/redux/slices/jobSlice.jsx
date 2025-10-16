@@ -22,21 +22,20 @@ const jobSlice = createSlice({
       const { key, value } = action.payload;
       state.filterJobs = state.jobs.filter((job) => {
         // lọc lương
-        const salary = job.salary;
-        const duoi5tr = salary[0] <= 5 && true;
+        const duoi5tr = job.salary_min <= 5 && true;
         const tu5toi10tr =
-          ((salary[0] <= 5 && salary[1] >= 5) ||
-            (salary[0] >= 5 && salary[0] <= 10)) &&
+          ((job.salary_min <= 5 && job.salary_max >= 5) ||
+            (job.salary_min >= 5 && job.salary_min <= 10)) &&
           true;
         const tu10den15tr =
-          ((salary[0] <= 10 && salary[1] >= 10) ||
-            (salary[0] >= 10 && salary[0] <= 15)) &&
+          ((job.salary_min <= 10 && job.salary_max >= 10) ||
+            (job.salary_min >= 10 && job.salary_min <= 15)) &&
           true;
         const tu15den20tr =
-          ((salary[0] <= 15 && salary[1] >= 15) ||
-            (salary[0] >= 15 && salary[0] <= 20)) &&
+          ((job.salary_min <= 15 && job.salary_max >= 15) ||
+            (job.salary_min >= 15 && job.salary_min <= 20)) &&
           true;
-        const tren20tr = (salary[0] >= 20 || salary[1] >= 20) && true;
+        const tren20tr = (job.salary_min >= 20 || job.salary_max >= 20) && true;
 
         if (key === "Địa điểm") {
           return value === "Tất cả" ? true : job.location === value;

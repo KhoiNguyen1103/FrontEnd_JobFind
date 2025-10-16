@@ -7,15 +7,18 @@ import {
   faFilter,
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
-
-import JobItem from "../../components/ui/JobItem";
+// redux
 import { useSelector, useDispatch } from "react-redux";
 import { filterJob, paginateJobs, maxPage } from "../../redux/slices/jobSlice";
+// data
 import filters from "../../data/filters";
+// untils
 import {
   convertSalaryDisplay,
   convertExperienceDisplay,
 } from "../../untils/convertSalaryDisplay";
+// component
+import JobItem from "../../components/ui/JobItem";
 
 const BestJob = () => {
   // Mở model bộ lọc
@@ -88,8 +91,6 @@ const BestJob = () => {
     }
   };
 
-  // console.log(formatedFilterItems());
-
   // Phân trang
   const [pagination, setPagination] = useState(1);
   const maxPageCount = useSelector(maxPage);
@@ -158,7 +159,7 @@ const BestJob = () => {
             {/* menu filter selector */}
             {isOpenFilter && (
               <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 w-2/3 py-2 mt-0.5">
-                {filters.map((filter) => (
+                {filters.slice(0, 4).map((filter) => (
                   <div
                     key={filter.key}
                     className="px-2 py-2 cursor-pointer hover:bg-slate-300"
@@ -232,7 +233,7 @@ const BestJob = () => {
             paginationJobs.map((job) => <JobItem key={job.id} job={job} />)
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">
-              Không tìm thấy job nào huhu
+              Không tìm thấy job nào
             </p>
           )}
         </div>

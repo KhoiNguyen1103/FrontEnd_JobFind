@@ -1,9 +1,13 @@
 import { useRef } from "react";
 import { FaUpload } from "react-icons/fa";
 
+// icon
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { addCV } from "../../redux/slices/cvSlice";
+import { addCV, removeCV } from "../../redux/slices/cvSlice";
 
 const MyCV = () => {
   const dispatch = useDispatch();
@@ -34,6 +38,11 @@ const MyCV = () => {
     fileInputRef.current.click();
   };
 
+  // remove CV
+  const handleRemoveCV = (cvName) => {
+    dispatch(removeCV(cvName));
+  };
+
   return (
     <div className="container mx-auto py-4">
       {/* CV đã tải lên */}
@@ -58,15 +67,21 @@ const MyCV = () => {
           </button>
         </div>
 
+        {/* Danh sách CV */}
         <div className="pt-6">
           {cvList.length > 0 ? (
             <ul>
               {cvList.map((cv, index) => (
-                <li
-                  key={index}
-                  className="text-blue-600 cursor-pointer hover:underline"
-                >
-                  📄 <strong>{cv.name}</strong>
+                <li key={index} className="text-blue-600 pb-4">
+                  <FontAwesomeIcon
+                    icon={faTrash}
+                    className="text-red-600 pe-4 cursor-pointer"
+                    onClick={() => handleRemoveCV(cv.name)}
+                  />
+                  📄{" "}
+                  <strong className="cursor-pointer hover:underline">
+                    {cv.name}
+                  </strong>
                 </li>
               ))}
             </ul>

@@ -5,9 +5,8 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import vina68 from "../../assets/images/image_products/vina68.webp";
-
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 const InfoCompany = ({ job }) => {
   return (
@@ -32,7 +31,7 @@ const InfoCompany = ({ job }) => {
           <p>{job.location}</p>
         </div>
         <Link
-          to="#"
+          to="/"
           className="text-green-500 text-center block mt-4 hover:underline"
         >
           Xem trang công ty
@@ -60,21 +59,6 @@ const InfoCompany = ({ job }) => {
         </div>
         {/* end: Học vấn */}
 
-        {/* Số lượng tuyển */}
-        <div className="flex items-center pt-4">
-          <div
-            className="bg-primary flex justify-center items-center rounded-full me-4"
-            style={{ width: "40px", height: "40px" }}
-          >
-            <FontAwesomeIcon icon={faUsers} className="text-lg text-white" />
-          </div>
-          <div>
-            <p className="text-slate-500">Số lượng tuyển</p>
-            <p className="font-bold">5 người</p>
-          </div>
-        </div>
-        {/* end: Số lượng tuyển */}
-
         {/* Hình thức làm việc */}
         <div className="flex items-center pt-4">
           <div
@@ -84,20 +68,35 @@ const InfoCompany = ({ job }) => {
             <FontAwesomeIcon icon={faUsers} className="text-lg text-white" />
           </div>
           <div>
-            <p className="text-slate-500">Số lượng tuyển</p>
-            <p className="font-bold">5 người</p>
+            <p className="text-slate-500">Hình thức làm việc</p>
+            <p className="font-bold">{job.workType}</p>
           </div>
         </div>
         {/* end: Hình thức làm việc */}
+
+        {/* Vị trí */}
+        <div className="flex items-center pt-4">
+          <div
+            className="bg-primary flex justify-center items-center rounded-full me-4"
+            style={{ width: "40px", height: "40px" }}
+          >
+            <FontAwesomeIcon
+              icon={faLocationDot}
+              className="text-lg text-white"
+            />
+          </div>
+          <div>
+            <p className="text-slate-500">Vị trí</p>
+            <p className="font-bold">{job.position}</p>
+          </div>
+        </div>
+        {/* end: Vị trí */}
       </div>
     </div>
   );
 };
 InfoCompany.propTypes = {
-  job: PropTypes.shape({
-    company: PropTypes.string.isRequired,
-    location: PropTypes.string.isRequired,
-  }).isRequired,
+  job: jobPropTypes.isRequired,
 };
 
 export default InfoCompany;

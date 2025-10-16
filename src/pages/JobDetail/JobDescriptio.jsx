@@ -26,10 +26,6 @@ const JobDescription = () => {
           <div className="bg-primary py-4 px-1 me-2"></div>
           <p className="font-bold text-lg">Chi tiết tin tuyển dụng</p>
         </div>
-        {/* <button className="border rounded-lg border-primary py-2 px-4 text-primary font-bold">
-          <FontAwesomeIcon icon={faBell} className="pe-4" />
-          <Link to="#">Gửi tôi việc làm tương tự</Link>
-        </button> */}
       </div>
       {/* End: Header */}
 
@@ -59,43 +55,11 @@ const JobDescription = () => {
         <p>- Không áp dụng doanh số</p>
       </div>
 
-      {/* Thu nhập */}
-      <div className="pt-4">
-        <p className="font-bold">Thu nhập</p>
-        <p>- Không áp dụng doanh số</p>
-      </div>
-
       {/* Quyền lợi */}
       <div className="pt-4">
         <p className="font-bold">Quyền lợi</p>
         <p>- Không áp dụng doanh số</p>
       </div>
-
-      {/* Địa điểm */}
-      <div className="pt-4">
-        <p className="font-bold">Địa điểm</p>
-        <p>- Không áp dụng doanh số</p>
-      </div>
-
-      {/* Nút Ứng tuyển  */}
-      <button className="mt-4">
-        <Link
-          to="#"
-          className="bg-primary rounded-lg py-2 px-4 text-white font-bold"
-        >
-          Ứng tuyển ngay
-        </Link>
-      </button>
-
-      {/* Lưu tin  */}
-      <button className="mt-4 ms-4">
-        <Link
-          to="#"
-          className="border-primary text-primary rounded-lg py-2 px-8"
-        >
-          Lưu tin
-        </Link>
-      </button>
 
       {/* Việc làm liên quan */}
       <div className="mt-8">

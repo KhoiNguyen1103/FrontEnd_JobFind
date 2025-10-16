@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import JobInfo from "./JobInfo";
 import JobDescription from "./JobDescriptio";
-import JobItem from "./RelatedJobItem";
+import JobItemv2 from "../../components/ui/JobItemv2";
 import InfoCompany from "./InfoCompany";
 import { useSelector } from "react-redux";
 
@@ -11,13 +11,9 @@ const JobDetail = () => {
   // Lấy dữ liệu từ job truyền qua navigate
   const location = useLocation();
   const job = location.state;
-  // console.log(job);
 
   // Lấy danh sách job liên quan
   const relatedJobs = useSelector((state) => state.jobs.relatedJobs);
-  // const dispatch = useDispatch();
-  // dispatch(relatedJob({ category: job.category }));
-  // const jobs = useSelector((state) => state.jobs.filterJobs);
 
   return (
     <div className="py-4" style={{ background: "#f5f5f5" }}>
@@ -52,7 +48,7 @@ const JobDetail = () => {
             {/* Công việc liên quan */}
             <div className="bg-white p-4 mt-4">
               {relatedJobs.map((job) => (
-                <JobItem key={job.title} job={job} />
+                <JobItemv2 key={job.title} job={job} iconHeart={true} />
               ))}
             </div>
           </div>

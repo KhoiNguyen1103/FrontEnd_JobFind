@@ -4,6 +4,21 @@
   --header-button-dark: #161f29;
 }
 
+.btn-header {
+  background-color: #f1f1f1;
+  color: #495057;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
+
 /* general */
 .text-primary {
   color: var(--primary-color);

@@ -1,0 +1,14 @@
+.btn-header {
+  background-color: #ccc;
+  color: #495057;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 1rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
+}
