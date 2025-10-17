@@ -3,6 +3,8 @@ import { useState } from "react";
 // import data
 import citys from "../../data/citys";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const businessFields = [
   {
@@ -216,13 +218,32 @@ const RecruiterRegister = () => {
         {/* end: form thông tin */}
       </div>
       {/* ========== End: Thẻ div chứa form thông tin ============== */}
-      <div className="flex-1">
+
+      {/* =================== div chứa background ============= */}
+      <div className="flex-1 bg-login-register">
         <img
-          src="/logo_with_bg.jpg"
-          alt=""
-          className="h-full w-full object-fit"
+          src="/logo_no_bg.png"
+          alt="Logo"
+          className="w-full h-80 object-fit"
         />
+
+        {/* button tới trang làm việc */}
+        <div className="flex items-center h-1/2">
+          <Link
+            to={"/home"}
+            className="flex justify-center items-center py-4 w-3/5 mx-auto bg-white rounded-md cursor-pointer hover:bg-black hover:text-white transition-all duration-200"
+          >
+            <input
+              type="button"
+              value={"Tới trang tìm việc"}
+              className="font-semibold text-xl cursor-pointer"
+            />
+            <FontAwesomeIcon icon={faArrowRight} className="ps-4 text-xl" />
+          </Link>
+        </div>
+        {/* end: button tới trang tìm việc */}
       </div>
+      {/* =================== end: div chứa background ============= */}
     </div>
   );
 };

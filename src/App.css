@@ -122,3 +122,12 @@
 /* ============================= RECRUITER ======================================= */
 
 /* login css */
+.bg-login-register {
+  background: rgb(0, 36, 2);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 36, 2, 1) 0%,
+    rgba(62, 124, 82, 1) 11%,
+    rgba(24, 205, 42, 1) 58%
+  );
+}
