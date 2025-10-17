@@ -16,7 +16,7 @@ const ButtonSave = ({ job }) => {
 
   // Lấy user
   const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có
-  const user = useSelector((state) => state.auths.user) || storedUser;
+  const user = useSelector((state) => state.auth.user) || storedUser;
 
   const [isHeart, setIsHeart] = useState(false);
   const handleHeartClick = () => {

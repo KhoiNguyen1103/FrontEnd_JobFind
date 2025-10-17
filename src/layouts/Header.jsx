@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 
 const Header = () => {
   // dùng useSelector để theo dõi sự thay đổi user khi logout
-  const user = useSelector((state) => state.auths.user);
+  const user = useSelector((state) => state.auth.user);
   const [isLogin, setIsLogin] = useState(!!user);
 
   useEffect(() => {

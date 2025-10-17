@@ -10,7 +10,7 @@ const store = configureStore({
   reducer: {
     jobs: jobReucer,
     locations: locationReducer,
-    auths: authReducer,
+    auth: authReducer,
     categories: categorySlice,
     cv: cvReducer,
     savedJob: savedJobReducer,

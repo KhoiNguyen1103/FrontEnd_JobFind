@@ -1,26 +1,26 @@
 import "./App.css";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import Home from "./pages/Home/index";
-import CompanyDetail from "./pages/CompanyDetail/index";
-import CompanyList from "./pages/CompanyList/index";
-import JobDetail from "./pages/JobDetail/index";
-import Login from "./pages/Login/index";
-import Signup from "./pages/Signup/index";
-import SearchResult from "./pages/SearchResult/index";
-import TemplateCV from "./pages/TemplateCV/index";
-import JobSaved from "./pages/JobSaved";
-import UserInfo from "./pages/UserInfo";
-import MyCV from "./pages/MyCV/index";
-import ChangePassword from "./pages/ChangePassword";
-import JobApplied from "./pages/JobApplied";
+
+// public routes
+import publicRoutes from "./routes/publicRoutes";
+
+// private routes: Những route phải đăng nhập mới vào đc
+import jobSeekerRoutes from "./routes/jobSeekerRoutes";
 
 // Nhà tuyển dụng
+import RecruiterLogin from "./pagesRecruiter/RecruiterLogin/RecruiterLogin";
+import RecruiterRegister from "./pagesRecruiter/RecruiterRegister/RecruiterRegister";
 import { recruiterRoutes } from "./routes/recruiterRoutes";
 
+// private routes
+import PrivateRoute from "./components/PrivateRoute";
+
+// layouts
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import SearchBar from "./layouts/SearchBar";
 import { ToastContainer } from "react-toastify";
+import RoleBasedRedirect from "./components/RoleBaseRedirect";
 
 function App() {
   const location = useLocation();
@@ -33,38 +33,50 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      {!hideHeaderFooter && <Header />}
-
-      {/* Search bar */}
-      {!hideHeaderFooter && <SearchBar />}
+      {/* Header và Search bar */}
+      {!hideHeaderFooter && (
+        <>
+          <Header />
+          <SearchBar />
+        </>
+      )}
 
       {/* Content */}
       <div className="flex-grow">
         <Routes>
-          <Route path="/" element={<Home />}></Route>
-          <Route path="/company-detail/:id" element={<CompanyDetail />}></Route>
-          <Route path="/company-list" element={<CompanyList />}></Route>
-          <Route path="/job-detail/:id" element={<JobDetail />}></Route>
-          <Route path="/job-saved" element={<JobSaved />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/search" element={<SearchResult />}></Route>
-          <Route path="/template-cv" element={<TemplateCV />}></Route>
-          <Route path="/user-info/:id" element={<UserInfo />}></Route>
-          <Route path="/my-cv/:id" element={<MyCV />}></Route>
-          <Route path="/job-applied" element={<JobApplied />}></Route>
-          <Route
-            path="/tai-khoan/mat-khau"
-            element={<ChangePassword />}
-          ></Route>
+          {/* Role-based redirect route */}
+          <Route path="/redirect" element={<RoleBasedRedirect />} />
+
+          {/* Các route dùng chung cho mọi user */}
+          {publicRoutes.map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+
+          {/* Các routes dành cho job seeker */}
+          {jobSeekerRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <PrivateRoute allowedRoles={[0, 2]}>
+                  {route.element}
+                </PrivateRoute>
+              }
+            />
+          ))}
 
           {/* Các route dành cho Nhà Tuyển Dụng */}
+          <Route path="/recruiter/login" element={<RecruiterLogin />} />
+          <Route path="/recruiter/login" element={<RecruiterRegister />} />
           {recruiterRoutes.map((route) => (
             <Route
               key={route.path}
               path={route.path}
-              element={route.component}
+              element={
+                <PrivateRoute allowedRoles={[0, 1]}>
+                  {route.component}
+                </PrivateRoute>
+              }
             />
           ))}
 
@@ -75,7 +87,6 @@ function App() {
 
       {/* Footer */}
       {!hideHeaderFooter && <Footer className="justify-end" />}
-      {/* <Footer className="justify-end" /> */}
       <ToastContainer />
     </div>
   );

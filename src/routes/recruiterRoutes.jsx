@@ -3,19 +3,9 @@ import RecruiterCompanyProfile from "../pagesRecruiter/RecruiterCompanyProfile/R
 import RecruiterJobCreate from "../pagesRecruiter/RecruiterJobCreate/RecruiterJobCreate";
 import RecruiterJobEdit from "../pagesRecruiter/RecruiterJobEdit/RecruiterJobEdit";
 import RecruiterJobList from "../pagesRecruiter/RecruiterJobList/RecruiterJobList";
-import RecruiterLogin from "../pagesRecruiter/RecruiterLogin/RecruiterLogin";
-import RecruiterRegister from "../pagesRecruiter/RecruiterRegister/RecruiterRegister";
 import RecruiterHome from "../pagesRecruiter/RecruiterHome/RecruiterHome";
 
 export const recruiterRoutes = [
-  {
-    path: "/recruiter/login",
-    component: <RecruiterLogin />,
-  },
-  {
-    path: "/recruiter/register",
-    component: <RecruiterRegister />,
-  },
   {
     path: "/recruiter/home",
     component: <RecruiterHome />,
