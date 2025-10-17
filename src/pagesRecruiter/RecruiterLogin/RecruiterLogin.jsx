@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 // import data
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// redux
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/slices/authSlice";
 
 const formFields = [
   {
@@ -25,6 +29,9 @@ const formFields = [
 ];
 
 const RecruiterLogin = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     email: "abc@gmail.com",
     password: "123456789",
@@ -40,7 +47,19 @@ const RecruiterLogin = () => {
     e.preventDefault();
 
     // in console log để kiểm tra dữ liệu
-    console.log(formData);
+    // console.log(formData);
+
+    // Điều hướng tới trang chủ
+    const fakeUser = {
+      id: 1,
+      role: 1,
+      email: formData.email,
+      username: "Tui là Nhà tuyển dụng",
+      avatar:
+        "https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png",
+    };
+    dispatch(login({ user: fakeUser }));
+    navigate("/recruiter/home");
 
     // --- Khi có BE sau này chỉ cần gọi API ở đây ---
     // fetch("/api/register", {

@@ -10,16 +10,16 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      const { user, token } = action.payload;
+      const { user } = action.payload;
+      // 1 là nhà tuyển dụng
+      // if(user.role === 1) {
+
+      // }
       state.user = user;
-      state.token = token;
-      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
     },
     logout: (state) => {
       state.user = null;
-      state.token = null;
-      localStorage.removeItem("token");
       localStorage.removeItem("user"); // Xóa user khỏi localStorage khi logout
     },
   },

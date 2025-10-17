@@ -11,23 +11,22 @@ import { useState, useEffect, useRef } from "react";
 
 // import data
 import navItems from "../data/header_submenu";
+
+// component
 import MenuNotification from "../components/Menu/MenuNotification";
-import DropDownUserMenu from "../components/ui/DropDownUserMenu";
+import MenuUser from "../components/Menu/MenuUser";
 import { useSelector } from "react-redux";
 
 // component
-import ButtonRecruiter from "../components/button/ButtonRecruiter";
 
 const Header = () => {
-  // lấy token user từ localstorage
   // dùng useSelector để theo dõi sự thay đổi user khi logout
   const user = useSelector((state) => state.auths.user);
-  const token = useSelector((state) => state.auths.token);
-  const [isLogin, setIsLogin] = useState(!!token);
+  const [isLogin, setIsLogin] = useState(!!user);
 
   useEffect(() => {
-    setIsLogin(!!token); // Cập nhật trạng thái khi user hoặc token thay đổi
-  }, [user, token]);
+    setIsLogin(!!user); // Cập nhật trạng thái khi user hoặc token thay đổi
+  }, [user]);
 
   // Bật / tắt model thông báo
   const [isOpenModelNotification, setIsOpenModelNotification] = useState(false);
@@ -99,12 +98,19 @@ const Header = () => {
 
       {/* Nút đăng nhập - đăng ký - đăng tuyển */}
       {isLogin ? (
-        // Đã đăng nhập
+        // ============== Đã đăng nhập ===============
         <div className="button-group-login flex justify-end items-center">
           {/* Nút đăng tuyển và tìm hồ sơ */}
-          <ButtonRecruiter />
+          <Link
+            to={user?.role === 2 ? "/recruiter/login" : "/login"}
+            className="bg-primary border-2 border-solid px-4 py-2 me-4 rounded-md text-white"
+          >
+            {user?.role === 2
+              ? "Đăng tuyển & tìm hồ sơ"
+              : "Bạn là người tìm việc"}
+          </Link>
 
-          {/* start: thông báo */}
+          {/* ==================== thông báo =================== */}
           <div className="relative">
             <div
               className="btn-header"
@@ -113,6 +119,7 @@ const Header = () => {
             >
               <FontAwesomeIcon icon={faBell} className="text-xl text-primary" />
             </div>
+
             {/* số lượng thông báo hiện có */}
             <div
               className="absolute top-0 right-4 p-2 bg-red-600 rounded-full flex items-center justify-center text-white"
@@ -120,6 +127,7 @@ const Header = () => {
             >
               1
             </div>
+
             {/* model danh sách các thông báo */}
             {isOpenModelNotification && (
               <div
@@ -130,7 +138,7 @@ const Header = () => {
               </div>
             )}
           </div>
-          {/* end: thông báo */}
+          {/* ==================== End: thông báo =================== */}
 
           {/* icon tin nhắn: click vào thì mở trang chat với nhà tuyển dụng */}
           <div className="btn-header">
@@ -159,20 +167,21 @@ const Header = () => {
               icon={faAngleDown}
               className="text-lg text-primary"
             />
-            {/* Dropdown user menu */}
+            {/* =================== Menu User ======================= */}
             {isOpenDropDownUserMenu && user && (
               <div
                 className="absolute top-full right-0 mt-6 p-4 bg-white rounded-lg shadow-lg z-[999]"
                 style={{ width: "400px" }}
               >
-                <DropDownUserMenu user={user} />
-                {/* <DropDownUserMenu user={data[0]} /> */}
+                <MenuUser user={user} />
               </div>
             )}
+            {/* =================== End: Menu User ======================= */}
           </div>
           {/* end: avatar */}
         </div>
       ) : (
+        // ============== End: Đã đăng nhập ===============
         // Chưa đăng nhập
         <div className="button-group-login flex justify-end items-center">
           <Link

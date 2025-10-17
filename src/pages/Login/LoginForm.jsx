@@ -34,13 +34,13 @@ const LoginForm = () => {
     // Fake user data
     const fakeUser = {
       id: 1,
+      role: 2,
       email: formData.email,
       username: "Nguyen Van A",
       avatar: vina68, // Tạo avatar theo username
     };
-    const fakeToken = "fake-jwt-token-123456";
 
-    dispatch(login({ user: fakeUser, token: fakeToken }));
+    dispatch(login({ user: fakeUser }));
     navigate("/");
   };
 

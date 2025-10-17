@@ -5,6 +5,7 @@ import RecruiterJobEdit from "../pagesRecruiter/RecruiterJobEdit/RecruiterJobEdi
 import RecruiterJobList from "../pagesRecruiter/RecruiterJobList/RecruiterJobList";
 import RecruiterLogin from "../pagesRecruiter/RecruiterLogin/RecruiterLogin";
 import RecruiterRegister from "../pagesRecruiter/RecruiterRegister/RecruiterRegister";
+import RecruiterHome from "../pagesRecruiter/RecruiterHome/RecruiterHome";
 
 export const recruiterRoutes = [
   {
@@ -14,6 +15,10 @@ export const recruiterRoutes = [
   {
     path: "/recruiter/register",
     component: <RecruiterRegister />,
+  },
+  {
+    path: "/recruiter/home",
+    component: <RecruiterHome />,
   },
   {
     path: "/recruiter/job-list",
