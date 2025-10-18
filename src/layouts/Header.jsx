@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +20,8 @@ import { useSelector } from "react-redux";
 // component
 
 const Header = () => {
+  const location = useLocation();
+
   // dùng useSelector để theo dõi sự thay đổi user khi logout
   const user = useSelector((state) => state.auth.user);
   const [isLogin, setIsLogin] = useState(!!user);
@@ -70,6 +72,20 @@ const Header = () => {
     };
   }, []);
 
+  // ==================== Sửa header cho role recruiter ====================
+  let text = "";
+  let link = "#";
+  if (user?.role === 2) {
+    text = "Bạn là nhà tuyển dụng?";
+    link = "/recruiter/login";
+  } else if (user?.role === 1 && location.pathname === "/recruiter/home") {
+    text = "Xem thị trường công việc";
+    link = "/";
+  } else if (user?.role === 1 && location.pathname === "/") {
+    text = "Xem Profile đề cử";
+    link = "/recruiter/home";
+  }
+
   return (
     <div className=" header flex justify-between items-center px-4 font-medium shadow">
       <Link to="/" className="h-full">
@@ -102,12 +118,10 @@ const Header = () => {
         <div className="button-group-login flex justify-end items-center">
           {/* Nút đăng tuyển và tìm hồ sơ */}
           <Link
-            to={user?.role === 2 ? "/recruiter/login" : "/login"}
+            to={link}
             className="bg-primary border-2 border-solid px-4 py-2 me-4 rounded-md text-white"
           >
-            {user?.role === 2
-              ? "Đăng tuyển & tìm hồ sơ"
-              : "Bạn là người tìm việc"}
+            {text}
           </Link>
 
           {/* ==================== thông báo =================== */}
