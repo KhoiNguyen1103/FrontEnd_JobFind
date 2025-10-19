@@ -22,6 +22,16 @@ const profileJobSeekers = [
     location: "Hồ Chí Minh",
     education: "Đại học",
   },
+  {
+    id: 3,
+    name: "Nguyễn Văn A",
+    job: "Kỹ sư phần mềm",
+    experience: 5,
+    salary_min: 20,
+    salary_max: 30,
+    location: "Hồ Chí Minh",
+    education: "Đại học",
+  },
 ];
 
 const RecruiterHome = () => {
@@ -42,7 +52,7 @@ const RecruiterHome = () => {
           {/* End: Header */}
 
           {/* List CV */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {profileJobSeekers.map((profile) => (
               <CVItem key={profile.id} profile={profile} />
             ))}

@@ -4,6 +4,8 @@ import RecruiterJobCreate from "../pagesRecruiter/RecruiterJobCreate/RecruiterJo
 import RecruiterJobEdit from "../pagesRecruiter/RecruiterJobEdit/RecruiterJobEdit";
 import RecruiterJobList from "../pagesRecruiter/RecruiterJobList/RecruiterJobList";
 import RecruiterHome from "../pagesRecruiter/RecruiterHome/RecruiterHome";
+import RecruiterProfileSaved from "../pagesRecruiter/RecruiterProfileSaved/RecruiterProfileSaved";
+import JobSeekerProfile from "../pagesRecruiter/JobSeekerProfile/JobSeekerProfile";
 
 export const recruiterRoutes = [
   {
@@ -29,5 +31,13 @@ export const recruiterRoutes = [
   {
     path: "/recruiter/application",
     component: <RecruiterApplication />,
+  },
+  {
+    path: "/recruiter/profile-saved",
+    component: <RecruiterProfileSaved />,
+  },
+  {
+    path: "/job-seeker-profile/:id",
+    component: <JobSeekerProfile />,
   },
 ];

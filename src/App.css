@@ -131,3 +131,14 @@
     rgba(24, 205, 42, 1) 58%
   );
 }
+
+/* profile */
+.profile {
+  background: rgb(202, 236, 205);
+  background: linear-gradient(
+    0deg,
+    rgba(202, 236, 205, 1) 0%,
+    rgba(202, 236, 205, 1) 0%,
+    rgba(255, 255, 255, 1) 62%
+  );
+}

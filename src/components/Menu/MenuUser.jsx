@@ -55,6 +55,11 @@ const itemsForRecruiter = [
     path: "/",
   },
   {
+    title: "Ứng viên ưa thích",
+    icon: faHeart,
+    path: "/recruiter/profile-saved",
+  },
+  {
     title: "Thông tin công ty",
     icon: faBuilding,
     path: "/",
