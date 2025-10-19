@@ -1,24 +1,104 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 
 import { useState } from "react";
 
+// api
+import registerUser from "../../services/registerService";
+
 const SignUpForm = () => {
+  const navigate = useNavigate();
+
   // Theo dõi trạng thái form
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "Nguyễn Minh",
+    lastName: "Nhật",
+    phone: "0123456789",
+    address: "Hà Nội",
+    email: "nhat@gmail.com",
+    password: "StrongPass@123",
+    confirmPassword: "StrongPass@123",
+  });
+
+  const [errors, setErrors] = useState({
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
+
+  // Kiểm tra email hợp lệ
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return regex.test(email);
+  };
+
+  // Kiểm tra số điện thoại có 10 chữ số
+  const validatePhone = (phone) => {
+    return phone.length === 10 && /^[0-9]+$/.test(phone);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  // call api đăng ký
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let newErrors = {};
+
+    // Kiểm tra email
+    if (!validateEmail(formData.email)) {
+      newErrors.email = "Email không hợp lệ";
+    } else {
+      newErrors.email = "";
+    }
+
+    // Kiểm tra số điện thoại
+    if (!validatePhone(formData.phone)) {
+      newErrors.phone = "Số điện thoại phải có 10 chữ số";
+    } else {
+      newErrors.phone = "";
+    }
+
+    // Cập nhật trạng thái lỗi
+    setErrors(newErrors);
+
+    const { confirmPassword, ...rest } = formData;
+
+    // Kiểm tra mật khẩu và xác nhận mật khẩu
+    if (formData.password !== confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu và xác nhận mật khẩu không khớp";
+    } else {
+      newErrors.confirmPassword = "";
+    }
+
+    const payload = {
+      ...rest,
+      role: "JOBSEEKER",
+    };
+
+    // Nếu có lỗi, không gửi form
+    if (Object.values(newErrors).some((error) => error !== "")) {
+      return;
+    }
+
+    const response = await registerUser(payload);
+    if (!response.success) {
+      alert(`Đăng ký thất bại: ${response.message}`);
+      return;
+    }
+
+    console.log("Đăng ký thành công:", response.data);
+    alert("Đăng ký thành công!");
+    // Chuyển hướng đến trang đăng nhập
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -29,11 +109,11 @@ const SignUpForm = () => {
         tưởng
       </p>
 
-      <form action="">
-        {/* form group */}
+      <form onSubmit={handleSubmit}>
+        {/* form group - firstName */}
         <div className="form-group pb-3">
           <label htmlFor="" className="block pb-1">
-            Họ và tên
+            Họ và tên đệm
           </label>
           <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
             <FontAwesomeIcon
@@ -42,17 +122,86 @@ const SignUpForm = () => {
             />
             <input
               type="text"
-              name="name"
-              placeholder="Nhập họ tên"
+              name="firstName"
+              placeholder="Nhập họ và tên đệm"
               required
               className="w-full outline-none"
-              value={formData.name}
+              value={formData.firstName}
               onChange={handleChange}
             />
           </div>
         </div>
 
-        {/* form group */}
+        {/* form group - lastName */}
+        <div className="form-group pb-3">
+          <label htmlFor="" className="block pb-1">
+            Tên
+          </label>
+          <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
+            <FontAwesomeIcon
+              icon={faUser}
+              className="text-primary text-xl pe-6"
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Nhập tên"
+              required
+              className="w-full outline-none"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        {/* form group - phone */}
+        <div className="form-group pb-3">
+          <label htmlFor="" className="block pb-1">
+            Số điện thoại
+          </label>
+          <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
+            <FontAwesomeIcon
+              icon={faUser}
+              className="text-primary text-xl pe-6"
+            />
+            <input
+              type="number"
+              name="phone"
+              placeholder="Nhập số điện thoại"
+              required
+              className="w-full outline-none"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </div>
+          {errors.phone && (
+            <p className="text-red-500 text-sm">{errors.phone}</p>
+          )}
+        </div>
+
+        {/* form group - address */}
+        <div className="form-group pb-3">
+          <label htmlFor="" className="block pb-1">
+            Địa chỉ
+          </label>
+          <div className="flex items-center border border-slate-300 rounded-lg p-2 ">
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              className="text-primary text-xl pe-6"
+            />
+            <input
+              type="text"
+              name="adress"
+              placeholder="Nhập địa chỉ"
+              required
+              className="w-full outline-none"
+              value={formData.address}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        {/* form group - email */}
         <div className="form-group pb-3">
           <label htmlFor="" className="block pb-1">
             Email
@@ -72,9 +221,12 @@ const SignUpForm = () => {
               onChange={handleChange}
             />
           </div>
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email}</p>
+          )}
         </div>
 
-        {/* form group */}
+        {/* form group - password */}
         <div className="form-group pb-3">
           <label htmlFor="" className="block pb-1">
             Mật khẩu
@@ -96,7 +248,7 @@ const SignUpForm = () => {
           </div>
         </div>
 
-        {/* form group */}
+        {/* form group - confirm password */}
         <div className="form-group pb-3">
           <label htmlFor="" className="block pb-1">
             Xác nhận mật khẩu
@@ -116,6 +268,9 @@ const SignUpForm = () => {
               onChange={handleChange}
             />
           </div>
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+          )}
         </div>
 
         {/* Đồng ý chính sách bảo mật */}

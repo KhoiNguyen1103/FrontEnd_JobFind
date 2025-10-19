@@ -10,14 +10,17 @@ import { useDispatch } from "react-redux";
 // ảnh logo test đăng nhập
 import vina68 from "../../assets/images/image_products/vina68.webp";
 
+// api services
+import loginService from "../../services/loginService";
+
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Theo dõi trạng thái form
   const [formData, setFormData] = useState({
-    email: "abs@gmail.com",
-    password: "123456",
+    email: "nhat@gmail.com",
+    password: "StrongPass@123",
   });
 
   const handleChange = (e) => {
@@ -28,20 +31,41 @@ const LoginForm = () => {
   };
 
   // Submit form login
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Fake user data
-    const fakeUser = {
-      id: 1,
-      role: 2,
-      email: formData.email,
-      username: "Nguyen Van A",
-      avatar: vina68, // Tạo avatar theo username
-    };
+    const { email, password } = formData;
 
-    dispatch(login({ user: fakeUser }));
-    navigate("/");
+    try {
+      const result = await loginService({ email, password });
+
+      const payload = {
+        ...result,
+        avatar: vina68, // Tạo avatar theo username
+      };
+      dispatch(login({ user: payload })); // Lưu thông tin người dùng vào Redux store
+      console.log("Kết quả đăng nhập:", payload);
+
+      // Lưu token hoặc user info nếu có
+      // localStorage.setItem("tokenUser", result.token);
+
+      // Redirect sang trang chính hoặc dashboard
+      navigate("/home");
+    } catch (error) {
+      console.error(error.message || "Đăng nhập thất bại");
+    }
+
+    // Fake user data
+    // const fakeUser = {
+    //   id: 1,
+    //   role: 2,
+    //   email: formData.email,
+    //   username: "Nguyen Van A",
+    //   avatar: vina68, // Tạo avatar theo username
+    // };
+
+    // dispatch(login({ user: fakeUser }));
+    // navigate("/");
   };
 
   return (

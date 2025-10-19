@@ -8,8 +8,8 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 // redux
-import { useSelector, useDispatch } from "react-redux";
-import { filterJob, paginateJobs, maxPage } from "../../redux/slices/jobSlice";
+import { useDispatch } from "react-redux";
+import { filterJob } from "../../redux/slices/jobSlice";
 // data
 import filters from "../../data/filters";
 // untils
@@ -18,9 +18,56 @@ import {
   convertExperienceDisplay,
 } from "../../untils/convertSalaryDisplay";
 // component
-import JobItem from "../../components/ui/JobItem";
+// import JobItem from "../../components/ui/JobItem";
+import JobItem from "./JobItem";
+
+// api service
+import { getAllJobs } from "../../services/getAllJobs";
 
 const BestJob = () => {
+  const dispatch = useDispatch();
+  // state để lưu danh sách job
+  const [jobs, setJobs] = useState([]);
+  // state để lưu trang hiện tại
+  const [currentPage, setCurrentPage] = useState(1);
+  // số lượng job hiển thị trên 1 trang
+  const jobsPerPage = 6;
+
+  // Lấy danh sách job từ api
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const data = await getAllJobs();
+        setJobs(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách jobs:", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // Lấy danh sách job phân trang
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+
+  // Phân trang
+  const maxPageCount = Math.ceil(jobs.length / jobsPerPage);
+
+  const increasePagination = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const decreasePagination = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
   // Mở model bộ lọc
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const toggleFilterModal = () => {
@@ -51,8 +98,6 @@ const BestJob = () => {
   };
 
   // Lọc danh sách job theo filter đã chọn
-  const dispatch = useDispatch();
-  const filterJobs = useSelector((state) => state.jobs.filterJobs);
 
   // Chọn 1 giá trị của bộ lọc
   const [filterItemSelected, setFilterItemSelected] = useState("Tất cả");
@@ -90,28 +135,6 @@ const BestJob = () => {
       return filterSelected.list;
     }
   };
-
-  // Phân trang
-  const [pagination, setPagination] = useState(1);
-  const maxPageCount = useSelector(maxPage);
-  const paginationJobs = useSelector((state) => state.jobs.paginationJobs);
-
-  // Tăng giảm phân trang
-  const increasePagination = () => {
-    if (pagination < maxPageCount) {
-      setPagination(pagination + 1);
-    }
-  };
-
-  const decreasePagination = () => {
-    if (pagination > 1) {
-      setPagination(pagination - 1);
-    }
-  };
-
-  useEffect(() => {
-    dispatch(paginateJobs(pagination));
-  }, [pagination, dispatch]);
 
   return (
     <div className="pt-6 pb-6" style={{ backgroundColor: "#f3f5f7" }}>
@@ -221,25 +244,25 @@ const BestJob = () => {
         </div>
         {/* end: filter */}
 
-        {/* start: list job */}
+        {/* start: ============= danh sách công việc ================ */}
         <div
           className={
-            filterJobs.length > 0
+            currentJobs.length > 0
               ? `pt-6 grid grid-cols-3 gap-4 grid-rows-2 overflow-hidden`
               : ""
           }
         >
-          {paginationJobs.length !== 0 ? (
-            paginationJobs.map((job) => <JobItem key={job.job_id} job={job} />)
+          {currentJobs.length !== 0 ? (
+            currentJobs.map((job) => <JobItem key={job.jobId} job={job} />)
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">
               Không tìm thấy job nào
             </p>
           )}
         </div>
-        {/* end: list job */}
+        {/* end: ============= danh sách công việc ================ */}
 
-        {/* pagination */}
+        {/* start: ============== phân trang =========== */}
         <div
           className="flex justify-between items-center pt-6 mx-auto"
           style={{ width: "200px" }}
@@ -247,23 +270,28 @@ const BestJob = () => {
           <FontAwesomeIcon
             icon={faAngleLeft}
             className={
-              pagination > 1
-                ? "me-4 btn-circle text-xl"
-                : "me-4 btn-circle text-xl opacity-50"
+              currentPage > 1
+                ? "me-4 btn-circle text-xl cursor-pointer"
+                : "me-4 btn-circle text-xl opacity-50 cursor-not-allowed"
             }
-            onClick={() => decreasePagination()}
+            onClick={decreasePagination}
           />
           <p>
-            <span className="text-primary">{pagination}</span> /{" "}
+            <span className="text-primary">{currentPage}</span> /{" "}
             <span className="text-slate-500">{maxPageCount} trang</span>
           </p>
           <FontAwesomeIcon
             icon={faAngleRight}
-            className="btn-circle text-xl"
-            onClick={() => increasePagination()}
+            className={
+              currentPage < maxPageCount
+                ? "btn-circle text-xl cursor-pointer"
+                : "btn-circle text-xl opacity-50 cursor-not-allowed"
+            }
+            onClick={increasePagination}
           />
         </div>
       </div>
+      {/* end: ============== phân trang =========== */}
     </div>
   );
 };

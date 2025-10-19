@@ -78,13 +78,15 @@ const Header = () => {
   if (user?.role === 2) {
     text = "Bạn là nhà tuyển dụng?";
     link = "/recruiter/login";
-  } else if (user?.role === 1 && location.pathname === "/recruiter/home") {
+  } else if (user?.role === 1 && location.pathname !== "/") {
     text = "Xem thị trường công việc";
     link = "/";
   } else if (user?.role === 1 && location.pathname === "/") {
     text = "Xem Profile đề cử";
     link = "/recruiter/home";
   }
+
+  // console.log(user.role);
 
   return (
     <div className=" header flex justify-between items-center px-4 font-medium shadow">

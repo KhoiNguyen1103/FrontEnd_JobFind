@@ -1,23 +1,30 @@
 import PropTypes from "prop-types";
 
 const jobPropTypes = PropTypes.shape({
-  job_id: PropTypes.number.isRequired,
-  image: PropTypes.string.isRequired,
+  jobId: PropTypes.number.isRequired,
+  company: PropTypes.shape({
+    companyId: PropTypes.number.isRequired,
+    companyName: PropTypes.string.isRequired,
+    logoPath: PropTypes.string.isRequired,
+    industry: PropTypes.arrayOf(PropTypes.string),
+    website: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+  }).isRequired,
   title: PropTypes.string.isRequired,
-  company_id: PropTypes.number.isRequired,
-  company: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
-  salary_min: PropTypes.number.isRequired,
-  salary_max: PropTypes.number.isRequired,
-  experience: PropTypes.number.isRequired,
-  position_id: PropTypes.number.isRequired,
-  position: PropTypes.string.isRequired,
-  workType: PropTypes.number.isRequired,
-  category_id: PropTypes.number.isRequired,
-  category: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  created: PropTypes.string.isRequired,
+  requirements: PropTypes.string.isRequired,
+  benefits: PropTypes.string.isRequired,
+  salaryMin: PropTypes.number.isRequired,
+  salaryMax: PropTypes.number.isRequired,
+  jobType: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  postedAt: PropTypes.string.isRequired,
   deadline: PropTypes.string.isRequired,
+  isActive: PropTypes.bool.isRequired,
+  skills: PropTypes.arrayOf(PropTypes.string), // nếu là array of string
+  categories: PropTypes.arrayOf(PropTypes.string), // hoặc có thể là object nếu backend trả vậy
 });
 
 export default jobPropTypes;

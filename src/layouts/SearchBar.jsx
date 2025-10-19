@@ -104,7 +104,11 @@ const SearchBar = () => {
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
     // Chuyển hướng đến trang search với các tham số
-    navigate(`/search?${queryParams.toString()}`);
+    if (auth_role == 2) {
+      navigate(`/search?${queryParams.toString()}`);
+    } else {
+      navigate(`/search-cv?${queryParams.toString()}`);
+    }
   };
 
   return (

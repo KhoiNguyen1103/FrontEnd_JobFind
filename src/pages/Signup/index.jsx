@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Signup = () => {
   return (
-    <div className="flex justify-between" style={{ height: "100vh" }}>
+    <div className="flex justify-between h-screen px-20 bg-white">
       <SignUpForm />
       <Link to="/" className="w-2/5 h-full">
         <img src={bg_signup} alt="background signup" className="h-full" />
