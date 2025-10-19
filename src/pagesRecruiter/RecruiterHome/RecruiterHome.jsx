@@ -1,5 +1,7 @@
 // component
+import { useState } from "react";
 import CVItem from "../../components/ui/CVItem";
+import Pagination from "../../components/ui/Pagination";
 
 const profileJobSeekers = [
   {
@@ -35,6 +37,9 @@ const profileJobSeekers = [
 ];
 
 const RecruiterHome = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 10;
+
   return (
     <div className="py-6">
       <div className="container mx-auto">
@@ -60,6 +65,14 @@ const RecruiterHome = () => {
           {/* END: List CV */}
         </div>
         {/* ====================== End: Top CV đề cử cho bạn ===================== */}
+
+        <div className="flex justify-center items-center pt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       </div>
     </div>
   );

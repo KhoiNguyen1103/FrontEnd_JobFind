@@ -22,6 +22,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { setSelectedCategories } from "../redux/slices/categorySlice";
 
 const SearchBar = () => {
+  const auth_role = useSelector((state) => state.auth.user)?.role;
+  // console.log(auth_role);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -113,13 +116,11 @@ const SearchBar = () => {
         backgroundPosition: "center",
       }}
     >
-      <div
-        className="relative container flex justify-between items-center rounded-full shadow-lg bg-white"
-        ref={refCategory}
-      >
+      <div className="relative container flex justify-between items-center rounded-full shadow-lg bg-white">
         <div
           className="relative"
           onClick={() => setIsOpenCategory(!isOpenCategory)}
+          ref={refCategory}
         >
           {/* Label danh mục nghề */}
           <div
@@ -131,13 +132,13 @@ const SearchBar = () => {
             <FontAwesomeIcon icon={faAngleDown} />
           </div>
           {/* end: label danh mục nghề */}
-        </div>
 
-        {/* Menu danh mục nghề */}
-        <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
-          {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
+          {/* Menu danh mục nghề */}
+          <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
+            {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
+          </div>
+          {/* end: Menu danh mục nghề */}
         </div>
-        {/* end: Menu danh mục nghề */}
 
         {/* Search text input */}
         <div className="flex grow justify-between items-center bg-white rounded-l-full px-4 py-3 w-3/5">
@@ -146,7 +147,9 @@ const SearchBar = () => {
             type="text"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            placeholder="Nhập công việc..."
+            placeholder={
+              auth_role == 2 ? "Nhập công việc..." : "Nhập mã ứng viên..."
+            }
             className="w-full text-gray-800 outline-none p-1"
           />
           {searchText && (

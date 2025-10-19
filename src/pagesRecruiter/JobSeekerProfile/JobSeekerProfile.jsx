@@ -1,3 +1,8 @@
+import { Link } from "react-router-dom";
+import ButtonSaveJobSeeker from "../../components/button/ButtonSaveJobSeeker";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMessage } from "@fortawesome/free-solid-svg-icons";
+
 const profile = {
   name: "Nguyễn Văn A",
   email: "nguyenvana@gmail.com",
@@ -29,6 +34,16 @@ const JobSeekerProfile = () => {
           <div>
             <h1 className="text-2xl font-bold">{profile.name}</h1>
             <p className="text-gray-600">{profile.location}</p>
+          </div>
+          <div className="grow text-right">
+            <ButtonSaveJobSeeker />
+            {/* Button chat */}
+            <Link to={"/"} className="cursor-pointer">
+              <FontAwesomeIcon
+                icon={faMessage}
+                className="h-6 w-6 text-green-600"
+              />
+            </Link>
           </div>
         </div>
 

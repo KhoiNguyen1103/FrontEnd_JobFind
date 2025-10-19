@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -18,15 +19,20 @@ const MenuCategory = ({ setIsOpen }) => {
     (state) => state.categories.selectedCategories
   );
 
-  // Lưu category đang chọn
+  // State tìm kiếm
+  const [searchText, setSearchText] = useState("");
 
-  // Danh sách category được chọn
+  // Lọc danh mục nghề theo từ khóa tìm kiếm
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  // Chọn hoặc bỏ chọn category
   const handleClickItemCategory = (category) => {
-    // setSelectedCategory(category);
     dispatch(saveCategory(category));
   };
 
-  // button áp dụng
+  // button Áp dụng
   const handleSaveSubCategories = () => {
     localStorage.setItem(
       "selectedCategories",
@@ -41,20 +47,31 @@ const MenuCategory = ({ setIsOpen }) => {
   };
 
   return (
-    <div>
-      {/* danh sách nghề */}
-      <div className="py-2 w-full">
+    <div className="">
+      {/* Ô tìm kiếm danh mục */}
+      <input
+        type="text"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        placeholder="Tìm kiếm danh mục..."
+        className="w-full p-2 mb-2 border rounded-md outline-none"
+      />
+
+      {/* Danh sách nghề với thanh cuộn */}
+      <div
+        className="overflow-y-auto"
+        style={{ height: "300px", scrollbarWidth: "none" }}
+      >
         <div className="border-r-2">
-          <p className="px-4 pb-2 border-b-2 font-bold">Nghề</p>
-          {categories.map((category) => (
+          {filteredCategories.map((category) => (
             <div
               key={category.id}
-              className={`py-2 cursor-pointer hover:bg-slate-200 px-4 flex items-center whitespace-nowrap`}
+              className="py-2 px-4 flex items-center whitespace-nowrap cursor-pointer hover:bg-slate-200"
               onClick={() => handleClickItemCategory(category)}
             >
               <input
                 type="checkbox"
-                className="h-5 w-5 cursor-pointer"
+                className="h-4 w-4 cursor-pointer"
                 checked={selectedCategories.some(
                   (item) => item.id === category.id
                 )}
@@ -65,20 +82,20 @@ const MenuCategory = ({ setIsOpen }) => {
           ))}
         </div>
       </div>
-      {/* end: danh sách nghề */}
-      {/* Button Áp dụng */}
+
+      {/* Button Áp dụng & Clear */}
       <div className="p-4 grid grid-cols-2 gap-4">
         <p
-          className="bg-primary rounded-lg text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
+          className="text-slate-300 cursor-pointer flex items-center"
+          onClick={handleClear}
+        >
+          Bỏ chọn tất cả
+        </p>
+        <p
+          className="bg-primary rounded-full text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
           onClick={handleSaveSubCategories}
         >
           Áp dụng
-        </p>
-        <p
-          className="bg-red-600 rounded-lg text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
-          onClick={handleClear}
-        >
-          Clear
         </p>
       </div>
     </div>

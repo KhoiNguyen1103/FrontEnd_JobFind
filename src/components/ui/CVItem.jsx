@@ -98,7 +98,7 @@ const CVItem = ({ profile }) => {
 };
 CVItem.propTypes = {
   profile: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     job: PropTypes.string.isRequired,
     experience: PropTypes.number.isRequired,
