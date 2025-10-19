@@ -72,16 +72,16 @@ const Header = () => {
     };
   }, []);
 
-  // ==================== Sửa header cho role recruiter ====================
+  // ==================== Sửa header cho từng role ====================
   let text = "";
   let link = "#";
-  if (user?.role === 2) {
+  if (user?.role === "JOBSEEKER") {
     text = "Bạn là nhà tuyển dụng?";
     link = "/recruiter/login";
-  } else if (user?.role === 1 && location.pathname !== "/") {
+  } else if (user?.role === "COMPANY" && location.pathname !== "/") {
     text = "Xem thị trường công việc";
     link = "/";
-  } else if (user?.role === 1 && location.pathname === "/") {
+  } else if (user?.role === "COMPANY" && location.pathname === "/") {
     text = "Xem Profile đề cử";
     link = "/recruiter/home";
   }

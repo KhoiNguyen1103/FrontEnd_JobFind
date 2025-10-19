@@ -67,7 +67,7 @@ function App() {
 
           {/* Các route dành cho Nhà Tuyển Dụng */}
           <Route path="/recruiter/login" element={<RecruiterLogin />} />
-          <Route path="/recruiter/login" element={<RecruiterRegister />} />
+          <Route path="/recruiter/register" element={<RecruiterRegister />} />
           {recruiterRoutes.map((route) => (
             <Route
               key={route.path}

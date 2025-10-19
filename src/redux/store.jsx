@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import jobReucer from "./slices/jobSlice";
 import locationReducer from "./slices/locationsSlice";
 import authReducer from "./slices/authSlice";
-import categorySlice from "../redux/slices/categorySlice";
+import industrySlice from "../redux/slices/industrySlice";
 import cvReducer from "./slices/cvSlice";
 import savedJobReducer from "./slices/savedJobSlice";
 
@@ -11,7 +11,7 @@ const store = configureStore({
     jobs: jobReucer,
     locations: locationReducer,
     auth: authReducer,
-    categories: categorySlice,
+    industry: industrySlice,
     cv: cvReducer,
     savedJob: savedJobReducer,
   },

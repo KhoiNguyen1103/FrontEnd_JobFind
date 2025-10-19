@@ -1,49 +1,56 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import {
-  saveCategory,
-  clearSelectedCategories,
-} from "../../redux/slices/categorySlice";
+  saveIndustry,
+  clearSelectedIndustries,
+  fetchIndustries,
+} from "../../redux/slices/industrySlice";
 
 const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
 
-  // Lấy danh sách category từ Redux store
-  const categories = useSelector((state) => state.categories.categories);
+  // Fetch industries khi component được mount
+  useEffect(() => {
+    dispatch(fetchIndustries());
+  }, [dispatch]);
 
-  // Lấy danh sách categories đã chọn
-  const selectedCategories = useSelector(
-    (state) => state.categories.selectedCategories
+  // Lấy danh sách industry từ Redux store
+  const industries = useSelector((state) => state.industry.industries);
+  // console.log(industries);
+
+  // Lấy danh sách industry đã chọn
+  const selectedIndustries = useSelector(
+    (state) => state.industry.selectedIndustries
   );
 
   // State tìm kiếm
   const [searchText, setSearchText] = useState("");
 
   // Lọc danh mục nghề theo từ khóa tìm kiếm
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredIndustries = industries.filter((industry) =>
+    industry.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // Chọn hoặc bỏ chọn category
-  const handleClickItemCategory = (category) => {
-    dispatch(saveCategory(category));
+  // Chọn hoặc bỏ chọn industry
+  const handleClickItemIndustry = (industry) => {
+    dispatch(saveIndustry(industry));
   };
 
   // button Áp dụng
-  const handleSaveSubCategories = () => {
+  const handleSaveSelectedIndustries = () => {
     localStorage.setItem(
-      "selectedCategories",
-      JSON.stringify(selectedCategories)
+      "selectedIndustries",
+      JSON.stringify(selectedIndustries)
     );
     setIsOpen(false);
   };
 
   // button Clear
   const handleClear = () => {
-    dispatch(clearSelectedCategories());
+    dispatch(clearSelectedIndustries());
   };
 
   return (
@@ -63,21 +70,21 @@ const MenuCategory = ({ setIsOpen }) => {
         style={{ height: "300px", scrollbarWidth: "none" }}
       >
         <div className="border-r-2">
-          {filteredCategories.map((category) => (
+          {filteredIndustries.map((industry) => (
             <div
-              key={category.id}
+              key={industry.industryId}
               className="py-2 px-4 flex items-center whitespace-nowrap cursor-pointer hover:bg-slate-200"
-              onClick={() => handleClickItemCategory(category)}
+              onClick={() => handleClickItemIndustry(industry)}
             >
               <input
                 type="checkbox"
                 className="h-4 w-4 cursor-pointer"
-                checked={selectedCategories.some(
-                  (item) => item.id === category.id
+                checked={selectedIndustries.some(
+                  (item) => item.industryId === industry.industryId
                 )}
-                onChange={() => handleClickItemCategory(category)}
+                onChange={() => handleClickItemIndustry(industry)}
               />
-              <p className="ps-4">{category.name}</p>
+              <p className="ps-4">{industry.name}</p>
             </div>
           ))}
         </div>
@@ -93,7 +100,7 @@ const MenuCategory = ({ setIsOpen }) => {
         </p>
         <p
           className="bg-primary rounded-full text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
-          onClick={handleSaveSubCategories}
+          onClick={handleSaveSelectedIndustries}
         >
           Áp dụng
         </p>

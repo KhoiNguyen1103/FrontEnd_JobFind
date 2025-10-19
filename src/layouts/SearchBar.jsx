@@ -15,11 +15,11 @@ import background from "../assets/bg_search_section.jpg";
 
 // component
 import MenuLocation from "../components/Menu/MenuLocation";
-import MenuCategory from "../components/Menu/MenuCategory";
+import MenuIndustry from "../components/Menu/MenuIndustry";
 
 // redux
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedCategories } from "../redux/slices/categorySlice";
+import { setSelectedIndustries } from "../redux/slices/industrySlice";
 
 const SearchBar = () => {
   const auth_role = useSelector((state) => state.auth.user)?.role;
@@ -30,8 +30,8 @@ const SearchBar = () => {
 
   // Lấy dữ liệu từ redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
-  const categoriesSelected = useSelector(
-    (state) => state.categories.selectedCategories
+  const industriesSelected = useSelector(
+    (state) => state.industry.selectedIndustries
   );
 
   // track search text
@@ -43,7 +43,7 @@ const SearchBar = () => {
 
     if (savedSearchData) {
       setSearchText(savedSearchData.keyword);
-      dispatch(setSelectedCategories(savedSearchData.categories));
+      dispatch(setSelectedIndustries(savedSearchData.industries));
     }
   }, []);
 
@@ -65,14 +65,14 @@ const SearchBar = () => {
     };
   }, []);
 
-  // Đóng/mở menu categories
-  const [isOpenCategory, setIsOpenCategory] = useState(false);
-  const refCategory = useRef(null);
+  // ============ Đóng/mở menu industries
+  const [isOpenIndustry, setIsOpenIndustry] = useState(false);
+  const refIndustry = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (refCategory.current && !refCategory.current.contains(event.target)) {
-        setIsOpenCategory(false);
+      if (refIndustry.current && !refIndustry.current.contains(event.target)) {
+        setIsOpenIndustry(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -88,10 +88,10 @@ const SearchBar = () => {
     // thêm keyword
     if (searchText) queryParams.append("keyword", searchText);
 
-    // Thêm các category đã chọn (nối bằng dấu phẩy)
-    if (categoriesSelected.length > 0) {
-      const categoryIds = categoriesSelected.map((cat) => cat.id).join(",");
-      queryParams.append("category", categoryIds);
+    // Thêm các industry đã chọn (nối bằng dấu phẩy)
+    if (industriesSelected.length > 0) {
+      const industryIds = industriesSelected.map((ind) => ind.id).join(",");
+      queryParams.append("industry", industryIds); // Đổi từ "category" thành "industry"
     }
 
     // Thêm các địa điểm đã chọn (nối bằng dấu phẩy)
@@ -104,7 +104,7 @@ const SearchBar = () => {
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
     // Chuyển hướng đến trang search với các tham số
-    if (auth_role == 2) {
+    if (auth_role == "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
     } else {
       navigate(`/search-cv?${queryParams.toString()}`);
@@ -121,25 +121,22 @@ const SearchBar = () => {
       }}
     >
       <div className="relative container flex justify-between items-center rounded-full shadow-lg bg-white">
-        <div
-          className="relative"
-          onClick={() => setIsOpenCategory(!isOpenCategory)}
-          ref={refCategory}
-        >
+        <div className="relative" ref={refIndustry}>
           {/* Label danh mục nghề */}
           <div
             className="ps-4 flex items-center justify-between flex-nowrap bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
             style={{ width: "250px" }}
+            onClick={() => setIsOpenIndustry(!isOpenIndustry)}
           >
             <FontAwesomeIcon icon={faList} />
-            <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
+            <p>Danh mục nghề {"(" + industriesSelected?.length + ")"}</p>
             <FontAwesomeIcon icon={faAngleDown} />
           </div>
           {/* end: label danh mục nghề */}
 
           {/* Menu danh mục nghề */}
           <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
-            {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
+            {isOpenIndustry && <MenuIndustry setIsOpen={setIsOpenIndustry} />}
           </div>
           {/* end: Menu danh mục nghề */}
         </div>
