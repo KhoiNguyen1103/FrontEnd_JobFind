@@ -29,11 +29,11 @@ const industrySlice = createSlice({
     saveIndustry: (state, action) => {
       const industry = action.payload;
       const exists = state.selectedIndustries.find(
-        (item) => item.id === industry.id
+        (item) => item.industryId === industry.industryId
       );
       if (exists) {
         state.selectedIndustries = state.selectedIndustries.filter(
-          (item) => item.id !== industry.id
+          (item) => item.industryId !== industry.industryId
         );
       } else {
         state.selectedIndustries = [...state.selectedIndustries, industry];

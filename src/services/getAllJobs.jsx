@@ -11,3 +11,14 @@ export const getAllJobs = async () => {
     throw error;
   }
 };
+
+export const getJobById = async (jobId) => {
+  try {
+    const response = await axios.get(`${API_URL}/job/getJobById/${jobId}`);
+
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi gọi API getJobById:", error);
+    throw error;
+  }
+};

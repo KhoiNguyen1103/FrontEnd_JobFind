@@ -9,7 +9,8 @@ import {
   fetchIndustries,
 } from "../../redux/slices/industrySlice";
 
-const MenuCategory = ({ setIsOpen }) => {
+// const MenuCategory = ({ setIsOpen }) => {
+const MenuCategory = () => {
   const dispatch = useDispatch();
 
   // Fetch industries khi component được mount
@@ -26,6 +27,14 @@ const MenuCategory = ({ setIsOpen }) => {
     (state) => state.industry.selectedIndustries
   );
 
+  // Cập nhật localStorage mỗi khi selectedIndustries thay đổi
+  useEffect(() => {
+    localStorage.setItem(
+      "selectedIndustries",
+      JSON.stringify(selectedIndustries)
+    );
+  }, [selectedIndustries]);
+
   // State tìm kiếm
   const [searchText, setSearchText] = useState("");
 
@@ -40,13 +49,13 @@ const MenuCategory = ({ setIsOpen }) => {
   };
 
   // button Áp dụng
-  const handleSaveSelectedIndustries = () => {
-    localStorage.setItem(
-      "selectedIndustries",
-      JSON.stringify(selectedIndustries)
-    );
-    setIsOpen(false);
-  };
+  // const handleSaveSelectedIndustries = () => {
+  //   localStorage.setItem(
+  //     "selectedIndustries",
+  //     JSON.stringify(selectedIndustries)
+  //   );
+  //   setIsOpen(false);
+  // };
 
   // button Clear
   const handleClear = () => {
@@ -98,12 +107,12 @@ const MenuCategory = ({ setIsOpen }) => {
         >
           Bỏ chọn tất cả
         </p>
-        <p
+        {/* <p
           className="bg-primary rounded-full text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
           onClick={handleSaveSelectedIndustries}
         >
           Áp dụng
-        </p>
+        </p> */}
       </div>
     </div>
   );

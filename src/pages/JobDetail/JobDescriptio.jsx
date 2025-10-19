@@ -2,6 +2,7 @@
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 const JobDescription = ({ job }) => {
+  console.log(job);
   return (
     <div className="p-4 rounded-lg bg-white mt-6">
       {/* Header */}
@@ -22,13 +23,13 @@ const JobDescription = ({ job }) => {
       {/* Yêu cầu ứng viên */}
       <div className="pt-4">
         <p className="font-bold">Yêu cầu ứng viên</p>
-        <p>- Không áp dụng doanh số</p>
+        <p>- {job.requirements}</p>
       </div>
 
       {/* Quyền lợi */}
       <div className="pt-4">
         <p className="font-bold">Quyền lợi</p>
-        <p>- Không áp dụng doanh số</p>
+        <p>- {job.benefits}</p>
       </div>
 
       {/* Việc làm liên quan */}

@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
-import { useDispatch } from "react-redux";
-import { setSelectedJob } from "../../redux/slices/jobSlice";
 import jobPropType from "../../untils/propTypes/jobPropTypes"; // propTypes
 
 // component
@@ -10,12 +8,13 @@ import ButtonApply from "../../components/button/ButtonApply";
 
 const JobItem = ({ job }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // navigate to job detail
   const navigateToJobDetail = () => {
-    dispatch(setSelectedJob(job));
-    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    // dispatch(setSelectedJob(job));
+    // navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    const slug = createSlug(job.title);
+    navigate(`/job-detail/${slug}?id=${job.jobId}`);
   };
 
   return (
