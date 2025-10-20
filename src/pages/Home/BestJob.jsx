@@ -8,8 +8,8 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 // redux
-import { useDispatch } from "react-redux";
-import { filterJob } from "../../redux/slices/jobSlice";
+// import { useDispatch } from "react-redux";
+// import { filterJob } from "../../redux/slices/jobSlice";
 // data
 import filters from "../../data/filters";
 // untils
@@ -22,10 +22,10 @@ import {
 import JobItem from "./JobItem";
 
 // api service
-import { getAllJobs } from "../../services/getAllJobs";
+import { getAllJobs } from "../../services/Job";
 
 const BestJob = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   // state để lưu danh sách job
   const [jobs, setJobs] = useState([]);
   // state để lưu trang hiện tại
@@ -106,9 +106,9 @@ const BestJob = () => {
   };
 
   // Dùng useEffect để lọc danh sách job khi filterItemSelected thay đổi
-  useEffect(() => {
-    dispatch(filterJob({ key: filterSelected.key, value: filterItemSelected }));
-  }, [filterItemSelected, dispatch, filterSelected.key]);
+  // useEffect(() => {
+  //   dispatch(filterJob({ key: filterSelected.key, value: filterItemSelected }));
+  // }, [filterItemSelected, dispatch, filterSelected.key]);
 
   // Nếu value của bộ lọc quá nhiều thì cho phép cuộn sang trái phải
   const listFilterRef = useRef(null);

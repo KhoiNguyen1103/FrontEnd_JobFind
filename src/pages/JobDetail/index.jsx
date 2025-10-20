@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 // import jobs from '../../data/jobs'
 
 // call api
-import { getJobById } from "../../services/getAllJobs";
+import { getJobById } from "../../services/Job";
 
 const JobDetail = () => {
   // Lấy dữ liệu từ job truyền qua navigate

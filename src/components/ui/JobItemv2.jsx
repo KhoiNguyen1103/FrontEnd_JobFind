@@ -8,21 +8,18 @@ import ButtonUnsaved from "../button/ButtonUnsaved";
 
 // redux
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setSelectedJob } from "../../redux/slices/jobSlice";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const navigateToJobDetail = () => {
-    dispatch(setSelectedJob(job));
-    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    const slug = createSlug(job.title);
+    navigate(`/job-detail/${slug}?id=${job.jobId}`);
     scrollTop();
   };
 
@@ -56,7 +53,10 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
       {/* Button */}
       <div className="flex flex-col justify-between items-end h-full">
         <p className="text-primary font-bold">
-          {job.salaryMin + " - " + job.salaryMax + " triệu"}
+          {new Intl.NumberFormat("de-DE").format(job.salaryMin) +
+            " - " +
+            new Intl.NumberFormat("de-DE").format(job.salaryMax) +
+            " triệu"}
         </p>
         <div className="flex items-center gap-2">
           <ButtonApply isApply={isApply} />

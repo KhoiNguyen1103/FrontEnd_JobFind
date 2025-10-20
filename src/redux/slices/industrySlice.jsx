@@ -17,7 +17,8 @@ export const fetchIndustries = createAsyncThunk(
 
 const initialState = {
   industries: [],
-  selectedIndustries: [],
+  selectedIndustries:
+    JSON.parse(localStorage.getItem("selectedIndustries")) || [], // Lấy từ localStorage nếu có
   loading: false,
   error: null,
 };

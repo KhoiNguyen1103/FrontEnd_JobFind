@@ -90,7 +90,9 @@ const SearchBar = () => {
 
     // Thêm các industry đã chọn (nối bằng dấu phẩy)
     if (industriesSelected.length > 0) {
-      const industryIds = industriesSelected.map((ind) => ind.id).join(",");
+      const industryIds = industriesSelected
+        .map((ind) => ind.industryId)
+        .join(",");
       queryParams.append("industry", industryIds); // Đổi từ "category" thành "industry"
     }
 
@@ -100,12 +102,16 @@ const SearchBar = () => {
       queryParams.append("location", cities);
     }
 
-    // lưu vào localstorage
-    localStorage.setItem("searchText", JSON.stringify(searchText));
+    // // lưu vào localstorage
+    // localStorage.setItem("searchText", JSON.stringify(searchText));
+
+    // // Reset searchText trong localStorage
+    // localStorage.setItem("searchText", JSON.stringify(""));
 
     // Chuyển hướng đến trang search với các tham số
     if (auth_role == "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
+      window.location.reload(); // Tải lại trang
     } else {
       navigate(`/search-cv?${queryParams.toString()}`);
     }

@@ -2,7 +2,7 @@
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 const JobDescription = ({ job }) => {
-  console.log(job);
+  // console.log(job);
   return (
     <div className="p-4 rounded-lg bg-white mt-6">
       {/* Header */}
