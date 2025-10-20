@@ -9,8 +9,7 @@ import {
   fetchIndustries,
 } from "../../redux/slices/industrySlice";
 
-// const MenuCategory = ({ setIsOpen }) => {
-const MenuCategory = () => {
+const MenuIndustry = ({ setIsOpen }) => {
   const dispatch = useDispatch();
 
   // Fetch industries khi component được mount
@@ -27,14 +26,6 @@ const MenuCategory = () => {
     (state) => state.industry.selectedIndustries
   );
 
-  // Cập nhật localStorage mỗi khi selectedIndustries thay đổi
-  useEffect(() => {
-    localStorage.setItem(
-      "selectedIndustries",
-      JSON.stringify(selectedIndustries)
-    );
-  }, [selectedIndustries]);
-
   // State tìm kiếm
   const [searchText, setSearchText] = useState("");
 
@@ -49,13 +40,13 @@ const MenuCategory = () => {
   };
 
   // button Áp dụng
-  // const handleSaveSelectedIndustries = () => {
-  //   localStorage.setItem(
-  //     "selectedIndustries",
-  //     JSON.stringify(selectedIndustries)
-  //   );
-  //   setIsOpen(false);
-  // };
+  const handleSaveSelectedIndustries = () => {
+    localStorage.setItem(
+      "selectedIndustries",
+      JSON.stringify(selectedIndustries)
+    );
+    setIsOpen(false);
+  };
 
   // button Clear
   const handleClear = () => {
@@ -107,19 +98,19 @@ const MenuCategory = () => {
         >
           Bỏ chọn tất cả
         </p>
-        {/* <p
+        <p
           className="bg-primary rounded-full text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
           onClick={handleSaveSelectedIndustries}
         >
           Áp dụng
-        </p> */}
+        </p>
       </div>
     </div>
   );
 };
 
-MenuCategory.propTypes = {
+MenuIndustry.propTypes = {
   setIsOpen: PropTypes.func.isRequired,
 };
 
-export default MenuCategory;
+export default MenuIndustry;

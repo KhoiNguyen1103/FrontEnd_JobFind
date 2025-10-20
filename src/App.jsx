@@ -73,7 +73,7 @@ function App() {
               key={route.path}
               path={route.path}
               element={
-                <PrivateRoute allowedRoles={["ADMIN", "COMPANY"]}>
+                <PrivateRoute allowedRoles={["COMPANY", "ADMIN"]}>
                   {route.component}
                 </PrivateRoute>
               }

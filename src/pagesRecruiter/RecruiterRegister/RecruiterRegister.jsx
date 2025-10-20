@@ -1,58 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// import data
-import citys from "../../data/citys";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-
-const businessFields = [
-  {
-    id: 1,
-    name: "Dịch vụ lưu trú, nhà hàng, khách sạn và du lịch",
-  },
-  {
-    id: 2,
-    name: "Hoạt động kế toán và kiểm toán",
-  },
-  {
-    id: 3,
-    name: "Nông nghiệp, lâm nghiệp và nuôi trồng thủy sản",
-  },
-  {
-    id: 4,
-    name: "Dịch vụ thú y",
-  },
-  {
-    id: 5,
-    name: "Kiến trúc và thiết kế nội thất",
-  },
-  {
-    id: 6,
-    name: "Nghệ thuật, giải trí và truyền thông",
-  },
-  {
-    id: 7,
-    name: "Hoạt động sản xuất và ứng dụng công nghệ tự động hóa",
-  },
-  {
-    id: 8,
-    name: "Sản xuất, phân phối và dịch vụ liên quan đến ô tô",
-  },
-  {
-    id: 9,
-    name: "Hoạt động ngân hàng",
-  },
-];
+import authApi from "./../../api/authApi";
+import industryApi from "./../../api/industryApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const formFields = [
   {
-    label: "Họ và tên",
-    name: "name",
-    type: "text",
-    placeholder: "Nhập tên",
+    label: "Email",
+    name: "email",
+    type: "email",
+    placeholder: "Nhập email",
     required: true,
-    errorMsg: "Vui lòng nhập họ và tên!",
+    errorMsg: "Vui lòng nhập email!",
   },
   {
     label: "Số điện thoại",
@@ -61,14 +24,6 @@ const formFields = [
     placeholder: "Nhập số điện thoại",
     required: true,
     errorMsg: "Vui lòng nhập số điện thoại!",
-  },
-  {
-    label: "Email",
-    name: "email",
-    type: "email",
-    placeholder: "Nhập email",
-    required: true,
-    errorMsg: "Vui lòng nhập email!",
   },
   {
     label: "Mật khẩu",
@@ -87,55 +42,132 @@ const formFields = [
     errorMsg: "Vui lòng nhập tên công ty!",
   },
   {
-    label: "Địa điểm",
-    name: "location",
+    label: "Ngành nghề hoạt động",
+    name: "industry",
     type: "select",
-    options: citys, // array từ file citys
+    options: [],
     required: true,
-    errorMsg: "Vui lòng chọn địa điểm!",
+    errorMsg: "Vui lòng chọn ngành nghề hoạt động!",
   },
   {
-    label: "Lĩnh vực hoạt động",
-    name: "businessFields",
-    type: "select",
-    options: businessFields, // array lĩnh vực
+    label: "Logo công ty (URL)",
+    name: "logoPath",
+    type: "file",
+    placeholder: "Nhập đường dẫn logo",
     required: true,
-    errorMsg: "Vui lòng chọn lĩnh vực hoạt động!",
+    errorMsg: "Vui lòng nhập đường dẫn logo nếu có!",
+  },
+  {
+    label: "Website công ty",
+    name: "website",
+    type: "text",
+    placeholder: "Nhập website công ty",
+    required: false,
+    errorMsg: "Vui lòng nhập website công ty nếu có!",
+  },
+  {
+    label: "Mô tả công ty",
+    name: "description",
+    type: "textarea",
+    placeholder: "Nhập mô tả công ty",
+    required: false,
+    errorMsg: "Vui lòng nhập mô tả công ty!",
   },
 ];
 
 const RecruiterRegister = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "Nguyễn Minh Nhật",
-    phone: "0123456789",
-    email: "abc@gmail.com",
-    password: "123456789",
-    companyName: "Công ty ABC",
-    location: "Hồ Chí Minh",
-    businessFields: "Hoạt động ngân hàng",
+    email: "",
+    phone: "",
+    password: "",
+    companyName: "",
+    industry: "",
+    logoPath: "",
+    website: "",
+    description: "",
   });
 
-  // Xử lý khi thay đổi input
+  const [businessFields, setBusinessFields] = useState([]);
+  const [selectedIndustries, setSelectedIndustries] = useState(null);
+
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        const response = await industryApi.getAll();
+        const industries = response;
+        setBusinessFields(industries);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu ngành nghề", error);
+      }
+    };
+
+    fetchIndustries();
+  }, []);
+
   const handleChangeFormData = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Xử lý khi submit form
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, logoPath: e.target.files[0] });
+  };
+
+  const handleIndustryChange = (e) => {
+    const selectedId = e.target.value;
+
+    const selectedIndustry = businessFields.find(
+      (option) => option.industryId.toString() === selectedId.toString()
+    );
+
+    if (selectedIndustry) {
+      console.log("Selected Industry:", selectedIndustry);
+      setSelectedIndustries({
+        industryId: selectedIndustry.industryId,
+        name: selectedIndustry.name,
+      });
+    } else {
+      setSelectedIndustries(null);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // in console log để kiểm tra dữ liệu
-    console.log(formData);
+    const form = new FormData();
+    form.append("email", formData.email);
+    form.append("phone", formData.phone);
+    form.append("password", formData.password);
+    form.append("companyName", formData.companyName);
+    form.append("website", formData.website);
+    form.append("industryIds", selectedIndustries.industryId);
+    form.append("description", formData.description);
+    form.append("role", "COMPANY");
 
-    // --- Khi có BE sau này chỉ cần gọi API ở đây ---
-    // fetch("/api/register", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(formData),
-    // })
-    // .then(res => res.json())
-    // .then(data => console.log(data))
-    // .catch(err => console.error(err));
+    if (formData.logoPath) {
+      form.append("logoPath", formData.logoPath);
+    }
+
+    try {
+      const response = await authApi.register(form);
+      console.log("Đăng ký thành công:", response);
+
+      toast.success("Đăng ký thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      setTimeout(() => {
+        navigate("/recruiter/home");
+      }, 3000);
+    } catch (error) {
+      console.error("Đăng ký thất bại:", error);
+
+      toast.error("Đăng ký thất bại. Vui lòng thử lại!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
@@ -145,39 +177,18 @@ const RecruiterRegister = () => {
         {/* form thông tin */}
         <form
           onSubmit={handleSubmit}
-          action=""
           className="mx-auto bg-white p-8 rounded-md w-fit"
         >
           {/* ========== Thông tin tài khoản ============== */}
           <p className="text-xl font-semibold pb-4">Thông tin tài khoản</p>
-
-          {formFields.map((field) => (
-            <div className="form-group mb-3" key={field.name}>
-              <label htmlFor={field.name} className="font-semibold pb-2">
-                {field.label}{" "}
-                {field.required && <span className="text-red-600">*</span>}
-              </label>
-
-              {field.type === "select" ? (
-                <select
-                  name={field.name}
-                  value={formData[field.name]}
-                  onChange={handleChangeFormData}
-                  className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                  required={field.required}
-                  onInvalid={(e) =>
-                    e.target.setCustomValidity(field.errorMsg || "")
-                  }
-                  onInput={(e) => e.target.setCustomValidity("")}
-                >
-                  <option value="">Chọn {field.label.toLowerCase()}</option>
-                  {field.options.map((option) => (
-                    <option key={option.id} value={option.name}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
-              ) : (
+          {formFields
+            .filter((f) => f.name === "email")
+            .map((field) => (
+              <div className="form-group mb-3" key={field.name}>
+                <label htmlFor={field.name} className="font-semibold pb-2">
+                  {field.label}{" "}
+                  {field.required && <span className="text-red-600">*</span>}
+                </label>
                 <input
                   type={field.type}
                   name={field.name}
@@ -191,9 +202,104 @@ const RecruiterRegister = () => {
                   }
                   onInput={(e) => e.target.setCustomValidity("")}
                 />
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+
+          <div className="flex gap-4">
+            {formFields
+              .filter((f) => f.name === "phone" || f.name === "password")
+              .map((field) => (
+                <div className="form-group mb-3 w-1/2" key={field.name}>
+                  <label htmlFor={field.name} className="font-semibold pb-2">
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-600">*</span>}
+                  </label>
+
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name]}
+                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
+                    placeholder={field.placeholder}
+                    onChange={handleChangeFormData}
+                    required={field.required}
+                    onInvalid={(e) =>
+                      e.target.setCustomValidity(field.errorMsg || "")
+                    }
+                    onInput={(e) => e.target.setCustomValidity("")}
+                  />
+                </div>
+              ))}
+          </div>
+          {formFields
+            .filter(
+              (f) =>
+                !["phone", "password", "email", "logoPath"].includes(f.name)
+            )
+            .map((field) => (
+              <div className="form-group mb-3" key={field.name}>
+                <label htmlFor={field.name} className="font-semibold pb-2">
+                  {field.label}{" "}
+                  {field.required && <span className="text-red-600">*</span>}
+                </label>
+                {field.type === "textarea" ? (
+                  <textarea
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
+                    value={formData[field.name]}
+                    onChange={handleChangeFormData}
+                  />
+                ) : field.type === "select" ? (
+                  <select
+                    name="industry"
+                    value={
+                      selectedIndustries ? selectedIndustries.industryId : ""
+                    }
+                    onChange={handleIndustryChange}
+                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
+                  >
+                    <option value="">Chọn ngành nghề</option>
+                    {businessFields.map((option) => (
+                      <option key={option.industryId} value={option.industryId}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name]}
+                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
+                    placeholder={field.placeholder}
+                    onChange={handleChangeFormData}
+                    required={field.required}
+                    onInvalid={(e) =>
+                      e.target.setCustomValidity(field.errorMsg || "")
+                    }
+                    onInput={(e) => e.target.setCustomValidity("")}
+                  />
+                )}
+
+                {field.name === "companyName" && (
+                  <div className="form-group mt-3">
+                    <label htmlFor="logoPath" className="font-semibold pb-2">
+                      Logo công ty <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="file"
+                      name="logoPath"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
 
           {/* =========== button submit form ============ */}
           <div className="flex justify-between mt-4 items-center pt-4">
@@ -215,6 +321,7 @@ const RecruiterRegister = () => {
           </div>
           {/* =========== end: button submit form ============ */}
         </form>
+        <ToastContainer />
         {/* end: form thông tin */}
       </div>
       {/* ========== End: Thẻ div chứa form thông tin ============== */}

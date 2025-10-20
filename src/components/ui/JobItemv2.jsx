@@ -8,59 +8,61 @@ import ButtonUnsaved from "../button/ButtonUnsaved";
 
 // redux
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const scrollTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  // navigate to job detail
+  const navigateToJobDetail = () => {
+    dispatch(setSelectedJob(job));
+    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    scrollTop();
   };
 
-  const navigateToJobDetail = () => {
-    const slug = createSlug(job.title || job.jobName);
-    navigate(`/job-detail/${slug}?id=${job.jobId}`);
-    scrollTop();
+  // scroll lên đầu trang
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-40">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
-        <img
-          src={job.company?.logoPath || "/logo_no_bg.png"}
-          alt="logo"
-          className="h-32 w-32 object-cover"
-        />
+        <img src={job.image} alt="logo" className="h-32 w-32" />
       </div>
-
       {/* Thông tin job */}
       <div
         className="grow ps-4 h-full cursor-pointer"
         onClick={navigateToJobDetail}
       >
-        <p className="font-bold pb-2">{job.title}</p>
-        <p className="pb-2 text-slate-600">
-          {job.company?.companyName || job.companyName}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
+        <p className="font-bold pb-4">{job.title}</p>
+        <p className="pb-2">{job.company}</p>
+        <div>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap">
             {job.location}
           </span>
-          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
-            {job.jobType}
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.experience} năm kinh nghiệm
+          </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.position}
+          </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md text-center whitespace-nowrap ms-4">
+            {job.workType}
           </span>
         </div>
       </div>
+      {/* end: thông tin job */}
 
       {/* Button */}
       <div className="flex flex-col justify-between items-end h-full">
         <p className="text-primary font-bold">
-          {new Intl.NumberFormat("de-DE").format(job.salaryMin) +
-            " - " +
-            new Intl.NumberFormat("de-DE").format(job.salaryMax) +
-            " triệu"}
+          {job.salary_min + " - " + job.salary_max + " triệu"}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex justify-between items-center">
           <ButtonApply isApply={isApply} />
           {iconHeart && <ButtonSave job={job} />}
           {isButtonSave && <ButtonUnsaved job={job} />}

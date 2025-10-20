@@ -1,98 +1,68 @@
-import { useState } from "react";
-
-// redux
-import {
-  updateFilterOptions,
-  applyAdvancedFilters,
-} from "../../redux/slices/jobSlice";
+import { useEffect, useState } from "react";
+import { filterJob } from "../../redux/slices/jobSlice";
 import { useDispatch } from "react-redux";
 
-const filters = [
-  {
-    id: 1,
-    key: "Hình thức làm việc",
-    list: [
-      { id: 1, name: "Tất cả" },
-      { id: 2, name: "Bán thời gian" },
-      { id: 3, name: "Toàn thời gian" },
-    ],
-  },
-  {
-    id: 2,
-    key: "Lương",
-    list: [
-      { id: 1, name: "Tất cả", value: "" },
-      { id: 2, name: "5 triệu", value: "5000000" },
-      { id: 3, name: "10 triệu", value: "10000000" },
-      { id: 4, name: "15 triệu", value: "15000000" },
-      { id: 5, name: "20 triệu", value: "20000000" },
-      { id: 6, name: "Trên 20 triệu", value: "20000000+" },
-    ],
-  },
-];
+import filters from "../../data/filters";
 
 const FilterSideBar = () => {
   const dispatch = useDispatch();
+  // Lấy lọc theo kinh nghiệm / vị trí / hình thức làm việc
+  const filter = filters.filter(
+    (f) => f.key === "Vị trí" || f.key === "Hình thức làm việc"
+  );
+
+  const [selectedExperience, setSelectedExperience] = useState("Tất cả");
+  const [selectedPosition, setSelectedPosition] = useState("Tất cả");
   const [selectedWorkType, setSelectedWorkType] = useState("Tất cả");
-  const [selectedSalary, setSelectedSalary] = useState("");
 
-  const handleWorkTypeChange = (value) => {
-    setSelectedWorkType(value);
-    dispatch(updateFilterOptions({ workType: value }));
-    dispatch(applyAdvancedFilters());
-  };
+  useEffect(() => {
+    // console.log(selectedExperience, selectedPosition, selectedWorkType);
+  }, [selectedExperience, selectedPosition, selectedWorkType]);
 
-  const handleSalaryChange = (value) => {
-    setSelectedSalary(value);
-    dispatch(updateFilterOptions({ salary: value }));
-    dispatch(applyAdvancedFilters());
+  const handleFilter = (key, value) => {
+    if (key === "Kinh nghiệm") {
+      setSelectedExperience(value.name);
+      dispatch(filterJob({ key, value }));
+    }
+    // Vị trí
+    if (key === 5) {
+      setSelectedPosition(value.name);
+      dispatch(filterJob({ key, value }));
+    }
+    // Hình thức làm việc
+    if (key === 6) {
+      setSelectedWorkType(value.name);
+      dispatch(filterJob({ key, value }));
+    }
   };
 
   return (
     <div>
-      {filters.map((f) => (
+      {filter.map((f) => (
         <div key={f.id} className="pb-4">
           <p className="text-primary font-bold pb-2">{f.key}</p>
           <div className="grid grid-cols-2 gap-2">
             {f.list.map((option) => (
-              <div key={option.id} className="flex items-center cursor-pointer">
-                {f.key === "Lương" ? (
-                  // Radio button cho Lương
-                  <div>
-                    <input
-                      type="radio"
-                      id={`salary-${option.id}`}
-                      className="w-4 h-4"
-                      value={option.value}
-                      checked={selectedSalary === option.value}
-                      onChange={() => handleSalaryChange(option.value)}
-                    />
-                    <label
-                      htmlFor={`salary-${option.id}`}
-                      className="ps-2 cursor-pointer"
-                    >
-                      {option.name}
-                    </label>
-                  </div>
-                ) : (
-                  // Radio button cho Hình thức làm việc
-                  <div>
-                    <input
-                      type="radio"
-                      id={`workType-${option.id}`}
-                      className="w-4 h-4"
-                      value={option.name}
-                      checked={selectedWorkType === option.name}
-                      onChange={() => handleWorkTypeChange(option.name)}
-                    />
-                    <label
-                      htmlFor={`workType-${option.id}`}
-                      className="ps-2 cursor-pointer"
-                    >
-                      {option.name}
-                    </label>
-                  </div>
-                )}
+              <div
+                key={option.id}
+                className="flex items-center cursor-pointer"
+                onClick={() => handleFilter(f.id, option)}
+              >
+                <input
+                  type="radio"
+                  className="w-5 h-5"
+                  value={option.name}
+                  checked={
+                    f.id === 3
+                      ? selectedExperience === option.name
+                      : f.id === 5
+                      ? selectedPosition === option.name
+                      : selectedWorkType === option.name
+                  }
+                  onChange={() => {}}
+                />
+                {/* <p>{option.name}</p> */}
+                <span className="ps-2">{option.name}</span>
               </div>
             ))}
           </div>

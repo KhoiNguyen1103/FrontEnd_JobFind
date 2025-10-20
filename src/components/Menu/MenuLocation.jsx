@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +12,7 @@ import {
   clearCitysSelected,
 } from "../../redux/slices/locationsSlice";
 
-const MenuLocation = () => {
+const MenuLocation = ({ setIsOpen }) => {
   const dispatch = useDispatch();
   const locations = useSelector(selectSearchLocations);
   const citySelected = useSelector((state) => state.locations.citySelected);
@@ -32,15 +32,9 @@ const MenuLocation = () => {
     dispatch(saveCitySelected(city));
   };
 
-  // Đọc selected cities từ localStorage khi component load
-  useEffect(() => {
-    localStorage.setItem("selectedCities", JSON.stringify(citySelected));
-  }, [citySelected]);
-
   // Bỏ chọn tất cả
   const uncheckAll = () => {
     dispatch(clearCitysSelected());
-    localStorage.removeItem("selectedCities"); // Xóa trong localStorage khi bỏ chọn tất cả
   };
 
   return (
@@ -82,6 +76,12 @@ const MenuLocation = () => {
       <div className="flex justify-between shadow-inner p-4">
         <button className="text-slate-400" onClick={uncheckAll}>
           Bỏ chọn tất cả
+        </button>
+        <button
+          className="px-4 py-2 bg-green-500 text-white rounded-full"
+          onClick={() => setIsOpen(false)}
+        >
+          Áp dụng
         </button>
       </div>
     </div>

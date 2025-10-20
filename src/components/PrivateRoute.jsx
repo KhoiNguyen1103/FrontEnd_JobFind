@@ -23,7 +23,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
 PrivateRoute.propTypes = {
   children: PropTypes.node.isRequired,
-  allowedRoles: PropTypes.arrayOf(PropTypes.string),
+  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default PrivateRoute;

@@ -6,40 +6,14 @@ import JobDescription from "./JobDescriptio";
 import JobItemv2 from "../../components/ui/JobItemv2";
 import InfoCompany from "./InfoCompany";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 
 // test công việc liên quan
 // import jobs from '../../data/jobs'
 
-// call api
-import { getJobById } from "../../services/Job";
-
 const JobDetail = () => {
   // Lấy dữ liệu từ job truyền qua navigate
-  // const location = useLocation();
-  // const job = location.state;
-
-  const { search } = useLocation();
-  const queryParams = new URLSearchParams(search);
-  const jobId = parseInt(queryParams.get("id"), 10);
-
-  const [job, setJob] = useState(null);
-
-  // call api
-  useEffect(() => {
-    const fetchJobDetail = async () => {
-      try {
-        const data = await getJobById(jobId);
-        setJob(data);
-      } catch (error) {
-        console.error("Lỗi khi lấy chi tiết job:", error);
-      }
-    };
-
-    if (jobId) {
-      fetchJobDetail();
-    }
-  }, [jobId]);
+  const location = useLocation();
+  const job = location.state;
 
   // Lấy danh sách job liên quan
   const relatedJobs = useSelector((state) => state.jobs.relatedJobs);
@@ -63,7 +37,7 @@ const JobDetail = () => {
             {" "}
             <FontAwesomeIcon icon={faAngleRight} />{" "}
           </Link>
-          <span>{job ? job.title : "Đang tải..."}</span>
+          <span>{job.title}</span>
         </div>
         {/* end: Đường dẫn */}
 
@@ -71,30 +45,20 @@ const JobDetail = () => {
         <div className="flex justify-between pt-6">
           {/* Thông tin job - mô tả công việc */}
           <div style={{ width: "70%" }}>
-            {job ? (
-              <>
-                <JobInfo job={job} />
-                <JobDescription job={job} />
+            <JobInfo job={job} />
+            <JobDescription job={job} />
 
-                {/* Công việc liên quan */}
-                <div className="bg-white p-4 mt-4">
-                  {relatedJobs.map((relatedJob) => (
-                    <JobItemv2
-                      key={relatedJob.title}
-                      job={relatedJob}
-                      iconHeart={true}
-                    />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div>Đang tải...</div>
-            )}
+            {/* Công việc liên quan */}
+            <div className="bg-white p-4 mt-4">
+              {relatedJobs.map((job) => (
+                <JobItemv2 key={job.title} job={job} iconHeart={true} />
+              ))}
+            </div>
           </div>
 
           {/* Thông tin chung - thông tin công ty */}
           <div className="ms-6" style={{ width: "30%" }}>
-            {job ? <InfoCompany job={job} /> : <div>Đang tải...</div>}
+            <InfoCompany job={job} />
           </div>
           {/* End: body */}
         </div>

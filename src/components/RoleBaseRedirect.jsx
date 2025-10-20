@@ -10,9 +10,9 @@ const RoleBasedRedirect = () => {
   }
 
   // Điều hướng dựa trên role
-  if (user.role === 1) {
+  if (user.role === "COMPANY") {
     return <Navigate to="/recruiter/home" replace />;
-  } else if (user.role === 2) {
+  } else if (user.role === "JOBSEEKER") {
     return <Navigate to="/" replace />;
   } else {
     // Nếu role không hợp lệ, chuyển về trang login

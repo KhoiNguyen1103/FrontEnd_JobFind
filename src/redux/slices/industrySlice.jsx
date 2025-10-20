@@ -17,8 +17,7 @@ export const fetchIndustries = createAsyncThunk(
 
 const initialState = {
   industries: [],
-  selectedIndustries:
-    JSON.parse(localStorage.getItem("selectedIndustries")) || [], // Lấy từ localStorage nếu có
+  selectedIndustries: [],
   loading: false,
   error: null,
 };
@@ -30,11 +29,11 @@ const industrySlice = createSlice({
     saveIndustry: (state, action) => {
       const industry = action.payload;
       const exists = state.selectedIndustries.find(
-        (item) => item.industryId === industry.industryId
+        (item) => item.id === industry.id
       );
       if (exists) {
         state.selectedIndustries = state.selectedIndustries.filter(
-          (item) => item.industryId !== industry.industryId
+          (item) => item.id !== industry.id
         );
       } else {
         state.selectedIndustries = [...state.selectedIndustries, industry];
