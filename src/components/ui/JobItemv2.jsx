@@ -18,7 +18,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   };
 
   const navigateToJobDetail = () => {
-    const slug = createSlug(job.title);
+    const slug = createSlug(job.title || job.jobName);
     navigate(`/job-detail/${slug}?id=${job.jobId}`);
     scrollTop();
   };
@@ -27,7 +27,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
     <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-40">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
-          src={job.company.logoPath}
+          src={job.company?.logoPath || "/logo_no_bg.png"}
           alt="logo"
           className="h-32 w-32 object-cover"
         />
@@ -39,7 +39,9 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         onClick={navigateToJobDetail}
       >
         <p className="font-bold pb-2">{job.title}</p>
-        <p className="pb-2 text-slate-600">{job.company.companyName}</p>
+        <p className="pb-2 text-slate-600">
+          {job.company?.companyName || job.companyName}
+        </p>
         <div className="flex flex-wrap gap-2">
           <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
             {job.location}

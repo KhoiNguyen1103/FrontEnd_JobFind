@@ -106,7 +106,7 @@ const DropDownUserMenu = ({ user }) => {
       </div>
       {/* ================ List chức năng trong menu ================ */}
       <div>
-        {role === 2
+        {role === "JOBSEEKER"
           ? itemsForJobSeeker.map((item) => (
               <Link
                 key={item.title}
