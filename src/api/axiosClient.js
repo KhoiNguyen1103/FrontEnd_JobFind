@@ -13,7 +13,9 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(async (config) => {
     try {
-        const token = localStorage.getItem('token');
+        const user = localStorage.getItem("user");
+        const userObject = JSON.parse(user);
+        const token = userObject.token;
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -32,8 +34,7 @@ axiosClient.interceptors.response.use(
     },
     async (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
+            // localStorage.removeItem('user');
 
             const navigate = useNavigate();  
             Alert.alert(

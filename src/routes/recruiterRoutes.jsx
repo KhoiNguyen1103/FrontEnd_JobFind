@@ -38,7 +38,7 @@ export const recruiterRoutes = [
     component: <RecruiterProfileSaved />,
   },
   {
-    path: "/job-seeker-profile/:id",
+    path: "/job-seeker-profile/:profileId",
     component: <JobSeekerProfile />,
   },
   {

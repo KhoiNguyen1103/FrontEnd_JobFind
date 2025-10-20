@@ -1,44 +1,64 @@
-// component
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CVItem from "../../components/ui/CVItem";
 import Pagination from "../../components/ui/Pagination";
-
-const profileJobSeekers = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    job: "Kỹ sư phần mềm",
-    experience: 5,
-    salary_min: 20,
-    salary_max: 30,
-    location: "Hồ Chí Minh",
-    education: "Đại học",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn A",
-    job: "Kỹ sư phần mềm",
-    experience: 5,
-    salary_min: 20,
-    salary_max: 30,
-    location: "Hồ Chí Minh",
-    education: "Đại học",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn A",
-    job: "Kỹ sư phần mềm",
-    experience: 5,
-    salary_min: 20,
-    salary_max: 30,
-    location: "Hồ Chí Minh",
-    education: "Đại học",
-  },
-];
+import jobSeekerApi from "../../api/jobSeekerApi";
 
 const RecruiterHome = () => {
+  const [jobSeekers, setJobSeekers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 10;
+
+  useEffect(() => {
+    const fetchJobSeekers = async () => {
+      try {
+        const user = localStorage.getItem("user");
+        const userObject = JSON.parse(user);
+        const companyId = userObject.userId;
+
+        const response = await jobSeekerApi.findJobSeekersByCompanyIndustry(companyId);
+        const data = response;
+        const transformedData = data.map(jobSeeker => {
+          const { profileId, firstName, lastName, address, title, workExperiences, skills } = jobSeeker;
+
+          const { startDateMin, endDateMax } = workExperiences.reduce(
+            (acc, exp) => {
+              const startDate = new Date(exp.startDate);
+              const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
+          
+              if (!acc.startDateMin || startDate < acc.startDateMin) {
+                acc.startDateMin = startDate;
+              }
+              if (!acc.endDateMax || endDate > acc.endDateMax) {
+                acc.endDateMax = endDate;
+              }
+          
+              return acc;
+            },
+            { startDateMin: null, endDateMax: null }
+          );
+          
+          const totalExperienceYears =
+            (endDateMax - startDateMin) / (1000 * 60 * 60 * 24 * 365);
+
+          return {
+            profileId: profileId,
+            firstName: firstName,
+            lastName: lastName,
+            title: title,
+            address: address,
+            workExperiences: Math.floor(totalExperienceYears),
+            skills: skills,
+          };
+        });
+
+        setJobSeekers(transformedData);
+      } catch (error) {
+        console.error("Error fetching job seekers:", error);
+      }
+    };
+
+    fetchJobSeekers();
+  }, []);
 
   return (
     <div className="py-6">
@@ -58,8 +78,8 @@ const RecruiterHome = () => {
 
           {/* List CV */}
           <div className="grid grid-cols-3 gap-4">
-            {profileJobSeekers.map((profile) => (
-              <CVItem key={profile.id} profile={profile} />
+            {jobSeekers.map((profile, index) => (
+              <CVItem key={index} profile={profile} />
             ))}
           </div>
           {/* END: List CV */}

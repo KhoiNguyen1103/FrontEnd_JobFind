@@ -81,35 +81,42 @@ const SearchBar = () => {
     };
   }, []);
 
-  // handle button Search
   const handleButtonSearch = () => {
+    const user = localStorage.getItem("user");
+    const userObject = JSON.parse(user);
+    const companyId = userObject.userId;
     const queryParams = new URLSearchParams();
 
-    // thêm keyword
-    if (searchText) queryParams.append("keyword", searchText);
+    const hasSearchText = searchText.trim().length > 0;
+    const hasCity = citysSelected.length > 0;
+    const hasCategory = categoriesSelected.length > 0;
 
-    // Thêm các industry đã chọn (nối bằng dấu phẩy)
-    if (categoriesSelected.length > 0) {
-      const categoryIds = categoriesSelected.map((cat) => cat.id).join(",");
-      queryParams.append("category", categoryIds);
+    if (hasSearchText) {
+      queryParams.append("keyword", searchText);
     }
 
-    // Thêm các địa điểm đã chọn (nối bằng dấu phẩy)
-    if (citysSelected.length > 0) {
-      const cities = citysSelected.join(",");
-      queryParams.append("location", cities);
+    // if (hasCity) {
+    //   const cities = citysSelected.join(",");
+    //   queryParams.append("location", cities);
+    // }
+
+    if (hasCategory) {
+      const categoryIds = categoriesSelected.map((cat) => cat.jobCategoryId).join(",");
+      queryParams.append("categoryIds", categoryIds);
     }
 
-    // lưu vào localstorage
+    queryParams.append("companyId", companyId);
+
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
-    // Chuyển hướng đến trang search với các tham số
     if (auth_role == "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
     } else {
       navigate(`/search-cv?${queryParams.toString()}`);
+      console.log("respones" + queryParams.toString())
     }
   };
+
 
   return (
     <div
@@ -149,7 +156,7 @@ const SearchBar = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder={
-              auth_role == 2 ? "Nhập công việc..." : "Nhập mã ứng viên..."
+              auth_role == "JOBSEEKER" ? "Nhập công việc..." : "Nhập từ khóa..."
             }
             className="w-full text-gray-800 outline-none p-1"
           />

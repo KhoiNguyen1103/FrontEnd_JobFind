@@ -1,8 +1,6 @@
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-
-// component
 import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -10,19 +8,23 @@ const CVItem = ({ profile }) => {
   const navigate = useNavigate();
 
   const {
-    id,
-    name,
-    job,
-    experience,
-    salary_min,
-    salary_max,
-    location,
-    education,
+    profileId,
+    firstName,
+    lastName,
+    address,
+    title,
+    workExperiences, 
+    skills, 
   } = profile;
 
   const handleClickProfileDetailButton = () => {
-    navigate(`/job-seeker-profile/${id}`);
+    if (profileId) {
+      navigate(`/job-seeker-profile/${profileId}`);
+    } else {
+      console.error("Profile ID is undefined or invalid");
+    }
   };
+  
 
   return (
     <div className="rounded-md border border-green-600 p-4 bg-white">
@@ -30,18 +32,18 @@ const CVItem = ({ profile }) => {
       <div className="flex">
         {/* Avatar của job seeker */}
         <div className="w-20 aspect-square flex items-center">
-          <img src="https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png" />
+          <img
+            src="https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png"
+            alt="Avatar"
+          />
         </div>
         {/* END: Avatar của job seeker */}
 
-        {/* block wrap */}
+        {/* Block wrap thông tin */}
         <div className="grow">
-          {/* block wrap */}
-          <div className="flex justify-between pb-4">
-            {/* Tên job seeker */}
-            <p className="text-primary font-semibold text-lg">{name}</p>
-
-            {/* Name + Button save + button chat */}
+          {/* Tên job seeker và các nút action */}
+          <div className="flex justify-between pb-2 pt-1">
+            <p className="text-primary font-semibold text-lg">{`${firstName} ${lastName}`}</p>
             <div>
               <ButtonSaveJobSeeker />
               {/* Button chat */}
@@ -52,33 +54,44 @@ const CVItem = ({ profile }) => {
                 />
               </Link>
             </div>
-            {/* END: Nme + Button save + button chat */}
           </div>
-          {/* END: block wrap */}
-
           {/* Ngành nghề */}
-          <p className="font-light text-base">{job}</p>
+          <p className="font-medium text-base">{title}</p>
         </div>
-        {/* END: block wrap */}
+        {/* END: Block wrap thông tin */}
       </div>
-      {/* END: thông tin sơ lược */}
+      {/* END: Thông tin sơ lược CV */}
 
-      {/* Tag list */}
+      {/* Tag list (Kinh nghiệm) */}
       <div className="flex items-center flex-wrap gap-4 pt-4">
         <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
-          {experience} năm
+          {workExperiences} năm
         </p>
         <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
-          {salary_min + " - " + salary_max} triệu
-        </p>
-        <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
-          {location}
-        </p>
-        <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
-          {education}
+          {address}
         </p>
       </div>
-      {/* END: Tag list */}
+      {/* END: Tag list (Kinh nghiệm, Địa chỉ) */}
+
+      {/* Skills list */}
+      <div className="pt-4">
+        <p className="font-semibold">Kỹ năng:</p>
+        <div className="flex flex-wrap gap-4 pt-2">
+          {Array.isArray(skills) && skills.length > 0 ? (
+            skills.map((skill, index) => (
+              <p
+                key={index}
+                className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2"
+              >
+                {skill.name}
+              </p>
+            ))
+          ) : (
+            <p className="text-sm text-slate-600">Chưa cập nhật</p>
+          )}
+        </div>
+      </div>
+      {/* END: Skills list */}
 
       {/* Button Xem chi tiết */}
       <div
@@ -92,20 +105,23 @@ const CVItem = ({ profile }) => {
           Xem chi tiết
         </button>
       </div>
-      {/* End: Button Xem chi tiết */}
     </div>
   );
 };
+
 CVItem.propTypes = {
   profile: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    job: PropTypes.string.isRequired,
-    experience: PropTypes.number.isRequired,
-    salary_min: PropTypes.number.isRequired,
-    salary_max: PropTypes.number.isRequired,
-    location: PropTypes.string.isRequired,
-    education: PropTypes.string.isRequired,
+    profileId: PropTypes.number.isRequired,
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    address: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    workExperiences: PropTypes.number.isRequired, 
+    skills: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+      })
+    ).isRequired, 
   }).isRequired,
 };
 

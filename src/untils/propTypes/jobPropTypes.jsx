@@ -23,8 +23,15 @@ const jobPropTypes = PropTypes.shape({
   postedAt: PropTypes.string.isRequired,
   deadline: PropTypes.string.isRequired,
   isActive: PropTypes.bool.isRequired,
-  skills: PropTypes.arrayOf(PropTypes.string), // nếu là array of string
-  categories: PropTypes.arrayOf(PropTypes.string), // hoặc có thể là object nếu backend trả vậy
+  skills: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,  
+    })
+  ),
+  categories: PropTypes.arrayOf(
+    PropTypes.shape({
+    name: PropTypes.string.isRequired,  
+  })),
 });
 
 export default jobPropTypes;

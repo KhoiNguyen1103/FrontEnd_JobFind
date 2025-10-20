@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
-// services Industry
-import { getAllIndustry } from "../../services/Industry";
+import { useEffect, useState } from "react"; 
+import industryApi from "../../api/industryApi";
 
 const BestIndustry = () => {
-  // state lưu danh sách ngành nghề
   const [industries, setIndustries] = useState([]);
 
-  // gọi api lấy danh sách ngành nghề
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const data = await getAllIndustry();
+        const data = await industryApi.getAll();
         setIndustries(data);
       } catch (error) {
         console.error("Lỗi khi lấy danh sách ngành nghề:", error);

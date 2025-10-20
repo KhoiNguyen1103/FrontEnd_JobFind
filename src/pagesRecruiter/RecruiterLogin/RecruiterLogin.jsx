@@ -46,7 +46,6 @@ const RecruiterLogin = () => {
     try {
       const response = await authApi.login(formData);
       const user = response;
-      console.log(user);
       dispatch(login({ user }));
       navigate("/recruiter/home");
     } catch (err) {
