@@ -189,7 +189,7 @@ const Header = () => {
                 className="absolute top-full right-0 mt-6 p-4 bg-white rounded-lg shadow-lg z-[999]"
                 style={{ width: "400px" }}
               >
-                <MenuUser user={user} isOpen={isOpenDropDownUserMenu} />
+                <MenuUser user={user} />
               </div>
             )}
             {/* =================== End: Menu User ======================= */}

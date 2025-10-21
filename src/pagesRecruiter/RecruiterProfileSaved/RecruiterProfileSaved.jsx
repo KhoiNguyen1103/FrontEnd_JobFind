@@ -1,7 +1,83 @@
+import { useState, useEffect } from 'react';
+import savedJobSeekerApi from "../../api/savedJobSeekerApi";
+import CVItem from "../../components/ui/CVItem";
+import Pagination from "../../components/ui/Pagination";
+import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
+
 const RecruiterProfileSaved = () => {
+  const [savedJobSeekers, setSavedJobSeekers] = useState([]);
+  const [jobSeekers, setJobSeekers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const user = localStorage.getItem("user");
+  const userObject = JSON.parse(user);
+  const companyId = userObject.userId;
+
+  useEffect(() => {
+    const fetchSavedJobSeekers = async () => {
+      try {
+        setLoading(true);
+        const response = await savedJobSeekerApi.getListSaved(companyId);
+        const transformedData = transformJobSeekerData(response);
+        setJobSeekers(transformedData);
+  
+        const savedIds = response.filter(seeker => seeker.profileId).map(seeker => seeker.profileId);
+        setSavedJobSeekers(savedIds);
+        setTotalPages(response.totalPages || 1);
+      } catch (error) {
+        setError("Failed to fetch saved job seekers");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchSavedJobSeekers();
+  }, [companyId, currentPage]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
-    <div>
-      <h1>Profile saved</h1>
+    <div className="py-6">
+      <div className="container mx-auto">
+        <div>
+          {/* Header */}
+          <div className="flex justify-between items-center py-4">
+            <p className="text-primary font-semibold text-xl">
+              Danh sách CV yêu thích
+            </p>
+            <p className="text-blue-500 hover:underline cursor-pointer">
+              Xem thêm
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            {jobSeekers.length > 0 ? (
+              jobSeekers.map((profile, index) => (
+                <CVItem key={index} profile={profile} savedJobSeekers={savedJobSeekers} />
+              ))
+            ) : (
+              <p className="text-gray-500">Không có CV đã lưu</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-center items-center pt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      </div>
     </div>
   );
 };

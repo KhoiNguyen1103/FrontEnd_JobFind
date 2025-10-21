@@ -1,38 +1,36 @@
-import { useEffect, useState } from "react";
-import jobCategoryApi from "../../api/jobCategoryApi";
+import { useEffect, useState } from "react"; 
+import industryApi from "../../api/industryApi";
 
-const BestCategory = () => {
-  const [categories, setCategories] = useState([]);
+const BestIndustry = () => {
+  const [industries, setIndustries] = useState([]);
 
-  // Lấy danh sách danh mục việc làm
   useEffect(() => {
-    console.log("Lấy danh sách danh mục việc làm");
-    const fetchCategories = async () => {
+    const fetchIndustries = async () => {
       try {
-        const data = await jobCategoryApi.getAll();
-        console.log("Danh sách danh mục việc làm:", data);
-        setCategories(data);
+        const data = await industryApi.getAll();
+        setIndustries(data);
       } catch (error) {
-        console.error("Lỗi khi lấy danh sách danh mục:", error);
+        console.error("Lỗi khi lấy danh sách ngành nghề:", error);
       }
     };
 
-    fetchCategories();
+    fetchIndustries();
   }, []);
 
   return (
     <div className="container mx-auto py-8">
-      <p className="text-2xl text-primary font-bold">Top danh mục nổi bật</p>
+      <p className="text-2xl text-primary font-bold">Top ngành nghề nổi bật</p>
       <div className="grid grid-cols-4 gap-6 pt-4">
-        {categories.map((item) => (
+        {industries.map((item) => (
           <div
-            key={item.categoryId}
+            key={item.industryId}
             className="flex flex-col justify-center items-center bg-slate-200 rounded-lg cursor-pointer hover:bg-white
             hover:shadow-lg transition duration-300 ease-in-out border hover:border-green-400"
             style={{ height: "200px" }}
           >
             <img
-              src={item.image || "/image_cv.webp"}
+              // src={item.image}
+              src={"/image_cv.webp"}
               alt="icon"
               style={{ width: "100px", height: "100px" }}
               className=""
@@ -46,4 +44,4 @@ const BestCategory = () => {
   );
 };
 
-export default BestCategory;
+export default BestIndustry;

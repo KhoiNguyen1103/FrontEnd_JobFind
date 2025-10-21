@@ -1,16 +1,31 @@
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import savedJobSeekerApi from "../../api/savedJobSeekerApi"; 
 
-const ButtonSaveJobSeeker = () => {
-  // Lấy id user để call api lưu profile
-  // const { id } = prop;
-  // console.log(id);
-
+const ButtonSaveJobSeeker = ({ profileId, savedJobSeekers }) => {
   const [isSave, setIsSave] = useState(false);
-  const handleSaveClick = () => {
-    setIsSave(!isSave);
+  const user = localStorage.getItem("user");
+  const userObject = JSON.parse(user);
+  const companyId = userObject.userId;
+
+  useEffect(() => {
+    setIsSave(savedJobSeekers.includes(profileId));
+  }, [savedJobSeekers, profileId]);
+
+  const handleSaveClick = async () => {
+    try {
+      if (isSave) {
+        await savedJobSeekerApi.unsave(profileId, companyId); 
+      } else {
+        await savedJobSeekerApi.save(profileId, companyId); 
+      }
+
+      setIsSave((prev) => !prev);
+    } catch (error) {
+      console.error("Failed to save job seeker", error);
+    }
   };
 
   return (

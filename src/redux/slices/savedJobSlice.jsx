@@ -1,25 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import savedJobApi from "../../api/savedJobApi";
-
-export const fetchSavedJobs = createAsyncThunk(
-  "savedJob/fetchSavedJobs",
-  async (jobSeekerProfileId, thunkAPI) => {
-    try {
-      const response = await savedJobApi.listSavedJobs(jobSeekerProfileId);
-      return response;
-    } catch (error) {
-      console.error("Lỗi khi load saved jobs:", error);
-      return thunkAPI.rejectWithValue(
-        "Không thể lấy danh sách công việc đã lưu"
-      );
-    }
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
+// data
+import saved_jobs from "../../data/saved_jobs";
 
 const initialState = {
-  savedJobs: [], // Load danh sách công việc đã lưu từ data
-  loading: false,
-  error: null,
+  savedJobs: saved_jobs, // Load danh sách công việc đã lưu từ data
 };
 
 const savedJobSlice = createSlice({
@@ -40,24 +24,9 @@ const savedJobSlice = createSlice({
     },
     removeSavedJob: (state, action) => {
       state.savedJobs = state.savedJobs.filter(
-        (job) => job.jobId !== action.payload
+        (job) => job.saved_job_id !== action.payload
       );
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchSavedJobs.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchSavedJobs.fulfilled, (state, action) => {
-        state.loading = false;
-        state.savedJobs = action.payload;
-      })
-      .addCase(fetchSavedJobs.rejected, (state, action) => {
-        state.loading = false;
-        state.savedJobs = action.payload;
-      });
   },
 });
 

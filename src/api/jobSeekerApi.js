@@ -31,15 +31,23 @@ const jobSeekerApi = {
     return axiosClient.post(url, skillRequest);
   },
 
-  searchJobSeekers: (keyword, categoryIds) => {
+  searchJobSeekers: (keyword, categoryIds, locationList, companyId) => {
     const params = new URLSearchParams();
 
-    categoryIds.forEach((id) => {
-      params.append("categoryIds", id);
+    if (keyword) {
+      params.append('keyword', keyword);
+    }
+
+    categoryIds.forEach(id => {
+      params.append('categoryIds', id);
     });
 
-    if (keyword) {
-      params.append("keyword", keyword);
+    locationList.forEach(loc => {
+      params.append('location', loc); 
+    });
+
+    if (companyId) {
+      params.append('companyId', companyId);
     }
 
     const url = `/jobseeker/search-jobseekers?${params.toString()}`;

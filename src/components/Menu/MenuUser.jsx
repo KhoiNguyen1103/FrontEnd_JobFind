@@ -37,9 +37,9 @@ const itemsForJobSeeker = [
     path: "/job-applied",
   },
   {
-    title: "Thông tin cá nhân",
+    title: "Cài đặt thông tin cá nhân",
     icon: faPenToSquare,
-    path: "/profile",
+    path: "/user-info/1",
   },
   {
     title: "Đổi mật khẩu",
@@ -81,7 +81,7 @@ const itemsForRecruiter = [
   },
 ];
 
-const DropDownUserMenu = ({ user, isOpen }) => {
+const DropDownUserMenu = ({ user }) => {
   const dispatch = useDispatch();
   const { username, id, avatar, role } = user;
 
@@ -112,9 +112,6 @@ const DropDownUserMenu = ({ user, isOpen }) => {
                 key={item.title}
                 className="flex items-center py-4 px-4 rounded-lg mb-4 bg-slate-100"
                 to={item.path}
-                onClick={() => {
-                  isOpen(false);
-                }}
               >
                 <FontAwesomeIcon
                   icon={item.icon}
@@ -128,9 +125,6 @@ const DropDownUserMenu = ({ user, isOpen }) => {
                 key={item.title}
                 className="flex items-center py-4 px-4 rounded-lg mb-4 bg-slate-100"
                 to={item.path}
-                onClick={() => {
-                  isOpen(false);
-                }}
               >
                 <FontAwesomeIcon
                   icon={item.icon}
@@ -158,7 +152,6 @@ const DropDownUserMenu = ({ user, isOpen }) => {
 };
 DropDownUserMenu.propTypes = {
   user: PropTypes.object.isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default DropDownUserMenu;

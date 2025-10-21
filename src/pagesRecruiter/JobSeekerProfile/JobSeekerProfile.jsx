@@ -1,6 +1,5 @@
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import ButtonSaveJobSeeker from "../../components/button/ButtonSaveJobSeeker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import jobSeekerApi from "../../api/jobSeekerApi";
@@ -51,7 +50,7 @@ const JobSeekerProfile = () => {
             <p className="text-gray-600">{profile.title}</p>
           </div>
           <div className="grow text-right">
-            <ButtonSaveJobSeeker />
+            {/* <ButtonSaveJobSeeker /> */}
             <FontAwesomeIcon
               icon={faMessage}
               className="h-6 w-6 text-green-600 cursor-pointer"
@@ -92,7 +91,7 @@ const JobSeekerProfile = () => {
                     <h4 className="text-lg font-semibold">{experience.companyName}</h4>
                   </div>
 
-                  <p className="text-gray-600 font-bold">
+                  <p className="text-gray-600 font-bold mb-1">
                     {experience.jobTitle}
                   </p>
 
@@ -105,15 +104,20 @@ const JobSeekerProfile = () => {
 
                   <div className="mt-2">
                     <h5 className="text-sm font-semibold mb-1">Kỹ năng:</h5>
-                    {experience.skills.map((skill, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2"
-                      >
-                        {skill.name}
-                      </span>
-                    ))}
+                    {Array.isArray(experience.skills) && experience.skills.length > 0 ? (
+                      experience.skills.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2"
+                        >
+                          {skill.name}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="text-sm text-slate-600">Chưa cập nhật</p>
+                    )}
                   </div>
+
                 </div>
               ))}
           </div>
@@ -123,17 +127,20 @@ const JobSeekerProfile = () => {
         <div className="mt-6 border-t pt-4">
           <h2 className="text-xl font-semibold">Kỹ năng</h2>
           <div className="flex gap-2 flex-wrap mt-2">
-            {profile.skills.map((skill, index) => (
-              <span
-                key={index}
-                className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
-              >
-                {skill.name}
-              </span>
-            ))}
+            {Array.isArray(profile.skills) && profile.skills.length > 0 ? (
+              profile.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
+                >
+                  {skill.name}
+                </span>
+              ))
+            ) : (
+              <p className="text-sm text-slate-600">Chưa cập nhật</p>
+            )}
           </div>
         </div>
-
         {/* CV */}
         <div className="mt-6 border-t pt-4">
           <h2 className="text-xl font-semibold">Hồ sơ CV</h2>

@@ -21,41 +21,14 @@ import Footer from "./layouts/Footer";
 import SearchBar from "./layouts/SearchBar";
 import { ToastContainer } from "react-toastify";
 import RoleBasedRedirect from "./components/RoleBaseRedirect";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchCategories } from "./redux/slices/categorySlice";
-import { fetchSavedJobs } from "./redux/slices/savedJobSlice";
-import { fetchJobSeekerProfileByUserId } from "./redux/slices/JSKerProfileSlice";
+
 function App() {
-  // load savedJob lên redux
-  const dispatch = useDispatch();
-  // Lấy user từ redux
-  const user = useSelector((state) => state.auth.user);
-  console.log("user", user);
-
-  // ====================== Load các dữ liệu cần thiết vào redux
-  useEffect(() => {
-    // Load jobCategory
-    dispatch(fetchCategories());
-
-    if (user) {
-      // Load savedJobs
-      dispatch(fetchSavedJobs(user.userId));
-
-      // Load profile cho job seeker
-      if (user.role === "JOBSEEKER") {
-        dispatch(fetchJobSeekerProfileByUserId(user.userId));
-      }
-    }
-  }, [dispatch, user]);
-
   const location = useLocation();
   const hideHeaderFooter = [
     "/login",
     "/signup",
     "/recruiter/login",
     "/recruiter/register",
-    "/profile",
   ].includes(location.pathname);
 
   return (
@@ -69,7 +42,7 @@ function App() {
       )}
 
       {/* Content */}
-      <div className="flex-grow" style={{ backgroundColor: "#e7eee7" }}>
+      <div className="flex-grow">
         <Routes>
           {/* Role-based redirect route */}
           <Route path="/redirect" element={<RoleBasedRedirect />} />

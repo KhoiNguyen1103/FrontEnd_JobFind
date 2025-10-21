@@ -1,82 +1,16 @@
 import { useState, useEffect } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import authApi from "./../../api/authApi";
-import industryApi from "./../../api/industryApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const formFields = [
-  {
-    label: "Email",
-    name: "email",
-    type: "email",
-    placeholder: "Nhập email",
-    required: true,
-    errorMsg: "Vui lòng nhập email!",
-  },
-  {
-    label: "Số điện thoại",
-    name: "phone",
-    type: "number",
-    placeholder: "Nhập số điện thoại",
-    required: true,
-    errorMsg: "Vui lòng nhập số điện thoại!",
-  },
-  {
-    label: "Mật khẩu",
-    name: "password",
-    type: "password",
-    placeholder: "Nhập mật khẩu",
-    required: true,
-    errorMsg: "Vui lòng nhập mật khẩu!",
-  },
-  {
-    label: "Tên công ty",
-    name: "companyName",
-    type: "text",
-    placeholder: "Nhập tên công ty",
-    required: true,
-    errorMsg: "Vui lòng nhập tên công ty!",
-  },
-  {
-    label: "Ngành nghề hoạt động",
-    name: "industry",
-    type: "select",
-    options: [],
-    required: true,
-    errorMsg: "Vui lòng chọn ngành nghề hoạt động!",
-  },
-  {
-    label: "Logo công ty (URL)",
-    name: "logoPath",
-    type: "file",
-    placeholder: "Nhập đường dẫn logo",
-    required: true,
-    errorMsg: "Vui lòng nhập đường dẫn logo nếu có!",
-  },
-  {
-    label: "Website công ty",
-    name: "website",
-    type: "text",
-    placeholder: "Nhập website công ty",
-    required: false,
-    errorMsg: "Vui lòng nhập website công ty nếu có!",
-  },
-  {
-    label: "Mô tả công ty",
-    name: "description",
-    type: "textarea",
-    placeholder: "Nhập mô tả công ty",
-    required: false,
-    errorMsg: "Vui lòng nhập mô tả công ty!",
-  },
-];
+import authApi from "../../api/authApi";
+import industryApi from "../../api/industryApi";
+import logo from "../../assets/logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const RecruiterRegister = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -95,8 +29,7 @@ const RecruiterRegister = () => {
     const fetchIndustries = async () => {
       try {
         const response = await industryApi.getAll();
-        const industries = response;
-        setBusinessFields(industries);
+        setBusinessFields(response);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu ngành nghề", error);
       }
@@ -115,20 +48,10 @@ const RecruiterRegister = () => {
 
   const handleIndustryChange = (e) => {
     const selectedId = e.target.value;
-
-    const selectedIndustry = businessFields.find(
-      (option) => option.industryId.toString() === selectedId.toString()
+    const selected = businessFields.find(
+      (option) => option.industryId.toString() === selectedId
     );
-
-    if (selectedIndustry) {
-      console.log("Selected Industry:", selectedIndustry);
-      setSelectedIndustries({
-        industryId: selectedIndustry.industryId,
-        name: selectedIndustry.name,
-      });
-    } else {
-      setSelectedIndustries(null);
-    }
+    setSelectedIndustries(selected || null);
   };
 
   const handleSubmit = async (e) => {
@@ -140,7 +63,7 @@ const RecruiterRegister = () => {
     form.append("password", formData.password);
     form.append("companyName", formData.companyName);
     form.append("website", formData.website);
-    form.append("industryIds", selectedIndustries.industryId);
+    form.append("industryIds", selectedIndustries?.industryId || "");
     form.append("description", formData.description);
     form.append("role", "COMPANY");
 
@@ -149,210 +72,186 @@ const RecruiterRegister = () => {
     }
 
     try {
-      const response = await authApi.register(form);
-      console.log("Đăng ký thành công:", response);
-
-      toast.success("Đăng ký thành công!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-
-      setTimeout(() => {
-        navigate("/recruiter/home");
-      }, 3000);
+      await authApi.register(form);
+      toast.success("Đăng ký thành công!", { autoClose: 3000 });
+      setTimeout(() => navigate("/recruiter/home"), 3000);
     } catch (error) {
-      console.error("Đăng ký thất bại:", error);
-
-      toast.error("Đăng ký thất bại. Vui lòng thử lại!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("Đăng ký thất bại. Vui lòng thử lại!", { autoClose: 3000 });
     }
   };
 
   return (
-    <div className="re-login flex justify-between bg-slate-100 items-stretch h-fit">
-      {/* ========== Thẻ div chứa form thông tin ============== */}
-      <div className="w-full p-4" style={{ maxWidth: "60%" }}>
-        {/* form thông tin */}
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto bg-white p-8 rounded-md w-fit"
-        >
-          {/* ========== Thông tin tài khoản ============== */}
-          <p className="text-xl font-semibold pb-4">Thông tin tài khoản</p>
-          {formFields
-            .filter((f) => f.name === "email")
-            .map((field) => (
-              <div className="form-group mb-3" key={field.name}>
-                <label htmlFor={field.name} className="font-semibold pb-2">
-                  {field.label}{" "}
-                  {field.required && <span className="text-red-600">*</span>}
-                </label>
-                <input
-                  type={field.type}
-                  name={field.name}
-                  value={formData[field.name]}
-                  className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                  placeholder={field.placeholder}
-                  onChange={handleChangeFormData}
-                  required={field.required}
-                  onInvalid={(e) =>
-                    e.target.setCustomValidity(field.errorMsg || "")
-                  }
-                  onInput={(e) => e.target.setCustomValidity("")}
-                />
-              </div>
-            ))}
-
-          <div className="flex gap-4">
-            {formFields
-              .filter((f) => f.name === "phone" || f.name === "password")
-              .map((field) => (
-                <div className="form-group mb-3 w-1/2" key={field.name}>
-                  <label htmlFor={field.name} className="font-semibold pb-2">
-                    {field.label}{" "}
-                    {field.required && <span className="text-red-600">*</span>}
-                  </label>
-
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    value={formData[field.name]}
-                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                    placeholder={field.placeholder}
-                    onChange={handleChangeFormData}
-                    required={field.required}
-                    onInvalid={(e) =>
-                      e.target.setCustomValidity(field.errorMsg || "")
-                    }
-                    onInput={(e) => e.target.setCustomValidity("")}
-                  />
-                </div>
-              ))}
-          </div>
-          {formFields
-            .filter(
-              (f) =>
-                !["phone", "password", "email", "logoPath"].includes(f.name)
-            )
-            .map((field) => (
-              <div className="form-group mb-3" key={field.name}>
-                <label htmlFor={field.name} className="font-semibold pb-2">
-                  {field.label}{" "}
-                  {field.required && <span className="text-red-600">*</span>}
-                </label>
-                {field.type === "textarea" ? (
-                  <textarea
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                    value={formData[field.name]}
-                    onChange={handleChangeFormData}
-                  />
-                ) : field.type === "select" ? (
-                  <select
-                    name="industry"
-                    value={
-                      selectedIndustries ? selectedIndustries.industryId : ""
-                    }
-                    onChange={handleIndustryChange}
-                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                  >
-                    <option value="">Chọn ngành nghề</option>
-                    {businessFields.map((option) => (
-                      <option key={option.industryId} value={option.industryId}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    value={formData[field.name]}
-                    className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                    placeholder={field.placeholder}
-                    onChange={handleChangeFormData}
-                    required={field.required}
-                    onInvalid={(e) =>
-                      e.target.setCustomValidity(field.errorMsg || "")
-                    }
-                    onInput={(e) => e.target.setCustomValidity("")}
-                  />
-                )}
-
-                {field.name === "companyName" && (
-                  <div className="form-group mt-3">
-                    <label htmlFor="logoPath" className="font-semibold pb-2">
-                      Logo công ty <span className="text-red-600">*</span>
-                    </label>
-                    <input
-                      type="file"
-                      name="logoPath"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="form-control w-full p-2 border border-gray-300 rounded-md outline-none"
-                      required
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-
-          {/* =========== button submit form ============ */}
-          <div className="flex justify-between mt-4 items-center pt-4">
-            <p className="text-slate-700">
-              Bạn đã có tài khoản ?{" "}
-              <Link
-                to={"/recruiter/login"}
-                className="text-blue-600 hover:underline font-semibold"
-              >
-                Đăng nhập
-              </Link>
-            </p>
-            <button
-              type="submit"
-              className="py-2 px-4 rounded-md bg-green-600 text-white font-semibold"
-            >
-              Hoàn thành đăng ký
-            </button>
-          </div>
-          {/* =========== end: button submit form ============ */}
-        </form>
-        <ToastContainer />
-        {/* end: form thông tin */}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-white to-blue-100 px-4">
+      <div>
+        <img src={logo} alt="Logo" className="w-44 mx-auto object-contain" />
       </div>
-      {/* ========== End: Thẻ div chứa form thông tin ============== */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded-xl p-8 w-full max-w-4xl"
+      >
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Đăng ký nhà tuyển dụng
+        </h2>
 
-      {/* =================== div chứa background ============= */}
-      <div className="flex-1 bg-login-register">
-        <img
-          src="/logo_no_bg.png"
-          alt="Logo"
-          className="w-full h-80 object-fit"
-        />
-
-        {/* button tới trang làm việc */}
-        <div className="flex items-center h-1/2">
-          <Link
-            to={"/home"}
-            className="flex justify-center items-center py-4 w-3/5 mx-auto bg-white rounded-md cursor-pointer hover:bg-black hover:text-white transition-all duration-200"
-          >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Email <span className="text-red-600">*</span>
+            </label>
             <input
-              type="button"
-              value={"Tới trang tìm việc"}
-              className="font-semibold text-xl cursor-pointer"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChangeFormData}
+              required
+              className="input"
             />
-            <FontAwesomeIcon icon={faArrowRight} className="ps-4 text-xl" />
-          </Link>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Số điện thoại <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="number"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChangeFormData}
+              required
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Mật khẩu <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChangeFormData}
+              required
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Tên công ty <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="text"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChangeFormData}
+              required
+              className="input"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Ngành nghề <span className="text-red-600">*</span>
+            </label>
+            <select
+              name="industry"
+              value={selectedIndustries?.industryId || ""}
+              onChange={handleIndustryChange}
+              required
+              className="input"
+            >
+              <option value="">Chọn ngành nghề *</option>
+              {businessFields.map((field) => (
+                <option key={field.industryId} value={field.industryId}>
+                  {field.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Logo công ty <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="file"
+              name="logoPath"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="input"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-medium text-sm">
+              Website công ty
+            </label>
+            <input
+              type="text"
+              name="website"
+              value={formData.website}
+              onChange={handleChangeFormData}
+              className="input"
+            />
+          </div>
         </div>
-        {/* end: button tới trang tìm việc */}
+
+        <div className="mt-4">
+          <label className="block mb-1 font-medium text-sm">
+            Mô tả công ty
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChangeFormData}
+            className="input"
+          />
+        </div>
+
+        <div className="mt-6 flex justify-between items-center">
+          <p>
+            Đã có tài khoản?{" "}
+            <Link
+              to="/recruiter/login"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Đăng nhập
+            </Link>
+          </p>
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-700"
+          >
+            Đăng ký
+          </button>
+        </div>
+        <div className="flex justify-center mt-6">
+        <Link
+          to="/home"
+          className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-black transition"
+        >
+          Tới trang tìm việc
+          <FontAwesomeIcon icon={faArrowRight} />
+        </Link>
       </div>
-      {/* =================== end: div chứa background ============= */}
+        <ToastContainer />
+      </form>
+      
+      <style>{`
+        .input {
+          padding: 0.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          width: 100%;
+          outline: none;
+        }
+        .input:focus {
+          border-color: #3b82f6;
+        }
+      `}</style>
     </div>
   );
-};
-
+}
 export default RecruiterRegister;
