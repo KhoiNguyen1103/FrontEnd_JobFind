@@ -44,6 +44,7 @@ const RecruiterLogin = () => {
       dispatch(login({ user }));
       navigate("/recruiter/home");
     } catch (err) {
+      console.log(err)
       setError("Vui lòng kiểm tra lại email hoặc mật khẩu.");
     }
   };

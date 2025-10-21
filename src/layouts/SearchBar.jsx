@@ -29,7 +29,6 @@ const SearchBar = () => {
 
   // Lấy dữ liệu từ redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
-  console.log("fdjd" + citysSelected)
   const categoriesSelected = useSelector(
     (state) => state.category.selectedCategories
   );

@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CVItem from "../../components/ui/CVItem";
 import jobSeekerApi from "../../api/jobSeekerApi";
 import { useMemo } from "react";
+import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 
 const SearchResultCV = () => {
   const [filters, setFilters] = useState({
@@ -17,7 +18,7 @@ const SearchResultCV = () => {
   const [cvList, setCvList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [savedJobSeekers, setSavedJobSeekers] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
@@ -34,6 +35,7 @@ const SearchResultCV = () => {
 
       try {
         const response = await jobSeekerApi.searchJobSeekers(keyword, categoryIds, locationList, companyId);
+        const responseSavedJobseeker = await savedJobSeekerApi.getListSaved(companyId);
 
         const transformedData = response.map(jobSeeker => {
           const { profileId, firstName, lastName, address, title, workExperiences, skills } = jobSeeker;
@@ -70,6 +72,8 @@ const SearchResultCV = () => {
         });
 
         setCvList(transformedData);
+        const savedIds = responseSavedJobseeker.filter(seeker => seeker.profileId).map(seeker => seeker.profileId);
+        setSavedJobSeekers(savedIds);
       } catch (err) {
         setError("Failed to fetch CVs. Please try again later.");
       } finally {
@@ -225,7 +229,7 @@ const SearchResultCV = () => {
           <div className="grid gap-4">
             {filteredCVs.length > 0 ? (
               filteredCVs.map((cv, index) => (
-                <CVItem key={index} profile={cv} />
+                <CVItem key={index} profile={cv} savedJobSeekers={savedJobSeekers}/>
               ))
             ) : (
               <p className="text-gray-500">Không tìm thấy CV phù hợp</p>

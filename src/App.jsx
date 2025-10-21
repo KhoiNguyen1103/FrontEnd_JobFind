@@ -29,6 +29,7 @@ function App() {
     "/signup",
     "/recruiter/login",
     "/recruiter/register",
+    "/overview"
   ].includes(location.pathname);
 
   return (

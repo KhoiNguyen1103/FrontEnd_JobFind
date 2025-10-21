@@ -6,6 +6,7 @@ import SearchResult from "../pages/SearchResult";
 import TemplateCV from "../pages/TemplateCV";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
+import RecruiterOverview from "../pagesRecruiter/RecruiterOverview";
 
 const publicRoutes = [
   { path: "/", element: <Home /> },
@@ -16,6 +17,7 @@ const publicRoutes = [
   { path: "/template-cv", element: <TemplateCV /> },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
+  { path: "/overview", element: <RecruiterOverview /> },
 ];
 
 export default publicRoutes;
