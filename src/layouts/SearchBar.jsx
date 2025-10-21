@@ -16,36 +16,26 @@ import background from "../assets/bg_search_section.jpg";
 // component
 import MenuLocation from "../components/Menu/MenuLocation";
 import MenuCategory from "../components/Menu/MenuCategory";
+// import MenuIndustry from "../components/Menu/MenuIndustry";
 
 // redux
-import { useSelector, useDispatch } from "react-redux";
-import { setSelectedCategories } from "../redux/slices/categorySlice";
+import { useSelector } from "react-redux";
 
 const SearchBar = () => {
   const auth_role = useSelector((state) => state.auth.user)?.role;
   // console.log(auth_role);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // Lấy dữ liệu từ redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
-  const categoriesSelected = useSelector(
-    (state) => state.category.selectedCategories
+  const industriesSelected = useSelector(
+    (state) => state.industry.selectedIndustries
   );
+  // console.log("SearchBar: ", industriesSelected);
 
   // track search text
   const [searchText, setSearchText] = useState("");
-
-  // Lấy dữu liệu search Text từ localstorage
-  useEffect(() => {
-    const savedSearchData = JSON.parse(localStorage.getItem("searchData"));
-
-    if (savedSearchData) {
-      setSearchText(savedSearchData.keyword);
-      dispatch(setSelectedCategories(savedSearchData.categories));
-    }
-  }, []);
 
   // Mở/Tắt model chọn tỉnh thành quận huyện
   const [isOpen, setIsOpen] = useState(false);
@@ -81,42 +71,41 @@ const SearchBar = () => {
     };
   }, []);
 
+  // handle button Search
   const handleButtonSearch = () => {
-    const user = localStorage.getItem("user");
-    const userObject = JSON.parse(user);
-    const companyId = userObject.userId;
     const queryParams = new URLSearchParams();
 
-    const hasSearchText = searchText.trim().length > 0;
-    const hasCity = citysSelected.length > 0;
-    const hasCategory = categoriesSelected.length > 0;
+    // thêm keyword
+    if (searchText) queryParams.append("keyword", searchText);
 
-    if (hasSearchText) {
-      queryParams.append("keyword", searchText);
+    // Thêm các industry đã chọn (nối bằng dấu phẩy)
+    if (industriesSelected.length > 0) {
+      const industryIds = industriesSelected
+        .map((ind) => ind.industryId)
+        .join(",");
+      queryParams.append("industry", industryIds); // Đổi từ "category" thành "industry"
     }
 
-    // if (hasCity) {
-    //   const cities = citysSelected.join(",");
-    //   queryParams.append("location", cities);
-    // }
-
-    if (hasCategory) {
-      const categoryIds = categoriesSelected.map((cat) => cat.jobCategoryId).join(",");
-      queryParams.append("categoryIds", categoryIds);
+    // Thêm các địa điểm đã chọn (nối bằng dấu phẩy)
+    if (citysSelected.length > 0) {
+      const cities = citysSelected.join(",");
+      queryParams.append("location", cities);
     }
 
-    queryParams.append("companyId", companyId);
+    // // lưu vào localstorage
+    // localStorage.setItem("searchText", JSON.stringify(searchText));
 
-    localStorage.setItem("searchText", JSON.stringify(searchText));
+    // // Reset searchText trong localStorage
+    // localStorage.setItem("searchText", JSON.stringify(""));
 
+    // Chuyển hướng đến trang search với các tham số
     if (auth_role == "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
+      window.location.reload(); // Tải lại trang
     } else {
       navigate(`/search-cv?${queryParams.toString()}`);
-      console.log("respones" + queryParams.toString())
     }
   };
-
 
   return (
     <div
@@ -136,7 +125,7 @@ const SearchBar = () => {
             onClick={() => setIsOpenIndustry(!isOpenIndustry)}
           >
             <FontAwesomeIcon icon={faList} />
-            <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
+            <p>Danh mục nghề {"(" + industriesSelected?.length + ")"}</p>
             <FontAwesomeIcon icon={faAngleDown} />
           </div>
           {/* end: label danh mục nghề */}

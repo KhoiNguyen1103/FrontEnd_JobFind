@@ -6,74 +6,21 @@ const JOBS_PER_PAGE = 6;
 
 const initState = {
   jobs: jobs,
-  currentPage: 1,
   filterJobs: [],
-  paginationJobs: jobs.slice(0, JOBS_PER_PAGE),
+  renderJobs: [],
   selectedJob: null,
   relatedJobs: [],
   jobsSaved: [],
+  filterOptions: {
+    salary: "", // Ví dụ: "10000000"
+    workType: "Tất cả", // "Toàn thời gian", "Bán thời gian", "Tất cả"
+  },
 };
 
 const jobSlice = createSlice({
   name: "jobs",
   initialState: { ...initState, filterJobs: initState.jobs },
   reducers: {
-    filterJob: (state, action) => {
-      const { key, value } = action.payload;
-      state.filterJobs = state.jobs.filter((job) => {
-        // lọc lương
-        const duoi5tr = job.salary_min <= 5 && true;
-        const tu5toi10tr =
-          ((job.salary_min <= 5 && job.salary_max >= 5) ||
-            (job.salary_min >= 5 && job.salary_min <= 10)) &&
-          true;
-        const tu10den15tr =
-          ((job.salary_min <= 10 && job.salary_max >= 10) ||
-            (job.salary_min >= 10 && job.salary_min <= 15)) &&
-          true;
-        const tu15den20tr =
-          ((job.salary_min <= 15 && job.salary_max >= 15) ||
-            (job.salary_min >= 15 && job.salary_min <= 20)) &&
-          true;
-        const tren20tr = (job.salary_min >= 20 || job.salary_max >= 20) && true;
-
-        if (key === "Địa điểm") {
-          return value === "Tất cả" ? true : job.location === value;
-        }
-        if (key === "Mức lương") {
-          if (value === "Tất cả") return true;
-          if (value === "Dưới 5 triệu") return duoi5tr;
-          if (value === "5 - 10 triệu") return tu5toi10tr;
-          if (value === "10 - 15 triệu") return tu10den15tr;
-          if (value === "15 - 20 triệu") return tu15den20tr;
-          if (value === "Trên 20 triệu") return tren20tr;
-        }
-        if (key === "Kinh nghiệm") {
-          if (value === "Tất cả") return true;
-          if (value === "Chưa có kinh nghiệm") return job.experience === 0;
-          if (value === "1 năm") return job.experience === 1;
-          if (value === "2 năm") return job.experience === 2;
-          if (value === "3 năm") return job.experience === 3;
-          if (value === "4 năm") return job.experience === 4;
-          if (value === "5 năm") return job.experience >= 5;
-        }
-        if (key === "Ngành nghề") {
-          return value === "Tất cả" ? true : job.category === value;
-        }
-        // lọc vị trí
-        if (key === 5) {
-          return value.id === 1 ? true : job.position === value.name;
-        }
-        // lọc hình thức làm việc
-        if (key === 6) {
-          return value.id === 3 ? true : job.workType === value.name;
-        }
-        return true;
-      });
-      // Reset lại trang khi filter
-      state.currentPage = 1;
-      state.paginationJobs = state.filterJobs.slice(0, JOBS_PER_PAGE);
-    },
     setSelectedJob: (state, action) => {
       // lưu job được chọn
       state.selectedJob = action.payload;
@@ -85,13 +32,60 @@ const jobSlice = createSlice({
           job.id !== action.payload.id
       );
     },
-    paginateJobs: (state, action) => {
-      state.currentPage = action.payload;
-      const start = (state.currentPage - 1) * JOBS_PER_PAGE;
-      state.paginationJobs = state.filterJobs.slice(
-        start,
-        start + JOBS_PER_PAGE
-      );
+    setFilterJob: (state, action) => {
+      // lưu job được chọn
+      state.selectedJob = action.payload;
+
+      state.filterJobs = state.selectedJob;
+      state.renderJobs = state.selectedJob;
+    },
+    applyAdvancedFilters: (state) => {
+      const { salary, workType } = state.filterOptions;
+      let result = [...state.filterJobs];
+      // console.log(JSON.parse(JSON.stringify(result)));
+
+      // Lọc theo hình thức làm việc
+      if (workType !== "Tất cả") {
+        result = result.filter((job) =>
+          workType === "Bán thời gian"
+            ? job.jobType === "PARTTIME" // chỉnh ở đây nha
+            : job.jobType === "FULLTIME"
+        );
+      }
+
+      // Lọc theo lương
+      if (salary !== "0") {
+        if (salary === "5000000") {
+          result = result.filter((job) => {
+            return job.salaryMin <= 5000000 && job.salaryMax >= 5000000;
+          });
+        } else if (salary === "10000000") {
+          result = result.filter(
+            (job) => job.salaryMin <= 10000000 && 10000000 <= job.salaryMax
+          );
+        } else if (salary === "15000000") {
+          result = result.filter(
+            (job) => job.salaryMin <= 15000000 && 15000000 <= job.salaryMax
+          );
+        } else if (salary === "20000000") {
+          result = result.filter(
+            (job) => job.salaryMin <= 20000000 && 20000000 <= job.salaryMax
+          );
+        } else if (salary === "20000000+") {
+          result = result.filter((job) => job.salaryMin >= 20000000);
+        }
+      }
+
+      state.renderJobs = result;
+    },
+    updateFilterOptions: (state, action) => {
+      state.filterOptions = {
+        ...state.filterOptions,
+        ...action.payload,
+      };
+    },
+    setRenderJobs: (state, action) => {
+      state.renderJobs = action.payload;
     },
     likeJob: (state, action) => {
       const job = action.payload;
@@ -130,5 +124,9 @@ export const {
   likeJob,
   unSaveJob,
   filterJobByCategory,
+  setFilterJob,
+  setRenderJobs,
+  updateFilterOptions,
+  applyAdvancedFilters,
 } = jobSlice.actions;
 export default jobSlice.reducer;

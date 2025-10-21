@@ -62,10 +62,7 @@ const categorySlice = createSlice({
   },
 });
 
-export const {
-  saveCategory,
-  clearSelectedCategories,
-  setSelectedCategories,
-} = categorySlice.actions;
+export const { saveCategory, clearSelectedCategories, setSelectedCategories } =
+  categorySlice.actions;
 
 export default categorySlice.reducer;

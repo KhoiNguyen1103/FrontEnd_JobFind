@@ -4,7 +4,7 @@ import citys from "../../data/citys";
 const initState = {
   locations: citys, // Danh sách tỉnh/thành
   searchResults: citys, // Kết quả tìm kiếm (ban đầu là toàn bộ danh sách)
-  citySelected: [], // Mảng chứa tên tỉnh/thành đã chọn
+  citySelected: JSON.parse(localStorage.getItem("selectedCities")) || [], // Mảng chứa tên tỉnh/thành đã chọn
 };
 
 const locationSlice = createSlice({

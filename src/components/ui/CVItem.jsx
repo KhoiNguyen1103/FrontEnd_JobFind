@@ -13,7 +13,7 @@ const CVItem = ({ profile }) => {
     lastName,
     address,
     title,
-    workExperiences, 
+    experience, 
     skills, 
   } = profile;
 
@@ -65,7 +65,7 @@ const CVItem = ({ profile }) => {
       {/* Tag list (Kinh nghiệm) */}
       <div className="flex items-center flex-wrap gap-4 pt-4">
         <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
-          {workExperiences} năm
+          {experience} năm
         </p>
         <p className="text-sm text-slate-600 bg-slate-200 rounded-full py-1 px-2">
           {address}
@@ -116,7 +116,7 @@ CVItem.propTypes = {
     lastName: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    workExperiences: PropTypes.number.isRequired, 
+    experience: PropTypes.number.isRequired, 
     skills: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,

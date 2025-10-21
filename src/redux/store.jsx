@@ -6,6 +6,7 @@ import industrySlice from "../redux/slices/industrySlice";
 import cvReducer from "./slices/cvSlice";
 import savedJobReducer from "./slices/savedJobSlice";
 import categoryReducer from "./slices/categorySlice";
+import jobSeekerProfileReducer from "./slices/JSKerProfileSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     cv: cvReducer,
     savedJob: savedJobReducer,
     category: categoryReducer,
+    jobSeekerProfile: jobSeekerProfileReducer,
   },
 });
 

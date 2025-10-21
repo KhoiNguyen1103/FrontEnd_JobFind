@@ -2,18 +2,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 // redux
-import { useDispatch } from "react-redux";
-import { removeSavedJob } from "../../redux/slices/savedJobSlice";
+// import { useDispatch } from "react-redux";
+// import { removeSavedJob } from "../../redux/slices/savedJobSlice";
 
 // proptypes
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
-
 import PropTyes from "prop-types";
+import { unSaveJob } from "../../services/saveJob";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { removeSavedJob } from "../../redux/slices/savedJobSlice";
 
 const ButtonUnsaved = ({ job }) => {
   const dispatch = useDispatch();
-  const handleUnSaveJob = () => {
-    dispatch(removeSavedJob(job.saved_job_id));
+  const handleUnSaveJob = async () => {
+    // Call API to unsave job
+    try {
+      await unSaveJob(job.jobId);
+      dispatch(removeSavedJob(job.jobId));
+      toast.success("Bỏ lưu job thành công", { autoClose: 1000 });
+    } catch (error) {
+      toast.error("Lỗi khi bỏ lưu job");
+      console.error("Lỗi khi bỏ lưu job:", error);
+    }
   };
 
   return (

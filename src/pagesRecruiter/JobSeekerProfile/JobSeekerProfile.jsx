@@ -92,7 +92,7 @@ const JobSeekerProfile = () => {
                     <h4 className="text-lg font-semibold">{experience.companyName}</h4>
                   </div>
 
-                  <p className="text-gray-600 font-bold mb-1">
+                  <p className="text-gray-600 font-bold">
                     {experience.jobTitle}
                   </p>
 
@@ -105,20 +105,15 @@ const JobSeekerProfile = () => {
 
                   <div className="mt-2">
                     <h5 className="text-sm font-semibold mb-1">Kỹ năng:</h5>
-                    {Array.isArray(experience.skills) && experience.skills.length > 0 ? (
-                      experience.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2"
-                        >
-                          {skill.name}
-                        </span>
-                      ))
-                    ) : (
-                      <p className="text-sm text-slate-600">Chưa cập nhật</p>
-                    )}
+                    {experience.skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm mr-2"
+                      >
+                        {skill.name}
+                      </span>
+                    ))}
                   </div>
-
                 </div>
               ))}
           </div>
@@ -128,20 +123,17 @@ const JobSeekerProfile = () => {
         <div className="mt-6 border-t pt-4">
           <h2 className="text-xl font-semibold">Kỹ năng</h2>
           <div className="flex gap-2 flex-wrap mt-2">
-            {Array.isArray(profile.skills) && profile.skills.length > 0 ? (
-              profile.skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  {skill.name}
-                </span>
-              ))
-            ) : (
-              <p className="text-sm text-slate-600">Chưa cập nhật</p>
-            )}
+            {profile.skills.map((skill, index) => (
+              <span
+                key={index}
+                className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm"
+              >
+                {skill.name}
+              </span>
+            ))}
           </div>
         </div>
+
         {/* CV */}
         <div className="mt-6 border-t pt-4">
           <h2 className="text-xl font-semibold">Hồ sơ CV</h2>

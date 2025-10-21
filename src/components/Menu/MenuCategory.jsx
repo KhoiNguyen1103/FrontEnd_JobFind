@@ -1,18 +1,14 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   saveCategory,
   clearSelectedCategories,
-  fetchCategories,
+  // fetchCategories,
 } from "../../redux/slices/categorySlice";
 
 const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
 
   const categories = useSelector((state) => state.category.categories);
   const selectedCategories = useSelector(
@@ -30,7 +26,10 @@ const MenuCategory = ({ setIsOpen }) => {
   };
 
   const handleSaveSelected = () => {
-    localStorage.setItem("selectedCategories", JSON.stringify(selectedCategories));
+    localStorage.setItem(
+      "selectedCategories",
+      JSON.stringify(selectedCategories)
+    );
     setIsOpen(false);
   };
 

@@ -1,36 +1,69 @@
-// import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import FilterSideBar from "./FilterSideBar";
 import ListJobFiltered from "./ListJobFiltered";
 
-// redux
-import { useDispatch, useSelector } from "react-redux";
-import { filterJobByCategory } from "../../redux/slices/jobSlice";
-import { useEffect } from "react";
+import { searchJobs } from "../../services/Job";
+
+//redux
+import { setFilterJob } from "../../redux/slices/jobSlice";
+import { useDispatch } from "react-redux";
 
 const SearchResult = () => {
-  // Lấy dữu liệu từ queryParam
-  // const location = useLocation();
-  // // const queryParams = new URLSearchParams(location.search);
-
-  // // const keyword = queryParams.get("keyword");
-  // // const category = queryParams.get("category")?.split(",") || [];
-  // // const locationSelected = queryParams.get("location")?.split(",") || [];
-
-  // console.log("Keyword:", keyword);
-  // console.log("Category:", category);
-  // console.log("Location:", locationSelected);
-
-  // Lấy danh sách categories đã chọn từ slice
-  const selectedCategories = useSelector(
-    (state) => state.categories.selectedCategories
-  );
-
   const dispatch = useDispatch();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+
+  const keyword = queryParams.get("keyword") || "";
+  const industryIds =
+    queryParams
+      .get("industry")
+      ?.split(",")
+      .map((id) => Number(id)) || [];
+  const locationIds =
+    queryParams
+      .get("location")
+      ?.split(",")
+      .map((loc) => loc.trim()) || [];
+  // console.log("locationIds", locationIds[0]);
+
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Call API search
   useEffect(() => {
-    if (selectedCategories) {
-      dispatch(filterJobByCategory(selectedCategories));
-    }
-  }, [dispatch, selectedCategories]);
+    // console.log("LocationIds", locationIds[0]); // ỉn ra đc Hà Nội
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const result = await searchJobs({
+          keyword,
+          industries:
+            industryIds === null
+              ? null
+              : industryIds.length === 0
+              ? null
+              : industryIds,
+          locations:
+            locationIds === null
+              ? null
+              : locationIds.length === 0
+              ? null
+              : locationIds,
+        });
+        // console.log(result); // in ra đc danh sách job
+        setJobs(result);
+        dispatch(setFilterJob(result)); // lưu job vào redux
+      } catch (error) {
+        console.error("Lỗi khi tìm kiếm job:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   return (
     <div className="container mx-auto py-4">
@@ -39,9 +72,16 @@ const SearchResult = () => {
         <div className="w-1/4">
           <FilterSideBar />
         </div>
+
         {/* List Job */}
         <div className="w-3/4">
-          <ListJobFiltered />
+          {loading ? (
+            <p>Đang tải dữ liệu công việc...</p>
+          ) : jobs.length > 0 ? (
+            <ListJobFiltered />
+          ) : (
+            <p>Không có công việc nào phù hợp.</p>
+          )}
         </div>
       </div>
     </div>

@@ -37,7 +37,14 @@ const JobInfo = ({ job }) => {
             <div className="ps-4">
               <p className="text-sm text-slate-500">Thu nhập</p>
               <p className="font-bold">
-                {job.salary_min + " - " + job.salary_max + " triệu"}
+                {new Intl.NumberFormat("de-DE").format(
+                  job.salaryMin / 1000000
+                ) +
+                  " - " +
+                  new Intl.NumberFormat("de-DE").format(
+                    job.salaryMax / 1000000
+                  ) +
+                  " triệu"}
               </p>
             </div>
           </div>

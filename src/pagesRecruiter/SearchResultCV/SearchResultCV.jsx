@@ -1,12 +1,10 @@
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import CVItem from "../../components/ui/CVItem";
-import jobSeekerApi from "../../api/jobSeekerApi";
-import { useMemo } from "react";
 
 const SearchResultCV = () => {
+  // State bộ lọc
   const [filters, setFilters] = useState({
     age: "",
     gender: "",
@@ -14,75 +12,48 @@ const SearchResultCV = () => {
     industry: "",
     experience: "",
   });
-  const [cvList, setCvList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const keyword = queryParams.get("keyword") || "";
-  const categoryIds = useMemo(() => {
-    const raw = queryParams.get("categoryIds");
-    return raw ? raw.split(",") : [];
-  }, [location.search]); const companyId = queryParams.get("companyId") || "";
+  // Danh sách CV giả lập
+  const cvList = [
+    {
+      id: 1,
+      name: "Nguyễn Văn A",
+      age: 25,
+      gender: "Nam",
+      salary: "15-20 triệu",
+      industry: "IT",
+      experience: "2 năm",
+    },
+    {
+      id: 2,
+      name: "Trần Thị B",
+      age: 28,
+      gender: "Nữ",
+      salary: "10-15 triệu",
+      industry: "Marketing",
+      experience: "3 năm",
+    },
+    {
+      id: 3,
+      name: "Lê Văn C",
+      age: 30,
+      gender: "Nam",
+      salary: "20-25 triệu",
+      industry: "Kế toán",
+      experience: "5 năm",
+    },
+  ];
 
-  useEffect(() => {
-    const fetchJobSeekers = async () => {
-      setLoading(true);
-      try {
-        const response = await jobSeekerApi.searchJobSeekers(
-          keyword,
-          categoryIds,
-          companyId,
-        );
-
-        const transformedData = response.map(jobSeeker => {
-          const { profileId, firstName, lastName, address, title, workExperiences, skills } = jobSeeker;
-
-          const { startDateMin, endDateMax } = workExperiences.reduce(
-            (acc, exp) => {
-              const startDate = new Date(exp.startDate);
-              const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
-
-              if (!acc.startDateMin || startDate < acc.startDateMin) {
-                acc.startDateMin = startDate;
-              }
-              if (!acc.endDateMax || endDate > acc.endDateMax) {
-                acc.endDateMax = endDate;
-              }
-
-              return acc;
-            },
-            { startDateMin: null, endDateMax: null }
-          );
-
-          const totalExperienceYears =
-            (endDateMax - startDateMin) / (1000 * 60 * 60 * 24 * 365);
-
-          return {
-            profileId: profileId,
-            firstName: firstName,
-            lastName: lastName,
-            title: title,
-            address: address,
-            workExperiences: Math.floor(totalExperienceYears),
-            skills: skills,
-          };
-        });
-
-        setCvList(transformedData);
-      } catch (err) {
-        setError("Failed to fetch CVs. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobSeekers();
-  }, [keyword, categoryIds, companyId]);
-
-  const filteredCVs = cvList;
+  // Lọc danh sách CV theo filter
+  const filteredCVs = cvList.filter((cv) => {
+    return (
+      (!filters.age || cv.age.toString().includes(filters.age)) &&
+      (!filters.gender || cv.gender === filters.gender) &&
+      (!filters.salary || cv.salary === filters.salary) &&
+      (!filters.industry || cv.industry === filters.industry) &&
+      (!filters.experience || cv.experience === filters.experience)
+    );
+  });
 
   // Xử lý thay đổi bộ lọc
   const handleFilterChange = (e) => {
@@ -226,8 +197,20 @@ const SearchResultCV = () => {
           {/* Danh sách CV */}
           <div className="grid gap-4">
             {filteredCVs.length > 0 ? (
-              filteredCVs.map((cv, index) => (
-                <CVItem key={index} profile={cv} />
+              filteredCVs.map((cv) => (
+                // <div
+                //   key={cv.id}
+                //   className="p-4 border rounded-lg shadow bg-white cursor-pointer hover:bg-gray-100"
+                //   onClick={() => navigate(`/profile/${cv.id}`)}
+                // >
+                //   <h3 className="text-lg font-bold">{cv.name}</h3>
+                //   <p className="text-gray-700">Tuổi: {cv.age}</p>
+                //   <p className="text-gray-700">Giới tính: {cv.gender}</p>
+                //   <p className="text-gray-700">Lương: {cv.salary}</p>
+                //   <p className="text-gray-700">Ngành: {cv.industry}</p>
+                //   <p className="text-gray-700">Kinh nghiệm: {cv.experience}</p>
+                // </div>
+                <CVItem key={cv.id} profile={cv} />
               ))
             ) : (
               <p className="text-gray-500">Không tìm thấy CV phù hợp</p>

@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
-import { useDispatch } from "react-redux";
-import { setSelectedJob } from "../../redux/slices/jobSlice";
 import jobPropType from "../../untils/propTypes/jobPropTypes"; // propTypes
 
 // component
@@ -9,13 +7,13 @@ import ButtonSave from "../../components/button/ButtonSave";
 import ButtonApply from "../../components/button/ButtonApply";
 
 const JobItem = ({ job }) => {
+  // console.log("JobItem - home: ", job);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   // navigate to job detail
   const navigateToJobDetail = () => {
-    dispatch(setSelectedJob(job));
-    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    const slug = createSlug(job.title);
+    navigate(`/job-detail/${slug}?id=${job.jobId}`);
   };
 
   return (
@@ -29,7 +27,7 @@ const JobItem = ({ job }) => {
         >
           <img
             src={
-              //   job.company.logoPath ||
+              job.company.logoPath ||
               "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6CkfRreFUwou55lvRWataKzz21cendRZmfMP1HF5dqzqYa6BjhUAxsY-wZZUDBT-Ve-U&usqp=CAU"
             }
             alt="logo"
@@ -46,9 +44,9 @@ const JobItem = ({ job }) => {
       <div className="flex justify-between items-center pt-2 text-sm whitespace-nowrap">
         <div className="flex flex-wrap items-center gap-2">
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {new Intl.NumberFormat("de-DE").format(job.salaryMin) +
+            {new Intl.NumberFormat("de-DE").format(job.salaryMin / 1000000) +
               " - " +
-              new Intl.NumberFormat("de-DE").format(job.salaryMax) +
+              new Intl.NumberFormat("de-DE").format(job.salaryMax / 1000000) +
               " triệu"}
           </p>
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
