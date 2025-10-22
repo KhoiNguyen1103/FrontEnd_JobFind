@@ -22,9 +22,13 @@ const jobApi = {
         return axiosClient.get(url, { params });
     },
 
-    getByCompanyId: (companyId) => {
+    getByCompanyId: (companyId, id) => {
         const url = `/job/company/${companyId}`;
-        return axiosClient.get(url);
+        return axiosClient.get(url, {
+            params: {
+                id: id
+            }
+        });
     },
 
     getByCategory: (categoryId) => {

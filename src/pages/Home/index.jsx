@@ -1,7 +1,7 @@
 // https://www.topcv.vn/?ref=you
 // import components
 import BestJob from "./BestJob";
-import BestIndustry from "./BestIndustry";
+import BestCategory from "./BestCategory";
 
 const Home = () => {
   return (
@@ -11,7 +11,9 @@ const Home = () => {
       {/* End: BestJob recommend section */}
 
       {/* Start: BestCategory  */}
-      <BestIndustry />
+      {/* <BestIndustry />
+       */}
+      <BestCategory />
       {/* End: BestCategory  */}
     </div>
   );

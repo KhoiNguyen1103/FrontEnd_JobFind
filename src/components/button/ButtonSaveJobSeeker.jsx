@@ -3,22 +3,36 @@ import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
 import { saveJobseeker, unsaveJobseeker } from "../../redux/slices/savedJobseekerSlice";
+import { useState, useEffect } from "react";
 
 const ButtonSaveJobSeeker = ({ profileId }) => {
   const dispatch = useDispatch();
   const savedJobSeekers = useSelector(state => state.savedJobseeker.savedList);
+  const [isSaved, setIsSaved] = useState(false);
 
   const user = localStorage.getItem("user");
-  const userObject = JSON.parse(user);
-  const companyId = userObject.userId;
+  const userObject = user ? JSON.parse(user) : null;
+  const companyId = userObject?.userId;
 
-  const isSave = savedJobSeekers.some(item => item.profileId === Number(profileId));
+  const numericProfileId = Number(profileId);
+
+  useEffect(() => {
+    const saved = savedJobSeekers.some(item => item.profileId === numericProfileId);
+    setIsSaved(saved);
+  }, [savedJobSeekers, numericProfileId]);
 
   const handleSaveClick = () => {
-    if (isSave) {
-      dispatch(unsaveJobseeker({ profileId, companyId }));
+    if (!companyId) {
+      console.error("No companyId found in localStorage");
+      return;
+    }
+
+    setIsSaved(!isSaved);
+
+    if (isSaved) {
+      dispatch(unsaveJobseeker({ profileId: numericProfileId, companyId }));
     } else {
-      dispatch(saveJobseeker({ profileId, companyId }));
+      dispatch(saveJobseeker({ profileId: numericProfileId, companyId }));
     }
   };
 
@@ -29,8 +43,8 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
       onClick={handleSaveClick}
     >
       <FontAwesomeIcon
-        icon={isSave ? faHeartSolid : faHeart}
-        className="h-6 w-6 text-green-600"
+        icon={isSaved ? faHeartSolid : faHeart}
+        className="h-6 w-6 text-green-600 hover:text-green-700"
       />
     </button>
   );

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
+  console.log("job", job);
   const navigate = useNavigate();
 
   const scrollTop = () => {
@@ -74,7 +75,7 @@ JobItemv2.propTypes = {
   iconHeart: PropTypes.bool,
   isApply: PropTypes.bool,
   isButtonSave: PropTypes.bool,
-  job: jobPropTypes.isRequired,
+  job: jobPropTypes,
 };
 
 export default JobItemv2;

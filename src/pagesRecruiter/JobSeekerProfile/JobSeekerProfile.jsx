@@ -77,7 +77,7 @@ const JobSeekerProfile = () => {
                 .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))
                 .map((experience, index) => (
                   <div key={index} className="relative pl-6 border-l-2 border-green-500">
-                    <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-1.5 top-1"></div>
+                    <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-1.5"></div>
                     <div className="flex items-center gap-3 mb-2">
                       <img
                         src={experience.logo}
