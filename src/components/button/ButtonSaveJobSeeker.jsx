@@ -12,7 +12,7 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
   const userObject = JSON.parse(user);
   const companyId = userObject.userId;
 
-  const isSave = savedJobSeekers.some(item => item.profileId === profileId);
+  const isSave = savedJobSeekers.some(item => item.profileId === Number(profileId));
 
   const handleSaveClick = () => {
     if (isSave) {

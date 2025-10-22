@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage, faEnvelope, faPhone, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import jobSeekerApi from "../../api/jobSeekerApi";
+import ButtonSaveJobSeeker from "../../components/button/ButtonSaveJobSeeker";
 
 const JobSeekerProfile = () => {
   const { profileId } = useParams();
@@ -19,7 +20,11 @@ const JobSeekerProfile = () => {
   }, [profileId]);
 
   if (!profile) {
-    return <div className="text-center py-10 text-gray-600">Đang tải...</div>;
+    return (
+      <div className="flex justify-center items-center mt-16">
+        <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   const calculateDuration = (startDate, endDate) => {
@@ -45,17 +50,21 @@ const JobSeekerProfile = () => {
             <img
               src="https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png"
               alt="Profile"
-              className="w-16 h-16 rounded-full border-2 border-blue-500"
+              className="w-16 h-16 rounded-full border-2 border-green-500"
             />
             <div>
               <h1 className="text-xl font-bold text-gray-800">{profile.firstName} {profile.lastName}</h1>
               <p className="text-gray-600 text-base">{profile.title}</p>
             </div>
           </div>
-          <FontAwesomeIcon
-            icon={faMessage}
-            className="h-5 w-5 text-green-600 cursor-pointer hover:text-green-700 transition"
-          />
+          <div>
+            <ButtonSaveJobSeeker profileId={profileId} />
+            <FontAwesomeIcon
+              icon={faMessage}
+              className="h-5 w-5 text-green-600 cursor-pointer hover:text-green-700 transition"
+            />
+          </div>
+
         </div>
 
         {/* Main Content */}
@@ -67,8 +76,8 @@ const JobSeekerProfile = () => {
               {profile.workExperiences
                 .sort((a, b) => new Date(b.endDate) - new Date(a.endDate))
                 .map((experience, index) => (
-                  <div key={index} className="relative pl-6 border-l-2 border-blue-500">
-                    <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-1.5 top-1"></div>
+                  <div key={index} className="relative pl-6 border-l-2 border-green-500">
+                    <div className="absolute w-3 h-3 bg-green-500 rounded-full -left-1.5 top-1"></div>
                     <div className="flex items-center gap-3 mb-2">
                       <img
                         src={experience.logo}
@@ -88,7 +97,7 @@ const JobSeekerProfile = () => {
                           experience.skills.map((skill, index) => (
                             <span
                               key={index}
-                              className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-sm"
+                              className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-sm"
                             >
                               {skill.name}
                             </span>
@@ -110,15 +119,15 @@ const JobSeekerProfile = () => {
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Thông Tin Cá Nhân</h2>
               <div className="space-y-3">
                 <p className="flex items-center text-base text-gray-700">
-                  <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-blue-600 mr-2" />
+                  <FontAwesomeIcon icon={faEnvelope} className="w-4 h-4 text-green-600 mr-2" />
                   <span><strong>Email:</strong> {profile.email}</span>
                 </p>
                 <p className="flex items-center text-base text-gray-700">
-                  <FontAwesomeIcon icon={faPhone} className="w-4 h-4 text-blue-600 mr-2" />
+                  <FontAwesomeIcon icon={faPhone} className="w-4 h-4 text-green-600 mr-2" />
                   <span><strong>Số điện thoại:</strong> {profile.phone}</span>
                 </p>
                 <p className="flex items-center text-base text-gray-700">
-                  <FontAwesomeIcon icon={faMapMarkerAlt} className="w-4 h-4 text-blue-600 mr-2" />
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="w-4 h-4 text-green-600 mr-2" />
                   <span><strong>Địa chỉ:</strong> {profile.address}</span>
                 </p>
               </div>
@@ -132,7 +141,7 @@ const JobSeekerProfile = () => {
                   profile.skills.map((skill, index) => (
                     <span
                       key={index}
-                      className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-base hover:bg-blue-200 transition"
+                      className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-base hover:bg-green-200 transition"
                     >
                       {skill.name}
                     </span>
@@ -155,7 +164,7 @@ const JobSeekerProfile = () => {
                           href={resume.resumePath}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 text-base font-medium hover:underline"
+                          className="text-green-600 text-base font-medium hover:underline"
                         >
                           {resume.resumeName}
                         </a>
@@ -171,7 +180,7 @@ const JobSeekerProfile = () => {
                         href={resume.resumePath}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-600 text-white px-3 py-1 rounded-md text-xs hover:bg-blue-700 transition"
+                        className="bg-green-600 text-white px-3 py-1 rounded-md text-xs hover:bg-green-700 transition"
                       >
                         Tải xuống
                       </a>

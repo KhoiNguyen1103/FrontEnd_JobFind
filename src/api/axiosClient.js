@@ -2,6 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "react";
 const API_URL = import.meta.env.VITE_API_URL;
+import { persistor } from "../redux/store";
 
 const axiosClient = axios.create({
   baseURL: `${API_URL}`,
@@ -47,6 +48,7 @@ axiosClient.interceptors.response.use(
             text: "OK",
             onPress: () => {
               navigate("/recruiter/login");
+              persistor.purge();
             },
           },
         ]

@@ -13,17 +13,19 @@ const RecruiterProfileSaved = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const user = localStorage.getItem("user");
+  if (!user) {
+    console.warn("Không tìm thấy user trong localStorage");
+    setLoading(false);
+    return;
+  }
+
+  const userObject = JSON.parse(user);
+  const companyId = userObject?.userId;
+
   useEffect(() => {
     const fetchSavedJobSeekers = async () => {
-      const user = localStorage.getItem("user");
-      if (!user) {
-        console.warn("Không tìm thấy user trong localStorage");
-        setLoading(false);
-        return;
-      }
 
-      const userObject = JSON.parse(user);
-      const companyId = userObject?.userId;
       try {
         setLoading(true);
         const response = await savedJobSeekerApi.getListSaved(companyId);
@@ -42,7 +44,11 @@ const RecruiterProfileSaved = () => {
   }, [companyId, currentPage]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center mt-16">
+        <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (error) {
@@ -58,7 +64,7 @@ const RecruiterProfileSaved = () => {
             <p className="text-primary font-semibold text-xl">
               Danh sách CV yêu thích
             </p>
-            <p className="text-blue-500 hover:underline cursor-pointer">
+            <p className="text-green-500 hover:underline cursor-pointer">
               Xem thêm
             </p>
           </div>

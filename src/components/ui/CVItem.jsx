@@ -5,7 +5,7 @@ import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
 import { Link, useNavigate } from "react-router-dom";
 
 const CVItem = ({ profile }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const {
     profileId,
@@ -13,8 +13,8 @@ const CVItem = ({ profile }) => {
     lastName,
     address,
     title,
-    workExperiences, 
-    skills, 
+    workExperiences,
+    skills,
   } = profile;
 
   const handleClickProfileDetailButton = () => {
@@ -44,8 +44,8 @@ const CVItem = ({ profile }) => {
           <div className="flex justify-between pb-2 pt-1">
             <p className="text-primary font-semibold text-lg">{`${firstName} ${lastName}`}</p>
             <div>
-            <ButtonSaveJobSeeker profileId={profileId}/>
-            {/* Button chat */}
+              <ButtonSaveJobSeeker profileId={profileId} />
+              {/* Button chat */}
               <Link to={"/"} className="cursor-pointer">
                 <FontAwesomeIcon
                   icon={faMessage}
@@ -115,12 +115,12 @@ CVItem.propTypes = {
     lastName: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    workExperiences: PropTypes.number.isRequired, 
+    workExperiences: PropTypes.number.isRequired,
     skills: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
       })
-    ).isRequired, 
+    ).isRequired,
   }).isRequired
 };
 
