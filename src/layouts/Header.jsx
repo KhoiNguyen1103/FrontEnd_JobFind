@@ -168,17 +168,14 @@ const Header = () => {
             className="relative flex items-center justify-center cursor-pointer"
             ref={menuRef}
           >
-            <div
-              className="border border-slate-300 rounded-full p-1 me-2  "
-              style={{ width: "40px", height: "40px" }}
-              onClick={openDropDownUserMenu}
-            >
+            <div className="pe-4 p-1" onClick={openDropDownUserMenu}>
               <img
                 src={user?.avatar || "/image_user_default.jpg"}
                 alt="avatar"
-                className="h-full"
+                className="w-12 h-12 rounded-full border-gray-300 border-[1px]"
               />
             </div>
+
             <FontAwesomeIcon
               icon={faAngleDown}
               className="text-lg text-primary"

@@ -1,21 +1,53 @@
 import { useState, useEffect } from 'react';
+import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 import CVItem from "../../components/ui/CVItem";
 import Pagination from "../../components/ui/Pagination";
 import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const RecruiterProfileSaved = () => {
   const savedJobSeekers = useSelector(state => state.savedJobseeker.savedList);
+  const [jobSeekers, setJobSeekers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (savedJobSeekers.length > 0) {
-      setTotalPages(Math.ceil(savedJobSeekers.length / 10));
-    }
-  }, [savedJobSeekers]);
+    const fetchSavedJobSeekers = async () => {
+      const user = localStorage.getItem("user");
+      if (!user) {
+        console.warn("Không tìm thấy user trong localStorage");
+        setLoading(false);
+        return;
+      }
 
-  const displayedJobSeekers = transformJobSeekerData(savedJobSeekers).slice((currentPage - 1) * 10, currentPage * 10);
+      const userObject = JSON.parse(user);
+      const companyId = userObject?.userId;
+      try {
+        setLoading(true);
+        const response = await savedJobSeekerApi.getListSaved(companyId);
+        const transformedData = transformJobSeekerData(response);
+        setJobSeekers(transformedData);
+
+        setTotalPages(response.totalPages || 1);
+      } catch (error) {
+        setError("Failed to fetch saved job seekers");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSavedJobSeekers();
+  }, [companyId, currentPage]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="py-6">
@@ -32,9 +64,9 @@ const RecruiterProfileSaved = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {savedJobSeekers.length > 0 ? (
-              displayedJobSeekers.map((profile, index) => (
-                <CVItem key={index} profile={profile}/>
+            {jobSeekers.length > 0 ? (
+              jobSeekers.map((profile, index) => (
+                <CVItem key={index} profile={profile} />
               ))
             ) : (
               <p className="text-gray-500">Không có CV đã lưu</p>

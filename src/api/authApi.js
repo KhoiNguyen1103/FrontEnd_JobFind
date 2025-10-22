@@ -8,11 +8,7 @@ const authApi = {
 
     register: (registrationRequest) => {
         const url = '/auth/register';
-        return axiosClient.post(url, registrationRequest, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        return axiosClient.post(url, registrationRequest);
     },
 };
 

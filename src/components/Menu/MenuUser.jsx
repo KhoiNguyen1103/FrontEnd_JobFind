@@ -52,7 +52,7 @@ const itemsForRecruiter = [
   {
     title: "Quản lý tin tuyển dụng",
     icon: faTableColumns,
-    path: "/",
+    path: "/recruiter/application",
   },
   {
     title: "Ứng viên ưa thích",
@@ -77,7 +77,7 @@ const itemsForRecruiter = [
   {
     title: "Quản lý tài khoản",
     icon: faUser,
-    path: "/",
+    path: "/recruiter/company-profile",
   },
 ];
 
@@ -99,7 +99,7 @@ const DropDownUserMenu = ({ user }) => {
         <div>
           <p className="font-bold text-lg">{username}</p>
           <p className="text-slate-400">
-            {role === 1 ? "Mã nhà tuyển dụng: " : "Mã ứng viên: "}{" "}
+            {role === "COMPANY" ? "Mã nhà tuyển dụng: " : "Mã ứng viên: "}{" "}
             <span className="text-slate-900">#{id}</span>{" "}
           </p>
         </div>

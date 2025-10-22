@@ -36,7 +36,7 @@ axiosClient.interceptors.response.use(
     },
     async (error) => {
         if (error.response && error.response.status === 401) {
-          localStorage.removeItem('user');
+          // localStorage.removeItem('user');
 
       const navigate = useNavigate();
       Alert.alert(
