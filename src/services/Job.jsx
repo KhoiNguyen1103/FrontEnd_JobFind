@@ -38,8 +38,8 @@ export const searchJobs = async ({
     if (industries) queryParams.append("industry", industries[0]);
     if (locations) queryParams.append("location", locations[0]);
     // console.log(
-    //   "queryParams",
-    //   `${API_URL}/job/searchJobs?${queryParams.toString()}`
+    // "queryParams",
+    // `${API_URL}/job/searchJobs?${queryParams.toString()}`
     // );
 
     const response = await axios.get(

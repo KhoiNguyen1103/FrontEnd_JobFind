@@ -7,29 +7,25 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
+import { filterJob } from "../../redux/slices/jobSlice";
 import filters from "../../data/filters";
 import {
   convertSalaryDisplay,
   convertExperienceDisplay,
 } from "../../untils/convertSalaryDisplay";
 import JobItem from "./JobItem";
-
-// api service
-import { searchJobs } from "../../services/Job";
-import { toast } from "react-toastify";
-
 import jobApi from "../../api/jobApi";
 
 const BestJob = () => {
+  const dispatch = useDispatch();
   const [jobs, setJobs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 6;
 
-  // Lấy danh sách job từ api
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const data = await jobApi.search("", "", "");
+        const data = await jobApi.search('', '', '');
         setJobs(data);
       } catch (error) {
         console.error("Lỗi khi lấy danh sách jobs:", error);
@@ -38,6 +34,27 @@ const BestJob = () => {
 
     fetchJobs();
   }, []);
+
+  // Lấy danh sách job phân trang
+  const indexOfLastJob = currentPage * jobsPerPage;
+  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstJob, indexOfLastJob);
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+
+  // Phân trang
+  const maxPageCount = Math.ceil(jobs.length / jobsPerPage);
+
+  const increasePagination = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const decreasePagination = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   // Mở model bộ lọc
   const [isOpenFilter, setIsOpenFilter] = useState(false);
@@ -72,41 +89,9 @@ const BestJob = () => {
 
   // Chọn 1 giá trị của bộ lọc
   const [filterItemSelected, setFilterItemSelected] = useState("Tất cả");
-  const [isLoading, setIsLoading] = useState(false);
-  const [filteredJobs, setFilteredJobs] = useState([]);
   const toggleFilterItem = (item) => {
     setFilterItemSelected(item);
   };
-
-  // call api search item
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setIsLoading(true);
-      try {
-        if (filterItemSelected === "Tất cả") {
-          // Gọi API lấy tất cả job
-          const jobs = await searchJobs(""); // hoặc hàm searchAllJobs()
-          setFilteredJobs(jobs);
-        } else {
-          // console.log("item: ", [filterItemSelected]);
-          const jobs = await searchJobs({
-            keyword: "",
-            industries: "",
-            locations: [filterItemSelected],
-          });
-          // console.log("jobs", jobs);
-          setFilteredJobs(jobs);
-        }
-      } catch (error) {
-        toast.error("Lỗi khi tìm kiếm việc làm");
-        console.error("Lỗi khi tìm kiếm việc làm:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, [filterItemSelected]);
 
   // Dùng useEffect để lọc danh sách job khi filterItemSelected thay đổi
   // useEffect(() => {
@@ -136,27 +121,6 @@ const BestJob = () => {
       return convertExperienceDisplay(filterSelected.list);
     } else {
       return filterSelected.list;
-    }
-  };
-
-  // Lấy danh sách job phân trang
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  // Phân trang
-  const maxPageCount = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  const increasePagination = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  };
-
-  const decreasePagination = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -276,11 +240,7 @@ const BestJob = () => {
               : ""
           }
         >
-          {isLoading ? (
-            <p className="text-center block text-2xl text-slate-400 py-6">
-              Đang tải...
-            </p>
-          ) : currentJobs.length !== 0 ? (
+          {currentJobs.length !== 0 ? (
             currentJobs.map((job) => <JobItem key={job.jobId} job={job} />)
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">

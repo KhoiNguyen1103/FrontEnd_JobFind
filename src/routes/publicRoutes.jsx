@@ -4,7 +4,8 @@ import CompanyList from "../pages/CompanyList";
 import JobDetail from "../pages/JobDetail";
 import SearchResult from "../pages/SearchResult";
 import TemplateCV from "../pages/TemplateCV";
-import LoginAndRegister from "../pages/LoginAndRegister";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 import RecruiterOverview from "../pagesRecruiter/RecruiterOverview";
 
 const publicRoutes = [
@@ -14,8 +15,8 @@ const publicRoutes = [
   { path: "/job-detail/:id", element: <JobDetail /> },
   { path: "/search", element: <SearchResult /> },
   { path: "/template-cv", element: <TemplateCV /> },
-  { path: "/login", element: <LoginAndRegister /> },
-  { path: "/register", element: <LoginAndRegister /> },
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
   { path: "/overview", element: <RecruiterOverview /> },
 ];
 

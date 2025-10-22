@@ -66,7 +66,7 @@
   width: 470px;
 }
 
-.nav-tab:hover > button {
+.nav-tab:hover>button {
   color: var(--primary-color);
   cursor: pointer;
 }
@@ -77,7 +77,7 @@
   padding: 12px;
 }
 
-.submenu-item > li:hover {
+.submenu-item>li:hover {
   color: var(--primary-color);
 }
 
@@ -124,21 +124,42 @@
 /* login css */
 .bg-login-register {
   background: rgb(0, 36, 2);
-  background: linear-gradient(
-    0deg,
-    rgba(0, 36, 2, 1) 0%,
-    rgba(62, 124, 82, 1) 11%,
-    rgba(24, 205, 42, 1) 58%
-  );
+  background: linear-gradient(0deg,
+      rgba(0, 36, 2, 1) 0%,
+      rgba(62, 124, 82, 1) 11%,
+      rgba(24, 205, 42, 1) 58%);
 }
 
 /* profile */
 .profile {
   background: rgb(202, 236, 205);
-  background: linear-gradient(
-    0deg,
-    rgba(202, 236, 205, 1) 0%,
-    rgba(202, 236, 205, 1) 0%,
-    rgba(255, 255, 255, 1) 62%
-  );
+  background: linear-gradient(0deg,
+      rgba(202, 236, 205, 1) 0%,
+      rgba(202, 236, 205, 1) 0%,
+      rgba(255, 255, 255, 1) 62%);
+}
+
+.ProseMirror:focus,
+.ProseMirror:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.ProseMirror h1 {
+  @apply text-2xl font-bold;
+}
+.ProseMirror h2 {
+  @apply text-xl font-semibold;
+} 
+
+.ProseMirror ul {
+  @apply list-disc pl-6 mb-2;
+}
+
+.ProseMirror ol {
+  @apply list-decimal pl-6 mb-2;
+}
+
+.ProseMirror li {
+  @apply mb-1;
 }
