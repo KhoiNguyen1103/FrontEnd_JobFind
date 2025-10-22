@@ -1,26 +1,34 @@
 export const transformJobSeekerData = (data) => {
     return data.map(jobSeeker => {
-        const { profileId, firstName, lastName, address, title, workExperiences, skills } = jobSeeker;
+        const { profileId, firstName, lastName, address, title, workExperiences = [], skills = [] } = jobSeeker;
 
-        const { startDateMin, endDateMax } = workExperiences.reduce(
-            (acc, exp) => {
-                const startDate = new Date(exp.startDate);
-                const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
+        let totalExperienceYears = 0;
 
-                if (!acc.startDateMin || startDate < acc.startDateMin) {
-                    acc.startDateMin = startDate;
-                }
-                if (!acc.endDateMax || endDate > acc.endDateMax) {
-                    acc.endDateMax = endDate;
-                }
+        if (Array.isArray(workExperiences) && workExperiences.length > 0) {
+            const { startDateMin, endDateMax } = workExperiences.reduce(
+                (acc, exp) => {
+                    const startDate = exp.startDate ? new Date(exp.startDate) : null;
+                    const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
 
-                return acc;
-            },
-            { startDateMin: null, endDateMax: null }
-        );
+                    if (startDate) {
+                        if (!acc.startDateMin || startDate < acc.startDateMin) {
+                            acc.startDateMin = startDate;
+                        }
+                        if (!acc.endDateMax || endDate > acc.endDateMax) {
+                            acc.endDateMax = endDate;
+                        }
+                    }
 
-        const totalExperienceYears =
-            (endDateMax - startDateMin) / (1000 * 60 * 60 * 24 * 365);
+                    return acc;
+                },
+                { startDateMin: null, endDateMax: null }
+            );
+
+            if (startDateMin && endDateMax) {
+                totalExperienceYears =
+                    (endDateMax - startDateMin) / (1000 * 60 * 60 * 24 * 365);
+            }
+        }
 
         return {
             profileId,

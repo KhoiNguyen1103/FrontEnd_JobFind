@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import CVItem from "../../components/ui/CVItem";
 import Pagination from "../../components/ui/Pagination";
 import jobSeekerApi from "../../api/jobSeekerApi";
-import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchSavedJobseekers } from "../../redux/slices/savedJobseekerSlice";
 
 const RecruiterHome = () => {
-  const [savedJobSeekers, setSavedJobSeekers] = useState([]);
   const [jobSeekers, setJobSeekers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 10;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchJobSeekers = async () => {
@@ -17,19 +18,17 @@ const RecruiterHome = () => {
         const user = localStorage.getItem("user");
         const userObject = JSON.parse(user);
         const companyId = userObject.userId;
-  
-        const response = await jobSeekerApi.findJobSeekersByCompanyIndustry(companyId);
-        const responseSavedJobseeker = await savedJobSeekerApi.getListSaved(companyId);
-        const transformedData = transformJobSeekerData(response);
+        const [jobSeekerRes] = await Promise.all([
+          jobSeekerApi.findJobSeekersByCompanyIndustry(companyId),
+          dispatch(fetchSavedJobseekers()).unwrap()
+        ]);
+        const transformedData = transformJobSeekerData(jobSeekerRes);
         setJobSeekers(transformedData);
-  
-        const savedIds = responseSavedJobseeker.filter(seeker => seeker.profileId).map(seeker => seeker.profileId);
-        setSavedJobSeekers(savedIds);
       } catch (error) {
         console.error("Error fetching job seekers:", error);
       }
     };
-  
+
     fetchJobSeekers();
   }, []);
 
@@ -52,7 +51,7 @@ const RecruiterHome = () => {
           {/* List CV */}
           <div className="grid grid-cols-3 gap-4">
             {jobSeekers.map((profile, index) => (
-              <CVItem key={index} profile={profile} savedJobSeekers={savedJobSeekers}/>
+              <CVItem key={index} profile={profile}/>
             ))}
           </div>
           {/* END: List CV */}

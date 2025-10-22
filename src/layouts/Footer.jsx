@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 py-10">
+    <footer className="bg-gray-100 py-8">
       <div className="container mx-auto">
         <div className="flex flex-wrap justify-between">
           {/* Logo và liên hệ */}
-          <div className="w-full md:w-1/4 mb-6 md:mb-0 pe-4">
+          <div className="w-[40%] md:w-1/6 mb-4 md:mb-0 pe-4">
             <Link to="/">
               <img src={logo} alt="logo" />
             </Link>

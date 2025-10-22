@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
 import { Link, useNavigate } from "react-router-dom";
 
-const CVItem = ({ profile, savedJobSeekers }) => {
+const CVItem = ({ profile }) => {
     const navigate = useNavigate();
 
   const {
@@ -44,7 +44,7 @@ const CVItem = ({ profile, savedJobSeekers }) => {
           <div className="flex justify-between pb-2 pt-1">
             <p className="text-primary font-semibold text-lg">{`${firstName} ${lastName}`}</p>
             <div>
-            <ButtonSaveJobSeeker profileId={profileId} savedJobSeekers={savedJobSeekers} />
+            <ButtonSaveJobSeeker profileId={profileId}/>
             {/* Button chat */}
               <Link to={"/"} className="cursor-pointer">
                 <FontAwesomeIcon
@@ -121,8 +121,7 @@ CVItem.propTypes = {
         name: PropTypes.string.isRequired,
       })
     ).isRequired, 
-  }).isRequired,
-  savedJobSeekers: PropTypes.arrayOf(PropTypes.number).isRequired,
+  }).isRequired
 };
 
 export default CVItem;

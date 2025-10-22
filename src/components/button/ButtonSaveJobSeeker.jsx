@@ -1,30 +1,24 @@
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useEffect } from "react";
-import savedJobSeekerApi from "../../api/savedJobSeekerApi"; 
+import { useSelector, useDispatch } from "react-redux";
+import { saveJobseeker, unsaveJobseeker } from "../../redux/slices/savedJobseekerSlice";
 
-const ButtonSaveJobSeeker = ({ profileId, savedJobSeekers }) => {
-  const [isSave, setIsSave] = useState(false);
+const ButtonSaveJobSeeker = ({ profileId }) => {
+  const dispatch = useDispatch();
+  const savedJobSeekers = useSelector(state => state.savedJobseeker.savedList);
+
   const user = localStorage.getItem("user");
   const userObject = JSON.parse(user);
   const companyId = userObject.userId;
 
-  useEffect(() => {
-    setIsSave(savedJobSeekers.includes(profileId));
-  }, [savedJobSeekers, profileId]);
+  const isSave = savedJobSeekers.some(item => item.profileId === profileId);
 
-  const handleSaveClick = async () => {
-    try {
-      if (isSave) {
-        await savedJobSeekerApi.unsave(profileId, companyId); 
-      } else {
-        await savedJobSeekerApi.save(profileId, companyId); 
-      }
-
-      setIsSave((prev) => !prev);
-    } catch (error) {
-      console.error("Failed to save job seeker", error);
+  const handleSaveClick = () => {
+    if (isSave) {
+      dispatch(unsaveJobseeker({ profileId, companyId }));
+    } else {
+      dispatch(saveJobseeker({ profileId, companyId }));
     }
   };
 
