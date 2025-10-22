@@ -15,6 +15,7 @@ import background from "../assets/bg_search_section.jpg";
 // component
 import MenuLocation from "../components/Menu/MenuLocation";
 import MenuCategory from "../components/Menu/MenuCategory";
+// import MenuIndustry from "../components/Menu/MenuIndustry";
 
 // redux
 import { useSelector, useDispatch } from "react-redux";
@@ -104,13 +105,17 @@ const SearchBar = () => {
       }
     }
 
-    if (auth_role === "JOBSEEKER" && industriesSelected.length > 0) {
-      const industryIds = industriesSelected.map(ind => ind.industryId).join(",");
-      queryParams.append("industry", industryIds);
-    }
+    // if (auth_role === "JOBSEEKER" && industriesSelected.length > 0) {
+    //   const industryIds = industriesSelected
+    //     .map((ind) => ind.industryId)
+    //     .join(",");
+    //   queryParams.append("industry", industryIds);
+    // }
 
     if (auth_role !== "JOBSEEKER" && categoriesSelected.length > 0) {
-      const categoryIds = categoriesSelected.map(cat => cat.jobCategoryId).join(",");
+      const categoryIds = categoriesSelected
+        .map((cat) => cat.jobCategoryId)
+        .join(",");
       queryParams.append("categoryIds", categoryIds);
     }
 
@@ -122,10 +127,12 @@ const SearchBar = () => {
 
     if (auth_role === "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
+      window.location.reload();
     } else {
       navigate(`/search-cv?${queryParams.toString()}`);
+      console.log("response: ", queryParams.toString());
     }
-};
+  };
 
   return (
     <div

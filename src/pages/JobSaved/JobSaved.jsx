@@ -1,29 +1,9 @@
-// import JobListSaved from "./JobListSaved";
-
 // api
-import { getListSavedJob } from "../../services/saveJob";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import JobItemv2 from "../../components/ui/JobItemv2";
+import { useSelector } from "react-redux";
 
 const JobSaved = () => {
-  const [savedJobs, setSavedJobs] = useState([]);
-
-  useEffect(() => {
-    const fetchSavedJobs = async () => {
-      try {
-        const data = await getListSavedJob();
-        // console.log("data", data);
-        setSavedJobs(data);
-      } catch (error) {
-        toast.error("Lỗi khi lấy danh sách job đã lưu");
-        console.error("Lỗi khi lấy danh sách job đã lưu:", error);
-      }
-    };
-
-    fetchSavedJobs();
-  }, []);
-
+  const savedJobs = useSelector((state) => state.savedJob.savedJobs);
   return (
     <div className="py-8">
       <div className="container mx-auto">

@@ -46,3 +46,21 @@ export const getListSavedJob = async () => {
     throw error;
   }
 };
+
+export const unSaveJob = async (jobId) => {
+  try {
+    const result = await axios.post(
+      `${API_URL}/savedJob/unsave?jobId=${jobId}&jobSeekerProfileId=${userObject?.userId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${userObject?.token}`, // Thêm token vào header
+        },
+      }
+    );
+    return result.data;
+  } catch (error) {
+    console.error("Lỗi khi bỏ lưu job:", error);
+    throw error;
+  }
+};

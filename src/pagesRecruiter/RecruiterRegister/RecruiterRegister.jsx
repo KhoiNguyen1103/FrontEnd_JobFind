@@ -228,17 +228,17 @@ const RecruiterRegister = () => {
           </button>
         </div>
         <div className="flex justify-center mt-6">
-        <Link
-          to="/home"
-          className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-black transition"
-        >
-          Tới trang tìm việc
-          <FontAwesomeIcon icon={faArrowRight} />
-        </Link>
-      </div>
+          <Link
+            to="/home"
+            className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-black transition"
+          >
+            Tới trang tìm việc
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Link>
+        </div>
         <ToastContainer />
       </form>
-      
+
       <style>{`
         .input {
           padding: 0.5rem;

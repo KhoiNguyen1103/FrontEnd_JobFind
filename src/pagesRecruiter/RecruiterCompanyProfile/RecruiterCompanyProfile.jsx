@@ -5,6 +5,7 @@ import { FiCamera, FiX } from 'react-icons/fi';
 import industryApi from '../../api/industryApi';
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
+import TipTapEditor from '../../untils/tipTapEditorHelper';
 
 const RecruiterCompanyProfile = () => {
   const [company, setCompany] = useState(null);
@@ -283,15 +284,12 @@ const RecruiterCompanyProfile = () => {
 
             <div className="mb-3">
               <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
-              <textarea
-                value={editData.description || ''}
+              <TipTapEditor
+                content={editData.description || ''}
                 onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                className="w-full border rounded px-3 py-2 mb-2"
-                rows="4"
               />
             </div>
 
-            {/* Buttons */}
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -301,7 +299,7 @@ const RecruiterCompanyProfile = () => {
               </button>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-blue-700"
               >
                 Lưu
               </button>
