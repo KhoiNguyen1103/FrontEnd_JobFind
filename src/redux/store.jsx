@@ -6,7 +6,6 @@ import cvReducer from "./slices/cvSlice";
 import savedJobReducer from "./slices/savedJobSlice";
 import categoryReducer from "./slices/categorySlice";
 import savedJobseekerReducer from "./slices/savedJobseekerSlice";
-import JSKReducer from "./slices/JSKerProfileSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
@@ -36,7 +35,6 @@ const rootReducer = combineReducers({
   savedJob: savedJobReducer,
   category: categoryReducer,
   savedJobseeker: savedJobseekerReducer,
-  jobSeekerProfile: JSKReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

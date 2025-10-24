@@ -4,9 +4,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const axiosClient = axios.create({
   baseURL: `${API_URL}`,
-  // headers: {
-  //   "content-type": "application/json",
-  // },
+  headers: {
+    "content-type": "application/json",
+  },
   paramsSerializer: (params) => new URLSearchParams(params).toString(),
 });
 

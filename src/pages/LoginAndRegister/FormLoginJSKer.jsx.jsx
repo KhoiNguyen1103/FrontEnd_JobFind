@@ -9,7 +9,7 @@ const App = ({ setIsLogin }) => {
 
   // State to manage form data and error messages
   const [formData, setFormData] = useState({
-    email: "nhat@gmail.com",
+    email: "jobSKer@gmail.com",
     password: "StrongPass@123",
   });
   const [errors, setErrors] = useState({});
