@@ -61,7 +61,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         </p>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            <ButtonApply isApply={isApply} />
+            <ButtonApply jobId={job.jobId} />
             {iconHeart && <ButtonSave job={job} />}
             {isButtonSave && <ButtonUnsaved job={job} />}
           </div>

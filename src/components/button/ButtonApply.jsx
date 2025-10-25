@@ -1,31 +1,38 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRightFromBracket,
+  faPaperPlane,
+} from "@fortawesome/free-solid-svg-icons";
 import ApplyModal from "../ui/ModalApply";
 import applicationApi from "../../api/applicationApi";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const ButtonApply = ({ isApply }) => {
+const ButtonApply = ({ jobId }) => {
+  const jobsApplied = useSelector((state) => state.application.list);
   const [showModal, setShowModal] = useState(false);
   const [applicationList, setApplicationList] = useState([]);
+  const navigate = useNavigate();
 
-  // const handleOpenModal = async () => {
-  //   try {
-  //     const response = await applicationApi.getApplicationOfJob(jobId);
-  //     setApplicationList(response?.data || []);
-  //   } catch (error) {
-  //     toast.error("Đã có lỗi xảy ra khi lấy danh sách hồ sơ ứng tuyển.");
-  //   } finally {
-  //     setShowModal(true);
-  //   }
-  // };
+  const isApply = jobsApplied.some((job) => {
+    return job.job.jobId === jobId;
+  });
+
+  const onClick = () => {
+    navigate("/job-applied");
+  };
 
   return (
     <>
       <div className="py-1 px-2 justify-center active:opacity-80 rounded-md bg-primary text-white font-sm cursor-pointer flex items-center w-full h-full">
         {isApply ? (
-          <p className="ps-2">Đang ứng tuyển</p>
+          <div className="flex items-center" onClick={onClick}>
+            <p className="px-4">Đang ứng tuyển </p>
+            <FontAwesomeIcon icon={faArrowRightFromBracket} />
+          </div>
         ) : (
           <>
             <FontAwesomeIcon icon={faPaperPlane} className="pe-4" />
@@ -38,7 +45,6 @@ const ButtonApply = ({ isApply }) => {
         <ApplyModal
           onClose={() => setShowModal(false)}
           applicationList={applicationList} // truyền danh sách hồ sơ ứng tuyển vào nếu cần
-          // jobId={jobId}
         />
       )}
     </>
@@ -46,7 +52,7 @@ const ButtonApply = ({ isApply }) => {
 };
 
 ButtonApply.propTypes = {
-  isApply: PropTypes.bool.isRequired,
+  jobId: PropTypes.number.isRequired,
 };
 
 export default ButtonApply;

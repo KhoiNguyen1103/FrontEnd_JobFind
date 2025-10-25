@@ -12,10 +12,15 @@ import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 // component
 import ButtonApply from "../../components/button/ButtonApply";
 import ButtonSave from "../../components/button/ButtonSave";
+import { useSelector } from "react-redux";
 
 const JobInfo = ({ job }) => {
   // console.log(job);
   const { title, location, experience, deadline } = job;
+
+  // Kiểm tra job này được applied chưa
+  const jobsApplied = useSelector((state) => state.application.list);
+  const isApplied = jobsApplied.some((item) => item.job?.jobId === job.jobId);
 
   return (
     <>
@@ -93,7 +98,7 @@ const JobInfo = ({ job }) => {
         {/* Ứng tuyển ngay - Lưu tin */}
         <div className="pt-6 flex items-center mt-4" style={{ height: "72px" }}>
           <div className="w-full h-full">
-            <ButtonApply isApply={false} jobId={job.jobId} />
+            <ButtonApply isApply={isApplied} />
           </div>
 
           <div className="ps-4">

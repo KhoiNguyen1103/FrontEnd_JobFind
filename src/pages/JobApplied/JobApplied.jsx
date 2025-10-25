@@ -4,16 +4,6 @@ import { fetchApplicationByJSK } from "../../redux/slices/applySlice";
 import { useEffect } from "react";
 
 const JobApplied = () => {
-  // Load application
-  const user = useSelector((state) => state.auth.user);
-  const jobSeekerId = user?.userId || user?.id;
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (jobSeekerId) {
-      dispatch(fetchApplicationByJSK(jobSeekerId));
-    }
-  }, [dispatch, jobSeekerId]);
-
   const jobsApplied = useSelector((state) => state.application.list);
   // console.log("jobsApplied", jobsApplied);
   // format jobsApplied cho phù hợp với component JobItemv2

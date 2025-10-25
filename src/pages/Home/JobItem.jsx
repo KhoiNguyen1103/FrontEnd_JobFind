@@ -16,21 +16,6 @@ const JobItem = ({ job }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const fetchApplicationList = async () => {
-  //   try {
-  //     const response = await applicationApi.getApplicationOfJob(job.jobId);
-  //     if (response?.errorCode !== 404) {
-  //       console.log("response: ", response);
-  //     }
-  //   } catch (error) {
-  //     toast.error("Đã có lỗi xảy ra khi lấy danh sách hồ sơ ứng tuyển.");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchApplicationList();
-  // }, [job.jobId]);
-
   // navigate to job detail
   const navigateToJobDetail = () => {
     const slug = createSlug(job.title);
@@ -82,7 +67,7 @@ const JobItem = ({ job }) => {
       </div>
 
       <div className="pt-4 flex justify-between items-center mt-auto">
-        <ButtonApply isApply={false} />
+        <ButtonApply jobId={job.jobId} />
         <ButtonSave job={job} />
       </div>
     </div>

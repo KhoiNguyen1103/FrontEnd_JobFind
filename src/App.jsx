@@ -46,6 +46,8 @@ function App() {
         dispatch(fetchSavedJobs(user.userId));
         // console.log("user.userId", user.userId);
         dispatch(fetchJobSeekerProfileByUserId(user.id));
+        // Load application
+        dispatch(fetchApplicationByJSK(user.id));
       }
     }
   }, [dispatch, user]);
