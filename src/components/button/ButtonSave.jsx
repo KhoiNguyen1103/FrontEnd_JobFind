@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 // service
 import { saveJob, unSaveJob } from "../../services/saveJob";
 import { removeSavedJob } from "../../redux/slices/savedJobSlice";
+import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 
 const ButtonSave = ({ job }) => {
   // console.log("Job: ", job);

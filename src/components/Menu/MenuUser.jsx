@@ -21,11 +21,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const itemsForJobSeeker = [
-  {
-    title: "CV của tôi",
-    icon: faFile,
-    path: "/my-cv/1",
-  },
+  // {
+  //   title: "CV của tôi",
+  //   icon: faFile,
+  //   path: "/my-cv/1",
+  // },
   {
     title: "Việc làm đã lưu",
     icon: faHeart,

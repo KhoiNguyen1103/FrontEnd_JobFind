@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 const UploadedCVs = ({ cvs, handleDeleteCv }) => {
-  console.log("cvs", cvs);
+  // console.log("cvs", cvs);
 
   return (
     <div className="flex flex-col items-center gap-4 bg-white px-4 min-h-[72px] justify-between">

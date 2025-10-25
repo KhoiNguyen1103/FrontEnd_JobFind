@@ -29,7 +29,10 @@ const formFields = [
 const RecruiterLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({
+    email: "CompanyTonHoaSen@gmail.com",
+    password: "StrongPass@123",
+  });
   const [error, setError] = useState(null);
 
   const handleChangeFormData = (e) => {
@@ -40,11 +43,12 @@ const RecruiterLogin = () => {
     e.preventDefault();
     try {
       const response = await authApi.login(formData);
+      console.log("response", response);
       const user = response;
-      dispatch(login({ user }));
+      dispatch(login(user));
       navigate("/recruiter/home");
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError("Vui lòng kiểm tra lại email hoặc mật khẩu.");
     }
   };
@@ -52,11 +56,7 @@ const RecruiterLogin = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-white to-blue-100 px-4">
       <div>
-        <img
-          src={logo}
-          alt="Logo"
-          className="w-44 mx-auto object-contain"
-        />
+        <img src={logo} alt="Logo" className="w-44 mx-auto object-contain" />
       </div>
       <form
         onSubmit={handleSubmit}
