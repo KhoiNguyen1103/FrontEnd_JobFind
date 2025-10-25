@@ -20,6 +20,12 @@ axiosClient.interceptors.request.use(async (config) => {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+
+    // Log full URL
+    // const fullUrl = `${config.baseURL}${config.url}${
+    //   config.params ? `?${new URLSearchParams(config.params).toString()}` : ""
+    // }`;
+    // console.log("🌐 Requesting URL:", fullUrl);
   } catch (error) {
     console.error("Error getting token:", error);
   }

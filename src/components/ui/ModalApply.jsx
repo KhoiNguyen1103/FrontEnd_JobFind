@@ -1,39 +1,65 @@
 import PropTypes from "prop-types";
 import { useRef, useState } from "react";
-
-// redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { submitCV } from "../../redux/slices/cvSlice";
-
-// utils
 import selectFile from "../../untils/handleUpLoadFile";
+import applicationApi from "../../api/applicationApi";
+import { toast } from "react-toastify";
 
 const ApplyModal = ({ onClose }) => {
-  // Lấy danh sách cv hiện có
-  // const cvList = useSelector((state) => state.cv.cvList);
-  const [selectedCV, setSelectedCV] = useState(null);
+  const dispatch = useDispatch();
+  const jobSeekerKer = useSelector((state) => state.jobSeekerProfile.profile);
+  const user = useSelector((state) => state.auth.user);
+  const selectedJob = useSelector((state) => state.jobs.selectedJob);
+  // console.log("user: ", user);
+  // console.log("selected job: ", selectedJob);
 
   const fileInputRef = useRef(null);
+  const [selectedOption, setSelectedOption] = useState("upload"); // 'upload' hoặc 'existing'
+  const [selectedCV, setSelectedCV] = useState(null); // File hoặc CV object
 
-  // Khi click vào button chọn cv thì mở popup chọn file lên
-  const handleButtonSelectFile = () => {
-    fileInputRef.current.click();
-  };
-
-  // Khi chọn được file thì lưu vào state
   const handleUploadFile = (event) => {
     const file = selectFile(event);
     setSelectedCV(file);
   };
 
-  // khi click nộp hồ sơ
-  const handleSubmit = () => {
-    dispatch(submitCV());
-    onClose();
+  const handleButtonSelectFile = () => {
+    fileInputRef.current.click();
   };
 
-  // test
-  const dispatch = useDispatch();
+  const handleSelectExistingCV = (cv) => {
+    setSelectedCV(cv);
+  };
+
+  const handleSubmit = async () => {
+    console.log("CV đã chọn:", selectedCV);
+    // Gọi submitCV với dữ liệu phù hợp
+    // dispatch(submitCV(selectedCV));
+    // onClose();
+
+    try {
+      if (!user) {
+        toast.error("Vui lòng đăng nhập để ứng tuyển.");
+        return;
+      }
+
+      if (!selectedJob) {
+        toast.error("Vui lòng chọn một công việc để ứng tuyển.");
+        return;
+      }
+
+      const response = await applicationApi.applyForJob({
+        jobId: selectedJob?.jobId,
+        jobSeekerProfileId: user?.id,
+        resumeId: selectedCV?.resumeId || null,
+      });
+      console.log("response: ", response);
+      toast.success("Nộp hồ sơ ứng tuyển thành công!");
+      onClose(); // Đóng modal sau khi nộp hồ sơ thành công
+    } catch (error) {
+      toast.error("Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
@@ -42,42 +68,94 @@ const ApplyModal = ({ onClose }) => {
           Ứng tuyển
         </h2>
 
-        {/* Tải CV lên từ máy tính */}
-        <div className="mt-4 border rounded-lg p-4 mx-4 flex flex-col justify-center">
+        {/* ==== CHỌN TỪ FILE ==== */}
+        <div className="mt-4 border rounded-lg p-4 mx-4">
           <label className="flex gap-2">
-            <input type="radio" name="cvOption" defaultChecked />
-            <p className="text-center text-xl text-slate-700 grow">
+            <input
+              type="radio"
+              name="cvOption"
+              value="upload"
+              checked={selectedOption === "upload"}
+              onChange={() => {
+                setSelectedOption("upload");
+                setSelectedCV(null);
+              }}
+            />
+            <p className="text-xl text-slate-700 grow cursor-pointer">
               Tải lên CV từ máy tính
             </p>
           </label>
-          <p className="font-light text-slate-500 text-center ps-4">
-            Hỗ trợ định dạng .pdf, .doc
-          </p>
-
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            ref={fileInputRef}
-            onChange={handleUploadFile}
-            hidden
-          />
-          {/* button chọn cv */}
-          <button
-            onClick={handleButtonSelectFile}
-            className="mt-2 px-4 py-2 bg-slate-300 hover:bg-green-500 text-white rounded-lg mx-auto"
-          >
-            Chọn CV
-          </button>
-
-          {/* Hiển thị tên file */}
-          {selectedCV && (
-            <p className="text-center text-blue-600 mt-2 hover:underline cursor-pointer">
-              {selectedCV.name}
-            </p>
+          {selectedOption === "upload" && (
+            <>
+              <p className="font-light text-slate-500 text-center ps-4">
+                Hỗ trợ định dạng .pdf, .doc
+              </p>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                ref={fileInputRef}
+                onChange={handleUploadFile}
+                hidden
+              />
+              <div className="flex justify-center items-center">
+                <button
+                  onClick={handleButtonSelectFile}
+                  className="mt-2 px-4 py-2 bg-slate-300 hover:bg-green-500 text-white rounded-lg mx-auto"
+                >
+                  Chọn CV
+                </button>
+              </div>
+              {selectedCV && selectedCV.name && (
+                <p className="text-center text-blue-600 mt-2 hover:underline cursor-pointer">
+                  {selectedCV.name}
+                </p>
+              )}
+            </>
           )}
         </div>
 
-        {/* Nút hành động */}
+        {/* ==== CHỌN TỪ DANH SÁCH CÓ SẴN ==== */}
+        <div className="mt-4 border rounded-lg p-4 mx-4">
+          <label className="flex gap-2">
+            <input
+              type="radio"
+              name="cvOption"
+              value="existing"
+              checked={selectedOption === "existing"}
+              onChange={() => {
+                setSelectedOption("existing");
+                setSelectedCV(null);
+              }}
+            />
+            <p className="text-xl text-slate-700 grow cursor-pointer">
+              Chọn CV từ danh sách đã lưu
+            </p>
+          </label>
+          {selectedOption === "existing" && (
+            <div className="mt-2 space-y-2">
+              {(jobSeekerKer?.resumeList || []).map((cv) => (
+                <div
+                  key={cv.resumeId}
+                  className={`p-2 border rounded cursor-pointer ${
+                    selectedCV?.resumeId === cv.resumeId
+                      ? "bg-green-100"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => handleSelectExistingCV(cv)}
+                >
+                  📄 {cv.resumeName || "CV chưa đặt tên"}
+                </div>
+              ))}
+              {jobSeekerKer?.resumeList?.length === 0 && (
+                <p className="text-sm text-gray-500 italic">
+                  Không có CV nào được lưu.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ===== Nút hành động ===== */}
         <div className="flex justify-end gap-4 mt-4 pb-4 px-4">
           <button
             onClick={onClose}
@@ -87,7 +165,12 @@ const ApplyModal = ({ onClose }) => {
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg"
+            disabled={!selectedCV}
+            className={`px-4 py-2 rounded-lg text-white ${
+              selectedCV
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
             Nộp hồ sơ ứng tuyển
           </button>
@@ -96,6 +179,7 @@ const ApplyModal = ({ onClose }) => {
     </div>
   );
 };
+
 ApplyModal.propTypes = {
   onClose: PropTypes.func.isRequired,
 };

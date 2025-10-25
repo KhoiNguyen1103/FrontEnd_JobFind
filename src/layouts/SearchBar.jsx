@@ -127,10 +127,11 @@ const SearchBar = () => {
 
     if (auth_role === "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
+      console.log("response: ", queryParams.toString());
       window.location.reload();
     } else {
-      navigate(`/search-cv?${queryParams.toString()}`);
       console.log("response: ", queryParams.toString());
+      navigate(`/search-cv?${queryParams.toString()}`);
     }
   };
 

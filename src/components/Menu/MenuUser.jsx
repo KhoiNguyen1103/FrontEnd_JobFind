@@ -50,6 +50,11 @@ const itemsForJobSeeker = [
 
 const itemsForRecruiter = [
   {
+    title: "Quản lý tài khoản",
+    icon: faUser,
+    path: "/recruiter/company-profile",
+  },
+  {
     title: "Quản lý tin tuyển dụng",
     icon: faTableColumns,
     path: "/recruiter/application",
@@ -60,11 +65,6 @@ const itemsForRecruiter = [
     path: "/recruiter/profile-saved",
   },
   {
-    title: "Thông tin công ty",
-    icon: faBuilding,
-    path: "/",
-  },
-  {
     title: "Gói dịch vụ & Thanh toán",
     icon: faMoneyBill,
     path: "/",
@@ -73,11 +73,6 @@ const itemsForRecruiter = [
     title: "Thêm thẻ thanh toán",
     icon: faCreditCard,
     path: "/",
-  },
-  {
-    title: "Quản lý tài khoản",
-    icon: faUser,
-    path: "/recruiter/company-profile",
   },
 ];
 

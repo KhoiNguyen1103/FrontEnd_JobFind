@@ -7,6 +7,7 @@ import savedJobReducer from "./slices/savedJobSlice";
 import categoryReducer from "./slices/categorySlice";
 import savedJobseekerReducer from "./slices/savedJobseekerSlice";
 import JSKReducer from "./slices/JSKerProfileSlice";
+import applicationReducer from "./slices/applySlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   savedJobseeker: savedJobseekerReducer,
   jobSeekerProfile: JSKReducer,
+  application: applicationReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

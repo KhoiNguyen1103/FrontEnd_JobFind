@@ -13,11 +13,8 @@ import {
   convertExperienceDisplay,
 } from "../../untils/convertSalaryDisplay";
 import JobItem from "./JobItem";
-
-// api service
 import { searchJobs } from "../../services/Job";
 import { toast } from "react-toastify";
-
 import jobApi from "../../api/jobApi";
 
 const BestJob = () => {

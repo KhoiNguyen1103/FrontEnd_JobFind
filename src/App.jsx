@@ -26,6 +26,9 @@ import { useEffect } from "react";
 import { fetchCategories } from "./redux/slices/categorySlice";
 import { fetchSavedJobs } from "./redux/slices/savedJobSlice";
 import { fetchJobSeekerProfileByUserId } from "./redux/slices/JSKerProfileSlice";
+import { fetchApplicationByJSK } from "./redux/slices/applySlice";
+import applicationApi from "./api/applicationApi";
+
 function App() {
   const dispatch = useDispatch();
   // Lấy user từ redux

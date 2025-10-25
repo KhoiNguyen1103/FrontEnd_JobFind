@@ -26,11 +26,11 @@ const jobSlice = createSlice({
       state.selectedJob = action.payload;
 
       // lọc ra các job liên quan
-      state.relatedJobs = state.jobs.filter(
-        (job) =>
-          job.category === action.payload.category &&
-          job.id !== action.payload.id
-      );
+      // state.relatedJobs = state.jobs.filter(
+      //   (job) =>
+      //     job.category === action.payload.category &&
+      //     job.id !== action.payload.id
+      // );
     },
     setFilterJob: (state, action) => {
       // lưu job được chọn

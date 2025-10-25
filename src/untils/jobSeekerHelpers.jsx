@@ -1,6 +1,6 @@
 export const transformJobSeekerData = (data) => {
     return data.map(jobSeeker => {
-        const { profileId, firstName, lastName, address, title, workExperiences = [], skills = [] } = jobSeeker;
+        const { profileId, firstName, lastName, address, avatar, title, workExperiences = [], skills = [] } = jobSeeker;
 
         let totalExperienceYears = 0;
 
@@ -36,6 +36,7 @@ export const transformJobSeekerData = (data) => {
             lastName,
             title,
             address,
+            avatar,
             workExperiences: Math.floor(totalExperienceYears),
             skills,
         };

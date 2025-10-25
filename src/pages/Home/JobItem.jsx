@@ -1,18 +1,40 @@
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 import jobPropType from "../../untils/propTypes/jobPropTypes"; // propTypes
+import applicationApi from "../../api/applicationApi";
+import { toast } from "react-toastify";
 
 // component
 import ButtonSave from "../../components/button/ButtonSave";
 import ButtonApply from "../../components/button/ButtonApply";
+import { useDispatch } from "react-redux";
+import { setSelectedJob } from "../../redux/slices/jobSlice";
+import { use, useEffect } from "react";
 
 const JobItem = ({ job }) => {
   // console.log("JobItem - home: ", job);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // const fetchApplicationList = async () => {
+  //   try {
+  //     const response = await applicationApi.getApplicationOfJob(job.jobId);
+  //     if (response?.errorCode !== 404) {
+  //       console.log("response: ", response);
+  //     }
+  //   } catch (error) {
+  //     toast.error("Đã có lỗi xảy ra khi lấy danh sách hồ sơ ứng tuyển.");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchApplicationList();
+  // }, [job.jobId]);
 
   // navigate to job detail
   const navigateToJobDetail = () => {
     const slug = createSlug(job.title);
+    dispatch(setSelectedJob(job)); // lưu job vào redux
     navigate(`/job-detail/${slug}?id=${job.jobId}`);
   };
 

@@ -2,16 +2,16 @@ import PropTypes from "prop-types";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 // component
-import ButtonApply from "../button/ButtonApply";
-import ButtonSave from "../button/ButtonSave";
-import ButtonUnsaved from "../button/ButtonUnsaved";
+import ButtonApply from "../../components/button/ButtonApply";
+import ButtonSave from "../../components/button/ButtonSave";
+import ButtonUnsaved from "../../components/button/ButtonUnsaved";
 
 // redux
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
-  // console.log("job", job);
+  //   console.log("job", job);
   const navigate = useNavigate();
 
   const scrollTop = () => {
@@ -28,7 +28,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
     <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-40">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
-          src={job.company?.logoPath || "/logo_no_bg.png"}
+          src={job.companyLogo}
           alt="logo"
           className="h-32 w-32 object-cover"
         />
@@ -40,9 +40,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         onClick={navigateToJobDetail}
       >
         <p className="font-bold pb-2">{job.title}</p>
-        <p className="pb-2 text-slate-600">
-          {job.company?.companyName || job.companyName}
-        </p>
+        <p className="pb-2 text-slate-600">{job.companyName}</p>
         <div className="flex flex-wrap gap-2">
           <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
             {job.location}
@@ -62,20 +60,22 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             " triệu"}
         </p>
         <div className="flex items-center gap-2">
-          <ButtonApply isApply={isApply} />
-          {iconHeart && <ButtonSave job={job} />}
-          {isButtonSave && <ButtonUnsaved job={job} />}
+          <div className="flex items-center gap-2">
+            <ButtonApply isApply={isApply} />
+            {iconHeart && <ButtonSave job={job} />}
+            {isButtonSave && <ButtonUnsaved job={job} />}
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="bg-gray-400 py-1 px-4 rounded-lg">
+              {job.status[0].status === "PENDING" && "Đang chờ"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-JobItemv2.propTypes = {
-  iconHeart: PropTypes.bool,
-  isApply: PropTypes.bool,
-  isButtonSave: PropTypes.bool,
-  job: jobPropTypes,
-};
+JobItemv2.propTypes = {};
 
 export default JobItemv2;

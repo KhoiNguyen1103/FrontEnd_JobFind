@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-
 import FilterSideBar from "./FilterSideBar";
 import ListJobFiltered from "./ListJobFiltered";
-
 import { searchJobs } from "../../services/Job";
-
-//redux
 import { setFilterJob } from "../../redux/slices/jobSlice";
 import { useDispatch } from "react-redux";
+import jobApi from "../../api/jobApi";
 
 const SearchResult = () => {
   const dispatch = useDispatch();
@@ -32,26 +29,44 @@ const SearchResult = () => {
   const [loading, setLoading] = useState(true);
 
   // Call API search
+  // useEffect(() => {
+  //   // console.log("LocationIds", locationIds[0]); // ỉn ra đc Hà Nội
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const result = await searchJobs({
+  //         keyword,
+  //         industries:
+  //           industryIds === null
+  //             ? null
+  //             : industryIds.length === 0
+  //             ? null
+  //             : industryIds,
+  //         locations:
+  //           locationIds === null
+  //             ? null
+  //             : locationIds.length === 0
+  //             ? null
+  //             : locationIds,
+  //       });
+  //       // console.log(result); // in ra đc danh sách job
+  //       setJobs(result);
+  //       dispatch(setFilterJob(result)); // lưu job vào redux
+  //     } catch (error) {
+  //       console.error("Lỗi khi tìm kiếm job:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [dispatch]);
+
   useEffect(() => {
-    // console.log("LocationIds", locationIds[0]); // ỉn ra đc Hà Nội
     const fetchData = async () => {
       try {
         setLoading(true);
-        const result = await searchJobs({
-          keyword,
-          industries:
-            industryIds === null
-              ? null
-              : industryIds.length === 0
-              ? null
-              : industryIds,
-          locations:
-            locationIds === null
-              ? null
-              : locationIds.length === 0
-              ? null
-              : locationIds,
-        });
+        const result = await jobApi.search(keyword, locationIds);
         // console.log(result); // in ra đc danh sách job
         setJobs(result);
         dispatch(setFilterJob(result)); // lưu job vào redux
