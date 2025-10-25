@@ -83,13 +83,25 @@ const RecruiterCompanyProfile = () => {
 
     try {
       await userApi.updateProfile(formData);
-      toast.success("Cập nhật thành công!")
+      const updatedUser = {
+        ...userObject,
+        phone: editData.phoneNumber,
+        avatar: avatarChanged
+          ? URL.createObjectURL(newAvatar)
+          : company.logoPath,
+      };
+
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       setIsModalOpen(false);
       window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error('Có lỗi xảy ra khi cập nhật');
     }
+  };
+
+  const handleEditorChange = (name) => (value) => {
+    setEditData({ ...editData, [name]: value });
   };
 
   useEffect(() => {
@@ -143,7 +155,7 @@ const RecruiterCompanyProfile = () => {
             className="w-24 h-24 object-contain rounded-full border-2 border-gray-200 mb-4"
           />
           <h1 className="text-2xl font-bold text-gray-800">{company.companyName}</h1>
-          <p className="text-gray-600 mt-2 text-base">{company.description}</p>
+          <div className="text-gray-600 mt-2 text-base" dangerouslySetInnerHTML={{ __html: company.description }} />
         </div>
 
         <div className="w-full md:w-1/3 flex flex-col gap-4">
@@ -286,7 +298,7 @@ const RecruiterCompanyProfile = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
               <TipTapEditor
                 content={editData.description || ''}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                onChange={handleEditorChange("description")}
               />
             </div>
 
