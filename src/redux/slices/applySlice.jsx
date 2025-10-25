@@ -22,7 +22,11 @@ const applicationSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    addApplication: (state, action) => {
+      state.list.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchApplicationByJSK.pending, (state) => {
@@ -39,5 +43,7 @@ const applicationSlice = createSlice({
       });
   },
 });
+
+export const { addApplication } = applicationSlice.actions;
 
 export default applicationSlice.reducer;

@@ -5,8 +5,9 @@ import { submitCV } from "../../redux/slices/cvSlice";
 import selectFile from "../../untils/handleUpLoadFile";
 import applicationApi from "../../api/applicationApi";
 import { toast } from "react-toastify";
+import { addApplication } from "../../redux/slices/applySlice";
 
-const ApplyModal = ({ onClose }) => {
+const ApplyModal = ({ onClose, jobId }) => {
   const dispatch = useDispatch();
   const jobSeekerKer = useSelector((state) => state.jobSeekerProfile.profile);
   const user = useSelector((state) => state.auth.user);
@@ -43,18 +44,20 @@ const ApplyModal = ({ onClose }) => {
         return;
       }
 
-      if (!selectedJob) {
+      if (!selectedJob && !jobId) {
         toast.error("Vui lòng chọn một công việc để ứng tuyển.");
         return;
       }
 
       const response = await applicationApi.applyForJob({
-        jobId: selectedJob?.jobId,
+        jobId: jobId || selectedJob?.jobId,
         jobSeekerProfileId: user?.id,
         resumeId: selectedCV?.resumeId || null,
       });
       console.log("response: ", response);
       toast.success("Nộp hồ sơ ứng tuyển thành công!");
+      // dispatch(addApplication(response)); // Cập nhật danh sách ứng tuyển trong Redux
+      window.location.reload(); // Tải lại trang để cập nhật danh sách ứng tuyển
       onClose(); // Đóng modal sau khi nộp hồ sơ thành công
     } catch (error) {
       toast.error("Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển.");

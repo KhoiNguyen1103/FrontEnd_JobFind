@@ -37,6 +37,7 @@ const categorySlice = createSlice({
       } else {
         state.selectedCategories = [...state.selectedCategories, category];
       }
+      // localStorage.setItem("categories", JSON.stringify(action.payload));
     },
     clearSelectedCategories: (state) => {
       state.selectedCategories = [];

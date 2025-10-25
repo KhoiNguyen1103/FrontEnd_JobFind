@@ -22,20 +22,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { setSelectedCategories } from "../redux/slices/categorySlice";
 
 const SearchBar = () => {
+  const user = useSelector((state) => state.auth.user);
   const auth_role = useSelector((state) => state.auth.user)?.role;
-  // console.log(auth_role);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState("");
 
   // Lấy dữ liệu từ redux
   const citysSelected = useSelector((state) => state.locations.citySelected);
   const categoriesSelected = useSelector(
     (state) => state.category.selectedCategories
   );
-
-  // track search text
-  const [searchText, setSearchText] = useState("");
 
   // Lấy dữu liệu search Text từ localstorage
   useEffect(() => {
@@ -65,14 +62,14 @@ const SearchBar = () => {
     };
   }, []);
 
-  // ============ Đóng/mở menu industries
-  const [isOpenIndustry, setIsOpenIndustry] = useState(false);
-  const refIndustry = useRef(null);
+  // ============ Đóng/mở menu categories
+  const [isOpenCategory, setIsOpenCategory] = useState(false);
+  const refCategory = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (refIndustry.current && !refIndustry.current.contains(event.target)) {
-        setIsOpenIndustry(false);
+      if (refCategory.current && !refCategory.current.contains(event.target)) {
+        setIsOpenCategory(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -82,13 +79,13 @@ const SearchBar = () => {
   }, []);
 
   const handleButtonSearch = () => {
-    const user = localStorage.getItem("user");
-    const userObject = JSON.parse(user);
-    const companyId = userObject.userId;
+    // const userObject = JSON.parse(user);
+    // const companyId = userObject.userId;
     const queryParams = new URLSearchParams();
 
     const hasSearchText = searchText.trim().length > 0;
     const hasCity = citysSelected.length > 0;
+    const hasCategory = categoriesSelected.length > 0;
 
     if (hasSearchText) {
       queryParams.append("keyword", searchText);
@@ -105,23 +102,16 @@ const SearchBar = () => {
       }
     }
 
-    // if (auth_role === "JOBSEEKER" && industriesSelected.length > 0) {
-    //   const industryIds = industriesSelected
-    //     .map((ind) => ind.industryId)
-    //     .join(",");
-    //   queryParams.append("industry", industryIds);
-    // }
-
-    if (auth_role !== "JOBSEEKER" && categoriesSelected.length > 0) {
+    if (hasCategory && auth_role === "JOBSEEKER") {
       const categoryIds = categoriesSelected
         .map((cat) => cat.jobCategoryId)
         .join(",");
       queryParams.append("categoryIds", categoryIds);
     }
 
-    if (auth_role !== "JOBSEEKER") {
-      queryParams.append("companyId", companyId);
-    }
+    // if (auth_role !== "JOBSEEKER") {
+    //   queryParams.append("companyId", companyId);
+    // }
 
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
@@ -145,12 +135,12 @@ const SearchBar = () => {
       }}
     >
       <div className="relative container flex justify-between items-center rounded-full shadow-lg bg-white">
-        <div className="relative" ref={refIndustry}>
+        <div className="relative" ref={refCategory}>
           {/* Label danh mục nghề */}
           <div
             className="ps-4 flex items-center justify-between flex-nowrap bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
             style={{ width: "250px" }}
-            onClick={() => setIsOpenIndustry(!isOpenIndustry)}
+            onClick={() => setIsOpenCategory(!isOpenCategory)}
           >
             <FontAwesomeIcon icon={faList} />
             <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
@@ -160,7 +150,7 @@ const SearchBar = () => {
 
           {/* Menu danh mục nghề */}
           <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
-            {isOpenIndustry && <MenuCategory setIsOpen={setIsOpenIndustry} />}
+            {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
           </div>
           {/* end: Menu danh mục nghề */}
         </div>
