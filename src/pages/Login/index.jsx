@@ -2,7 +2,7 @@ import LoginForm from "./LoginForm";
 
 const Login = () => {
   return (
-    <div>
+    <div className="pb-4">
       <LoginForm />
     </div>
   );

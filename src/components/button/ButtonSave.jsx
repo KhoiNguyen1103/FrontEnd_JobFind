@@ -20,7 +20,7 @@ const ButtonSave = ({ job }) => {
   const dispatch = useDispatch();
   //Lấy danh sách savedJobs từ redux
   const savedJobs = useSelector((state) => state.savedJob.savedJobs);
-  // console.log("savedJobs", savedJobs);
+  console.log("savedJobs", savedJobs);
 
   // Lấy user
   const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có
@@ -30,9 +30,7 @@ const ButtonSave = ({ job }) => {
 
   // Kiểm tra xem job đã được lưu hay chưa
   useEffect(() => {
-    // console.log("jobSaved", savedJobs);
-    // console.log("job", job);
-    const isJobSaved = savedJobs.some(
+    const isJobSaved = savedJobs?.some(
       (savedJob) => savedJob.jobId === job.jobId
     );
     setIsHeart(isJobSaved);

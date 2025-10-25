@@ -3,11 +3,11 @@ import { faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
-import { login } from "../../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
-import vina68 from "../../assets/images/image_products/vina68.webp";
-import loginService from "../../services/loginService";
 import logo from "../../assets/logo.png";
+import authApi from "../../api/authApi";
+import { toast } from "react-toastify";
+import { login } from "../../redux/slices/authSlice";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
@@ -30,38 +30,22 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { email, password } = formData;
-
     try {
-      const result = await loginService({ email, password });
+      const user = await authApi.login(formData);
+      console.log("Login response:", user);
+      toast.success("Đăng nhập thành công!", { autoClose: 2000 });
 
-      const payload = {
-        ...result,
-        avatar: vina68, // Tạo avatar theo username
-      };
-      dispatch(login({ user: payload })); // Lưu thông tin người dùng vào Redux store
-      console.log("Kết quả đăng nhập:", payload);
-
-      // Lưu token hoặc user info nếu có
-      // localStorage.setItem("tokenUser", result.token);
-
-      // Redirect sang trang chính hoặc dashboard
-      navigate("/home");
+      // Lưu thông tin người dùng vào localStorage
+      // localStorage.setItem("user", JSON.stringify(response));
+      // localStorage.setItem("token", response.token);
+      dispatch(login(user));
+      navigate("/");
     } catch (error) {
-      console.error(error.message || "Đăng nhập thất bại");
+      console.error("Login error:", error);
+      toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.", {
+        autoClose: 2000,
+      });
     }
-
-    // Fake user data
-    // const fakeUser = {
-    //   id: 1,
-    //   role: 2,
-    //   email: formData.email,
-    //   username: "Nguyen Van A",
-    //   avatar: vina68, // Tạo avatar theo username
-    // };
-
-    // dispatch(login({ user: fakeUser }));
-    // navigate("/");
   };
 
   return (
@@ -78,7 +62,8 @@ const LoginForm = () => {
           Chào mừng bạn đã quay trở lại
         </h2>
         <p className="text-center text-gray-500 mb-6">
-          Cùng xây dựng một hồ sơ nổi bật và nhận được các cơ hội sự nghiệp lý tưởng
+          Cùng xây dựng một hồ sơ nổi bật và nhận được các cơ hội sự nghiệp lý
+          tưởng
         </p>
 
         {/* Email */}
@@ -162,7 +147,7 @@ const LoginForm = () => {
       </form>
     </div>
   );
-}
+};
 
 const InputField = ({
   icon,
@@ -190,7 +175,5 @@ const InputField = ({
     {error && <p className="text-red-500 text-sm">{error}</p>}
   </div>
 );
-
-
 
 export default LoginForm;

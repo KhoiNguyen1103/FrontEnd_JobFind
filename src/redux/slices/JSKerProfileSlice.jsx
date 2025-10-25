@@ -7,6 +7,7 @@ export const fetchJobSeekerProfileByUserId = createAsyncThunk(
   async (userId, thunkAPI) => {
     try {
       const response = await jobSeekerApi.getProfileByUserId(userId);
+      console.log("Response from API:", response);
       return response;
     } catch (error) {
       console.error("Lỗi khi lấy profile:", error);

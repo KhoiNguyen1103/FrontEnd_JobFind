@@ -10,13 +10,9 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      console.log("Đăng nhập thành công:", action.payload);
-      const { user } = action.payload;
-      console.log("User đăng nhập:", user);
-      // 1 là nhà tuyển dụng
-      // if(user.role === 1) {
+      const user = action.payload;
+      console.log("user", action.payload);
 
-      // }
       state.user = user;
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", JSON.stringify(user.token));

@@ -1,8 +1,8 @@
-import SignUpForm from "./SignUpForm";;
+import SignUpForm from "./SignUpForm";
 
 const Signup = () => {
   return (
-    <div>
+    <div className="py-4">
       <SignUpForm />
     </div>
   );

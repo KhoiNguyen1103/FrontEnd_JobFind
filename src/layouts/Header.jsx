@@ -23,7 +23,12 @@ const Header = () => {
   const location = useLocation();
 
   // dùng useSelector để theo dõi sự thay đổi user khi logout
-  const user = useSelector((state) => state.auth.user);
+  let user = useSelector((state) => state.auth.user);
+
+  if (!user || user === null) {
+    user = JSON.parse(localStorage.getItem("user"));
+    // const token = JSON.parse(localStorage.getItem("token"));
+  }
   const [isLogin, setIsLogin] = useState(!!user);
 
   useEffect(() => {

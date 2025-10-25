@@ -6,7 +6,6 @@ import CVItem from "../../components/ui/CVItem";
 import jobSeekerApi from "../../api/jobSeekerApi";
 import { useMemo } from "react";
 import savedJobSeekerApi from "../../api/savedJobSeekerApi";
-import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
 
 const SearchResultCV = () => {
   const [filters, setFilters] = useState({
@@ -38,7 +37,39 @@ const SearchResultCV = () => {
         const response = await jobSeekerApi.searchJobSeekers(keyword, categoryIds, locationList, companyId);
         const responseSavedJobseeker = await savedJobSeekerApi.getListSaved(companyId);
 
-        const transformedData = transformJobSeekerData(response);
+        const transformedData = response.map(jobSeeker => {
+          const { profileId, firstName, lastName, address, title, workExperiences, skills } = jobSeeker;
+
+          const { startDateMin, endDateMax } = workExperiences.reduce(
+            (acc, exp) => {
+              const startDate = new Date(exp.startDate);
+              const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
+
+              if (!acc.startDateMin || startDate < acc.startDateMin) {
+                acc.startDateMin = startDate;
+              }
+              if (!acc.endDateMax || endDate > acc.endDateMax) {
+                acc.endDateMax = endDate;
+              }
+
+              return acc;
+            },
+            { startDateMin: null, endDateMax: null }
+          );
+
+          const totalExperienceYears =
+            (endDateMax - startDateMin) / (1000 * 60 * 60 * 24 * 365);
+
+          return {
+            profileId: profileId,
+            firstName: firstName,
+            lastName: lastName,
+            title: title,
+            address: address,
+            workExperiences: Math.floor(totalExperienceYears),
+            skills: skills,
+          };
+        });
 
         setCvList(transformedData);
         const savedIds = responseSavedJobseeker.filter(seeker => seeker.profileId).map(seeker => seeker.profileId);

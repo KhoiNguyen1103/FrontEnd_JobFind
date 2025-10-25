@@ -48,11 +48,7 @@ const JobSeekerProfile = () => {
         <div className="bg-white shadow-md rounded-lg p-6 mb-6 flex items-center justify-between border-b">
           <div className="flex items-center gap-4">
             <img
-              src={
-                profile.avatar && profile.avatar.trim() !== ""
-                  ? profile.avatar
-                  : "https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png"
-              }
+              src="https://res.cloudinary.com/dz1nfbpra/image/upload/v1742040186/Screenshot_2025-02-26_182955_dvxonq.png"
               alt="Profile"
               className="w-16 h-16 rounded-full border-2 border-green-500"
             />
