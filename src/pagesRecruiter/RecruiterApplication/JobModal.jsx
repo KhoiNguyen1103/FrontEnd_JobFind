@@ -7,13 +7,16 @@ import filtersData from '../../data/filters';
 const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, onEdit, onViewApplications, onRefreshJobs }) => {
     const isViewMode = mode === 'view';
     const isEditMode = mode === 'edit';
+    const isCreateMode = mode === 'create';
+
     const initialJobState = isViewMode || isEditMode ? {
-        ...job,
-        skillIds: job.skills.map(s => {
+        ...(job || {}),
+        skillIds: job?.skills?.map(s => {
             const matchedSkill = skills.find(sk => sk.name === s.name);
             return matchedSkill?.skillId;
-        }), categoryIds: job.categories.map(c => c.jobCategoryId),
-        isActive: job.isActive,
+        }) || [],
+        categoryIds: job?.categories?.map(c => c.jobCategoryId) || [],
+        isActive: job?.isActive ?? false,
     } : {
         companyId,
         title: "",
@@ -27,6 +30,7 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         deadline: "",
         skillIds: [],
         categoryIds: [],
+        isActive: true, 
     };
 
     const [formData, setFormData] = useState(initialJobState);
@@ -70,8 +74,8 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         if (!formData.description) newErrors.description = "Mô tả là bắt buộc";
         if (!formData.requirements) newErrors.requirements = "Yêu cầu là bắt buộc";
         if (!formData.benefits) newErrors.benefits = "Quyền lợi là bắt buộc";
-        if (!formData.salaryMin || formData.salaryMin < 0) newErrors.salaryMin = "Lương tối thiểu phải >= 0";
-        if (!formData.salaryMax || formData.salaryMax < 0) newErrors.salaryMax = "Lương tối đa phải >= 0";
+        if (formData.salaryMin === undefined || formData.salaryMin < 0) newErrors.salaryMin = "Lương tối thiểu phải >= 0";
+        if (formData.salaryMax === undefined || formData.salaryMax < 0) newErrors.salaryMax = "Lương tối đa phải >= 0";
         if (!formData.jobType) newErrors.jobType = "Hình thức làm việc là bắt buộc";
         if (!formData.location) newErrors.location = "Địa điểm là bắt buộc";
         if (!formData.deadline) newErrors.deadline = "Hạn chót là bắt buộc";
@@ -154,17 +158,16 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                                     <p className="border p-3 px-10 rounded-lg bg-gray-50">{formData.salaryMax} triệu</p>
                                 </div>
                             </div>
-
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Kỹ năng</label>
                                 <p className="border p-3 rounded-lg bg-gray-50">
-                                    {formData.skillIds.map(id => skills.find(s => s.skillId === id)?.name).join(', ') || 'Không có'}
+                                    {formData.skillIds.map(id => skills.find(s => s.skillId === id)?.name).filter(Boolean).join(', ') || 'Không có'}
                                 </p>
                             </div>
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Danh mục</label>
                                 <p className="border p-3 rounded-lg bg-gray-50">
-                                    {formData.categoryIds.map(id => categories.find(c => c.jobCategoryId === id)?.name).join(', ') || 'Không có'}
+                                    {formData.categoryIds.map(id => categories.find(c => c.jobCategoryId === id)?.name).filter(Boolean).join(', ') || 'Không có'}
                                 </p>
                             </div>
                             <div>
@@ -199,7 +202,6 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                                 </button>
                             </div>
                         </div>
-
                     ) : (
                         <form onSubmit={handleSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -371,12 +373,12 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                             <div className="flex justify-end mt-6 gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => setMode('view')}
+                                    onClick={isCreateMode ? onClose : () => setMode('view')} // Close modal in create mode
                                     className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition"
                                 >
                                     {isViewMode ? 'Đóng' : 'Hủy'}
                                 </button>
-                                {(isEditMode || mode === 'create') && (
+                                {(isEditMode || isCreateMode) && (
                                     <button
                                         type="submit"
                                         className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"

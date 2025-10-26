@@ -32,8 +32,8 @@ const PersonalInfoForm = () => {
     }
   }, [profileJSK]);
 
-  // console.log("profileJSK", profileJSK);
-  // console.log("fullName", fullName);
+  console.log("profileJSK", profileJSK);
+  console.log("fullName", fullName);
 
   const handleAddSkill = (newSkill) => {
     setSkills((prev) => [...prev, newSkill]);
@@ -162,7 +162,7 @@ const PersonalInfoForm = () => {
             {/* End: Nút chỉnh sửa */}
 
             {/* Start: Header */}
-            <ProfileHeader profileJSK={profileJSK} isEditMode={isEditMode} />
+            <ProfileHeader profileJSK={profileJSK} isUpdateMode={isEditMode} />
             {/* End: Header */}
 
             <div className="p-4 grid grid-cols-[20%_1fr] gap-x-6">

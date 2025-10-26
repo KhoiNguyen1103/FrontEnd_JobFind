@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 
 const WorkExperience = ({ isEditMode, workExperiences }) => {
-  // console.log("experiences", workExperiences);
-  // console.log("isEditMode", isEditMode);
+  console.log("experiences", workExperiences);
+  console.log("isEditMode", isEditMode);
 
   return (
     <div className="relative pl-8">

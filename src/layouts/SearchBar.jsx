@@ -79,8 +79,7 @@ const SearchBar = () => {
   }, []);
 
   const handleButtonSearch = () => {
-    // const userObject = JSON.parse(user);
-    // const companyId = userObject.userId;
+    const companyId = user.userId;
     const queryParams = new URLSearchParams();
 
     const hasSearchText = searchText.trim().length > 0;
@@ -109,15 +108,14 @@ const SearchBar = () => {
       queryParams.append("categoryIds", categoryIds);
     }
 
-    // if (auth_role !== "JOBSEEKER") {
-    //   queryParams.append("companyId", companyId);
-    // }
+    if (auth_role !== "JOBSEEKER") {
+      queryParams.append("companyId", companyId);
+    }
 
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
     if (auth_role === "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
-      console.log("response: ", queryParams.toString());
       window.location.reload();
     } else {
       console.log("response: ", queryParams.toString());

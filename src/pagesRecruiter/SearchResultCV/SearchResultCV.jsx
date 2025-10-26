@@ -28,7 +28,8 @@ const SearchResultCV = () => {
   const categoryIds = useMemo(() => {
   const raw = queryParams.get("categoryIds");
     return raw ? raw.split(",") : [];
-  }, [location.search]); const companyId = queryParams.get("companyId") || "";
+  }, [location.search]); 
+  const companyId = queryParams.get("companyId") || "";
 
   useEffect(() => {
     const fetchJobSeekers = async () => {

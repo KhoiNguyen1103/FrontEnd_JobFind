@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,20 +7,16 @@ import {
     faBriefcase,
     faMapMarkerAlt,
     faTag,
-    faTimes,
     faClock,
     faMicrophone,
     faCheckCircle,
     faTimesCircle,
-    faBuilding,
-    faUser,
-    faFileAlt,
-    faTools,
 } from '@fortawesome/free-solid-svg-icons';
 import applicationApi from '../../api/applicationApi';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
+import ApplicationStatusModal from './ApplicationStatusModal'; 
 
 const ApplicationsPage = () => {
     const location = useLocation();
@@ -32,7 +28,6 @@ const ApplicationsPage = () => {
     const [selectedApplication, setSelectedApplication] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sortStatus, setSortStatus] = useState('');
-    const modalContentRef = useRef(null);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -186,6 +181,20 @@ const ApplicationsPage = () => {
             : allStatuses.filter((status) => status !== 'PENDING');
     };
 
+    const calculateDuration = (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = endDate ? new Date(endDate) : new Date();
+        let years = end.getFullYear() - start.getFullYear();
+        let months = end.getMonth() - start.getMonth();
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        return `${years > 0 ? years + ' năm' : ''}${months > 0 ? (years > 0 ? ' ' : '') + months + ' tháng' : ''}`;
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -201,20 +210,6 @@ const ApplicationsPage = () => {
             </div>
         );
     }
-
-    const calculateDuration = (startDate, endDate) => {
-        const start = new Date(startDate);
-        const end = endDate ? new Date(endDate) : new Date();
-        let years = end.getFullYear() - start.getFullYear();
-        let months = end.getMonth() - start.getMonth();
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
-        return `${years > 0 ? years + " năm" : ""}${months > 0 ? (years > 0 ? " " : "") + months + " tháng" : ""}`;
-    };
 
     return (
         <div className="max-w-7xl mx-auto p-6 min-h-screen">
@@ -327,320 +322,19 @@ const ApplicationsPage = () => {
                 </div>
             )}
 
-            {/* Modal chi tiết ứng tuyển */}
-            {isModalOpen && selectedApplication && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity duration-300">
-                    <div
-                        ref={modalContentRef}
-                        className="bg-white rounded-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto p-8 relative shadow-2xl transform transition-all duration-300 scale-100"
-                    >
-                        <button
-                            onClick={closeModal}
-                            className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 transition"
-                        >
-                            <FontAwesomeIcon icon={faTimes} size="lg" />
-                        </button>
-
-                        {/* Timeline trạng thái */}
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-600" />
-                                Lịch sử trạng thái
-                            </h2>
-                            {selectedApplication.statusDTOList.length > 0 ? (
-                                <div className="flex items-center gap-8 overflow-x-auto pb-4">
-                                    {selectedApplication.statusDTOList.map((status, index) => (
-                                        <div key={index} className="flex-shrink-0 text-center relative">
-                                            <div
-                                                className={`w-12 h-12 rounded-full flex items-center justify-center ${getStatusColor(
-                                                    status.status
-                                                )} mb-2`}
-                                            >
-                                                <FontAwesomeIcon
-                                                    icon={getStatusIcon(status.status)}
-                                                    className="text-white"
-                                                />
-                                            </div>
-                                            <p className="text-sm font-medium text-gray-700">
-                                                {getStatusText(status.status)}
-                                            </p>
-                                            <p className="text-xs text-gray-500">{formatDateTime(status.time)}</p>
-                                            {index < selectedApplication.statusDTOList.length - 1 && (
-                                                <div className="absolute top-5 left-12 w-28 h-1 bg-gray-300"></div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-gray-600">Không có lịch sử trạng thái</p>
-                            )}
-                            <div className="mt-4">
-                                <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                                    Cập nhật trạng thái
-                                </h3>
-                                <select
-                                    onChange={(e) =>
-                                        handleUpdateStatus(selectedApplication.applicationId, e.target.value)
-                                    }
-                                    className="mt-2 w-full max-w-xs px-4 py-2 rounded-lg border border-gray-300 bg-gradient-to-r from-blue-50 to-blue-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                                    defaultValue=""
-                                >
-                                    <option value="" disabled>
-                                        Cập nhật trạng thái
-                                    </option>
-                                    {getAvailableStatuses(
-                                        selectedApplication.statusDTOList[
-                                            selectedApplication.statusDTOList.length - 1
-                                        ]?.status
-                                    ).map((status) => (
-                                        <option key={status} value={status}>
-                                            {getStatusText(status)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Hai cột: Job và JobSeeker */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {/* Bên trái: Thông tin công việc */}
-                            <div className="bg-gray-100 rounded-xl p-6 shadow-md hover:shadow-lg transition">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faBuilding} className="text-blue-600" />
-                                    Thông tin công việc
-                                </h2>
-                                <div className="space-y-6">
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                                            Tiêu đề
-                                        </h3>
-                                        <p className="text-gray-600">{selectedApplication.job.title}</p>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faBuilding} className="text-gray-500" />
-                                            Công ty
-                                        </h3>
-                                        <p className="text-gray-600">
-                                            {selectedApplication.job.company.companyName}
-                                        </p>
-                                        <p className="text-gray-600">
-                                            Ngành: {selectedApplication.job.company.industry[0]?.name}
-                                        </p>
-                                        <a
-                                            href={selectedApplication.job.company.website}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-blue-600 hover:underline"
-                                        >
-                                            {selectedApplication.job.company.website}
-                                        </a>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTools} className="text-gray-500" />
-                                            Kỹ năng yêu cầu
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {selectedApplication.job.skills.length > 0 ? (
-                                                selectedApplication.job.skills.map((skill, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
-                                                    >
-                                                        {skill.name}
-                                                    </span>
-                                                ))
-                                            ) : (
-                                                <span className="text-gray-600">Không có kỹ năng</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                                            Danh mục
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {selectedApplication.job.categories.length > 0 ? (
-                                                selectedApplication.job.categories.map((category, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full"
-                                                    >
-                                                        {category.name}
-                                                    </span>
-                                                ))
-                                            ) : (
-                                                <span className="text-gray-600">Không có danh mục</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            Mô tả
-                                        </h3>
-                                        <div
-                                            className="text-gray-600 prose max-w-none"
-                                            dangerouslySetInnerHTML={{ __html: selectedApplication.job.description }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            Yêu cầu
-                                        </h3>
-                                        <div
-                                            className="text-gray-600 prose max-w-none"
-                                            dangerouslySetInnerHTML={{ __html: selectedApplication.job.requirements }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            Quyền lợi
-                                        </h3>
-                                        <div
-                                            className="text-gray-600 prose max-w-none"
-                                            dangerouslySetInnerHTML={{ __html: selectedApplication.job.benefits }}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                                            Thông tin khác
-                                        </h3>
-                                        <p className="text-gray-600">
-                                            Lương: {selectedApplication.job.salaryMin} -{' '}
-                                            {selectedApplication.job.salaryMax}
-                                        </p>
-                                        <p className="text-gray-600">Địa điểm: {selectedApplication.job.location}</p>
-                                        <p className="text-gray-600">Hình thức: {selectedApplication.job.jobType}</p>
-                                        <p className="text-gray-600">
-                                            Hạn chót: {formatDate(selectedApplication.job.deadline)}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Bên phải: Thông tin ứng viên */}
-                            <div className="bg-gray-100 rounded-xl p-6 shadow-md hover:shadow-lg transition">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <FontAwesomeIcon icon={faUser} className="text-blue-600" />
-                                    Thông tin ứng viên
-                                </h2>
-                                <div className="space-y-6">
-                                    <div className="flex items-center gap-4">
-                                        <img
-                                            src={selectedApplication.jobSeekerProfile.avatar}
-                                            alt={`${selectedApplication.jobSeekerProfile.firstName} ${selectedApplication.jobSeekerProfile.lastName}`}
-                                            className="w-20 h-20 rounded-full object-cover shadow-sm"
-                                        />
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-700">
-                                                {selectedApplication.jobSeekerProfile.firstName}{' '}
-                                                {selectedApplication.jobSeekerProfile.lastName}
-                                            </h3>
-                                            <p className="text-gray-600">
-                                                {selectedApplication.jobSeekerProfile.title}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTag} className="text-gray-500" />
-                                            Liên hệ
-                                        </h3>
-                                        <p className="text-gray-600">
-                                            Email: {selectedApplication.jobSeekerProfile.email}
-                                        </p>
-                                        <p className="text-gray-600">
-                                            Số điện thoại: {selectedApplication.jobSeekerProfile.phone}
-                                        </p>
-                                        <p className="text-gray-600">
-                                            Địa chỉ: {selectedApplication.jobSeekerProfile.address}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faTools} className="text-gray-500" />
-                                            Kỹ năng
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {selectedApplication.jobSeekerProfile.skills.length > 0 ? (
-                                                selectedApplication.jobSeekerProfile.skills.map((skill, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
-                                                    >
-                                                        {skill.name}
-                                                    </span>
-                                                ))
-                                            ) : (
-                                                <span className="text-gray-600">Không có kỹ năng</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            <FontAwesomeIcon icon={faBriefcase} className="text-gray-500" />
-                                            Kinh nghiệm làm việc
-                                        </h3>
-                                        {selectedApplication.jobSeekerProfile.workExperiences.length > 0 ? (
-                                            selectedApplication.jobSeekerProfile.workExperiences.map((exp, index) => (
-                                                <div key={index} className="mb-4 bg-white p-4 rounded-lg shadow-sm">
-                                                    <p className="text-gray-700 font-semibold">{exp.jobTitle}</p>
-                                                    <p className="text-gray-600">{exp.companyName}</p>
-                                                    <p className="text-gray-600">
-                                                        {formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Hiện tại'} • {calculateDuration(exp.startDate, exp.endDate)}
-                                                    </p>
-                                                    <div
-                                                        className="text-gray-600 prose max-w-none"
-                                                        dangerouslySetInnerHTML={{ __html: exp.description }}
-                                                    />
-                                                    <div className="flex flex-wrap gap-2 mt-2">
-                                                        {exp.skills.map((skill, skillIndex) => (
-                                                            <span
-                                                                key={skillIndex}
-                                                                className="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full"
-                                                            >
-                                                                {skill.name}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="text-gray-600">Không có kinh nghiệm làm việc</p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                                            Resume đã nộp
-                                        </h3>
-                                        {selectedApplication.resumeApplied ? (
-                                            <div className="bg-white p-4 rounded-lg shadow-sm">
-                                                <a
-                                                    href={selectedApplication.resumeApplied.resumePath}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline flex items-center gap-2"
-                                                >
-                                                    <FontAwesomeIcon icon={faFileAlt} />
-                                                    Xem resume
-                                                </a>
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-600">Không có resume</p>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ApplicationStatusModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                application={selectedApplication}
+                handleUpdateStatus={handleUpdateStatus}
+                getStatusColor={getStatusColor}
+                getStatusIcon={getStatusIcon}
+                getStatusText={getStatusText}
+                getAvailableStatuses={getAvailableStatuses}
+                formatDate={formatDate}
+                formatDateTime={formatDateTime}
+                calculateDuration={calculateDuration}
+            />
         </div>
     );
 };
