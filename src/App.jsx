@@ -27,10 +27,11 @@ import { fetchCategories } from "./redux/slices/categorySlice";
 import { fetchSavedJobs } from "./redux/slices/savedJobSlice";
 import { fetchJobSeekerProfileByUserId } from "./redux/slices/JSKerProfileSlice";
 import { fetchApplicationByJSK } from "./redux/slices/applySlice";
-import applicationApi from "./api/applicationApi";
+import ChatBox from "./components/ui/ChatBox";
 
 function App() {
   const dispatch = useDispatch();
+  const chatBoxes = useSelector(state => state.chatBox.chatBoxes);
   // Lấy user từ redux
   const user = useSelector((state) => state.auth.user);
 
@@ -83,7 +84,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-        // style={{ backgroundColor: "#e7eee7" }}
+      // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}
@@ -130,6 +131,18 @@ function App() {
       {/* Footer */}
       {!hiddenFooter && <Footer className="justify-end" />}
       <ToastContainer />
+      <div id="chatbox-root" />
+      {chatBoxes.map((chat, index) => (
+        <ChatBox
+          key={chat.profileId}
+          profileId={chat.profileId}
+          userId={chat.userId}
+          displayName={chat.displayName}
+          conversationId={chat.conversationId}
+          isMinimized={chat.isMinimized}
+          index={index}
+        />
+      ))}
     </div>
   );
 }

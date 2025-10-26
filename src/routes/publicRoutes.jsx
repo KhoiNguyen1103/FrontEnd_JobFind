@@ -1,23 +1,23 @@
 import Home from "../pages/Home";
-import CompanyDetail from "../pages/CompanyDetail/CompanyDetail";
+import CompanyDetail from "../pages/CompanyDetail";
+import CompanyList from "../pages/CompanyList";
 import JobDetail from "../pages/JobDetail";
 import SearchResult from "../pages/SearchResult";
 import TemplateCV from "../pages/TemplateCV";
 import Signup from "../pages/Signup";
 import Login from "../pages/Login";
 import RecruiterOverview from "../pagesRecruiter/RecruiterOverview";
-import Company from "../pages/Company/Company";
 
 const publicRoutes = [
   { path: "/", element: <Home /> },
-  { path: "/company/:id", element: <CompanyDetail /> },
+  { path: "/company-detail/:id", element: <CompanyDetail /> },
+  { path: "/company-list", element: <CompanyList /> },
   { path: "/job-detail/:id", element: <JobDetail /> },
   { path: "/search", element: <SearchResult /> },
   { path: "/template-cv", element: <TemplateCV /> },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
   { path: "/overview", element: <RecruiterOverview /> },
-  { path: "/company", element: <Company /> },
 ];
 
 export default publicRoutes;

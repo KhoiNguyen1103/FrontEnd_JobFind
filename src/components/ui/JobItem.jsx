@@ -62,8 +62,8 @@ const JobItem = ({ job }) => {
     </div>
   );
 };
-// JobItem.propTypes = {
-//   job: jobPropType,
-// };
+JobItem.propTypes = {
+  job: jobPropType.isRequired,
+};
 
 export default JobItem;

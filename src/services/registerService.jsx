@@ -3,7 +3,7 @@ const registerUser = async (payload) => {
   const response = await fetch("http://localhost:8080/auth/register", {
     method: "POST",
     headers: {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
   });

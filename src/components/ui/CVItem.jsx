@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { openChatBox } from '../../redux/slices/chatBoxSlice';
 
 const CVItem = ({ profile }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {
     profileId,
+    userId,
     firstName,
     lastName,
     address,
@@ -23,6 +27,11 @@ const CVItem = ({ profile }) => {
     } else {
       console.error("Profile ID is undefined or invalid");
     }
+  };
+
+  const handleOpenChat = () => {
+    const displayName = `${firstName} ${lastName}`;
+    dispatch(openChatBox({ profileId, userId, displayName }));
   };
 
   return (
@@ -51,9 +60,12 @@ const CVItem = ({ profile }) => {
             </div>
             <div className="flex items-center gap-2">
               <ButtonSaveJobSeeker profileId={profileId} />
-              <Link to="/" className="text-green-600 hover:text-green-700">
+              <button
+                onClick={handleOpenChat}
+                className="text-green-600 hover:text-green-700"
+              >
                 <FontAwesomeIcon icon={faMessage} className="h-5 w-5" />
-              </Link>
+              </button>
             </div>
           </div>
 

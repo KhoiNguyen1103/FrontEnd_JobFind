@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
+  //   console.log("job", job);
   const navigate = useNavigate();
 
   const scrollTop = () => {
@@ -66,11 +67,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
           </div>
           <div className="flex items-center gap-2">
             <button className="bg-gray-400 py-1 px-4 rounded-lg">
-              {{
-                PENDING: "Đang chờ",
-                REJECTED: "Bị từ chối",
-                REVIEWING: "Đang xem xét",
-              }[job.status.at(-1)?.status] || "Đang chờ"}
+              {job.status[0].status === "PENDING" && "Đang chờ"}
             </button>
           </div>
         </div>

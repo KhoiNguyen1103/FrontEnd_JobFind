@@ -1,30 +1,22 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faLock,
-  faUser,
-  faEnvelope,
-  faPhone,
-  faHome,
-} from "@fortawesome/free-solid-svg-icons";
+import { faLock, faUser, faEnvelope, faPhone, faHome } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
 import registerUser from "../../services/registerService";
-import authApi from "../../api/authApi";
 import logo from "../../assets/logo.png";
-import axiosClient from "../../api/axiosClient";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: "Nguyễn Minh",
-    lastName: "Nhật",
-    phone: "0147258369",
-    address: "123 Gò Vấp, Hồ Chí Minh",
-    email: "nhat@gmail.com",
-    password: "StrongPass@123",
-    confirmPassword: "StrongPass@123",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    address: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -38,76 +30,32 @@ const SignUpForm = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   let newErrors = {};
-  //   if (!validateEmail(formData.email)) newErrors.email = "Email không hợp lệ";
-  //   if (!validatePhone(formData.phone))
-  //     newErrors.phone = "Số điện thoại phải có 10 chữ số";
-  //   if (formData.password !== formData.confirmPassword)
-  //     newErrors.confirmPassword = "Mật khẩu và xác nhận không khớp";
-
-  //   setErrors(newErrors);
-  //   if (Object.keys(newErrors).length > 0) return;
-
-  //   const payload = {
-  //     ...formData,
-  //     role: "JOBSEEKER",
-  //   };
-  //   delete payload.confirmPassword;
-  //   console.log("payload", payload);
-
-  //   // const response = await registerUser(payload);
-  //   const response = await authApi.register(payload);
-  //   if (!response.success) {
-  //     alert(`Đăng ký thất bại: ${response}`);
-  //     return;
-  //   }
-
-  //   alert("Đăng ký thành công!");
-  //   navigate("/login", { replace: true });
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     let newErrors = {};
     if (!validateEmail(formData.email)) newErrors.email = "Email không hợp lệ";
-    if (!validatePhone(formData.phone))
-      newErrors.phone = "Số điện thoại phải có 10 chữ số";
+    if (!validatePhone(formData.phone)) newErrors.phone = "Số điện thoại phải có 10 chữ số";
     if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Mật khẩu và xác nhận không khớp";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const queryParams = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      address: formData.address,
-      email: formData.email,
-      password: formData.password,
+    const payload = {
+      ...formData,
       role: "JOBSEEKER",
     };
+    delete payload.confirmPassword;
 
-    try {
-      const response = await axiosClient.post("/auth/register", null, {
-        params: queryParams,
-      });
-
-      if (!response) {
-        alert(`Đăng ký thất bại: ${JSON.stringify(response.infoMessage)}`);
-        return;
-      }
-
-      alert("Đăng ký thành công!");
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error("Lỗi gửi query:", error);
-      alert("Lỗi khi đăng ký!");
+    const response = await registerUser(payload);
+    if (!response.success) {
+      alert(`Đăng ký thất bại: ${response.message}`);
+      return;
     }
+
+    alert("Đăng ký thành công!");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -268,19 +216,9 @@ const SignUpForm = () => {
   );
 };
 
-const InputField = ({
-  icon,
-  label,
-  name,
-  value,
-  onChange,
-  error,
-  type = "text",
-}) => (
+const InputField = ({ icon, label, name, value, onChange, error, type = "text" }) => (
   <div>
-    <label className="block mb-1 font-medium text-sm">
-      {label} <span className="text-red-600">*</span>
-    </label>
+    <label className="block mb-1 font-medium text-sm">{label} <span className="text-red-600">*</span></label>
     <div className="flex items-center border border-slate-300 rounded-lg px-3 py-2">
       <FontAwesomeIcon icon={icon} className="text-primary mr-3" />
       <input
