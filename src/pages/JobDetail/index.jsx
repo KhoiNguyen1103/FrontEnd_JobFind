@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import JobInfo from "./JobInfo";
-import JobDescription from "./JobDescriptio";
+import JobDescription from "./JobDescription";
 import JobItemv2 from "../../components/ui/JobItemv2";
 import InfoCompany from "./InfoCompany";
 import { useSelector } from "react-redux";

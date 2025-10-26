@@ -15,8 +15,8 @@ import ButtonSave from "../../components/button/ButtonSave";
 import { useSelector } from "react-redux";
 
 const JobInfo = ({ job }) => {
-  // console.log(job);
-  const { title, location, experience, deadline } = job;
+  console.log(job);
+  const { title, location, yearsOfExperience, deadline } = job;
 
   // Kiểm tra job này được applied chưa
   const jobsApplied = useSelector((state) => state.application.list);
@@ -78,7 +78,7 @@ const JobInfo = ({ job }) => {
             </div>
             <div className="ps-4">
               <p className="text-sm text-slate-500">Kinh nghiệm</p>
-              <p className="font-bold">{experience} năm</p>
+              <p className="font-bold">{yearsOfExperience} năm</p>
             </div>
           </div>
         </div>

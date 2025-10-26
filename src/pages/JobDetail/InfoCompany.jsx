@@ -23,9 +23,20 @@ const InfoCompany = ({ job }) => {
               className="w-full h-full object-contain"
             />
           </div>
-          <p className="ps-4 font-bold text-lg">
-            Công ty {job.company.companyName}
-          </p>
+          <div>
+            <p className="ps-4 font-bold text-lg">
+              {job.company.companyName}
+            </p>
+            <p className="ps-4">
+              <Link
+                to={`${job.company.website}`}
+                target="_blank"
+                className="text-green-500 text-center hover:underline"
+              >
+                {job.company.website}
+              </Link>
+            </p>
+          </div>
         </div>
         <div className="flex items-center pt-4">
           <FontAwesomeIcon
@@ -35,13 +46,14 @@ const InfoCompany = ({ job }) => {
           <p className="text-slate-500 pe-2">Địa điểm: </p>
           <p>{job.location}</p>
         </div>
-        <Link
-          to={`${job.company.website}`}
-          target="_blank"
-          className="text-green-500 text-center block mt-4 hover:underline"
-        >
-          Xem trang công ty
-        </Link>
+        <div className="flex items-center pt-4">
+          <p className="text-slate-500 pe-2">Email: </p>
+          <p>{job.company.email}</p>
+        </div>
+        <div className="flex items-center pt-4">
+          <p className="text-slate-500 pe-2">Số điện thoại: </p>
+          <p>{job.company.phoneNumber}</p>
+        </div>
       </div>
       {/* end: thông tin công ty */}
 
@@ -60,7 +72,7 @@ const InfoCompany = ({ job }) => {
           </div>
           <div>
             <p className="text-slate-500">Học vấn</p>
-            <p className="font-bold">Cao đẳng trở lên</p>
+            <p className="font-bold">{job.educationLevel}</p>
           </div>
         </div>
 
@@ -75,23 +87,6 @@ const InfoCompany = ({ job }) => {
           <div>
             <p className="text-slate-500">Hình thức làm việc</p>
             <p className="font-bold">{job.jobType}</p>
-          </div>
-        </div>
-
-        {/* Vị trí */}
-        <div className="flex items-center pt-4">
-          <div
-            className="bg-primary flex justify-center items-center rounded-full me-4"
-            style={{ width: "40px", height: "40px" }}
-          >
-            <FontAwesomeIcon
-              icon={faLocationDot}
-              className="text-lg text-white"
-            />
-          </div>
-          <div>
-            <p className="text-slate-500">Vị trí</p>
-            <p className="font-bold">{job.position}</p>
           </div>
         </div>
       </div>
