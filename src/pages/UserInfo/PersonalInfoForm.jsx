@@ -9,14 +9,21 @@ import UploadedCVs from "./UploadedCVs";
 import { useEffect, useRef, useState } from "react";
 import resumeApi from "../../api/resumeApi";
 import { toast } from "react-toastify";
+import userApi from "../../api/userApi";
 
 const PersonalInfoForm = () => {
   const profileJSK = useSelector((state) => state.jobSeekerProfile.profile);
   const loading = useSelector((state) => state.jobSeekerProfile.loading); // Lấy trạng thái loading từ redux
   const upLoadCvsRef = useRef(null);
 
+  const [avatar, setAvatar] = useState(
+    "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+  );
   const [isEditMode, setIsEditMode] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [fullName, setFullName] = useState("");
+  const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [skills, setSkills] = useState([]);
@@ -24,6 +31,13 @@ const PersonalInfoForm = () => {
 
   useEffect(() => {
     if (profileJSK) {
+      setAvatar(
+        profileJSK.avatar ||
+          "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+      );
+      setFirstName(profileJSK.firstName || "");
+      setLastName(profileJSK.lastName || "");
+      setAddress(profileJSK.address || "123 Gò Vấp, Hồ Chí Minh");
       setFullName(`${profileJSK.firstName} ${profileJSK.lastName}`);
       setPhone(profileJSK.phone || "");
       setEmail(profileJSK.email || "");
@@ -32,8 +46,8 @@ const PersonalInfoForm = () => {
     }
   }, [profileJSK]);
 
-  console.log("profileJSK", profileJSK);
-  console.log("fullName", fullName);
+  // console.log("profileJSK", profileJSK);
+  // console.log("fullName", fullName);
 
   const handleAddSkill = (newSkill) => {
     setSkills((prev) => [...prev, newSkill]);
@@ -90,7 +104,30 @@ const PersonalInfoForm = () => {
     upLoadCvsRef.current.click();
   };
 
-  const handleSave = () => {};
+  const handleSave = async () => {
+    const formData = new FormData();
+
+    if (avatar) formData.append("avatar", avatar); // avatar là File
+    if (firstName) formData.append("firstName", firstName);
+    if (lastName) formData.append("lastName", lastName);
+    if (address) formData.append("address", address);
+    if (phone) formData.append("phone", phone);
+    if (email) formData.append("email", email);
+
+    if (skills && skills.length > 0) {
+      skills.forEach((skill) => {
+        formData.append("skills", skill); // giả sử skill là mảng chuỗi
+      });
+    }
+
+    try {
+      const response = await userApi.updateProfile(formData); // API nhận multipart/form-data
+      console.log("Cập nhật thành công:", response);
+      alert("Cập nhật thành công!");
+    } catch (err) {
+      alert("Lỗi khi cập nhật: " + err.message);
+    }
+  };
 
   // Nếu đang loading hoặc không có profile, hiển thị loading spinner
   if (loading) {
@@ -162,7 +199,18 @@ const PersonalInfoForm = () => {
             {/* End: Nút chỉnh sửa */}
 
             {/* Start: Header */}
-            <ProfileHeader profileJSK={profileJSK} isUpdateMode={isEditMode} />
+            <ProfileHeader
+              profileJSK={profileJSK}
+              isEditMode={isEditMode}
+              avatar={avatar}
+              setAvatar={setAvatar}
+              firstName={firstName}
+              setFirstName={setFirstName}
+              lastName={lastName}
+              setLastName={setLastName}
+              address={address}
+              setAddress={setAddress}
+            />
             {/* End: Header */}
 
             <div className="p-4 grid grid-cols-[20%_1fr] gap-x-6">

@@ -125,11 +125,13 @@ const Header = () => {
       <ul className="flex grow justify-start items-center px-3">
         {navItems.map((item, index) => (
           <li key={index} className="nav-tab ps-4 pe-6 relative group">
-            <button className="">{item.title}</button>
+            <button className="">
+              <Link to={item.path ? item.path : ""}>{item.title}</Link>
+            </button>
 
             {/* Submenu khi hover vào tab */}
             <ul className="submenu-item absolute left-0 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible bg-white shadow-lg transition-all duration-200 z-[999]">
-              {item.subItems.map((subItem, index) => (
+              {item.subItems?.map((subItem, index) => (
                 <li
                   key={index}
                   className="py-4 px-4 bg-slate-100 rounded-md mb-3"

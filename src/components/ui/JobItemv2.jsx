@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
+import { formatDateTime } from "../../untils/formatDate";
 
 // component
 import ButtonApply from "../button/ButtonApply";
@@ -25,7 +26,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   };
 
   return (
-    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-40">
+    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
           src={job.company?.logoPath || "/logo_no_bg.png"}
@@ -51,6 +52,17 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             {job.jobType}
           </span>
         </div>
+        {/* Ngày đăng - ngày end */}
+        <div className="pt-6 flex flex-col justify-center items-start text-sm text-gray-500 min-w-[120px]">
+          <p className="flex items-center gap-1">
+            📅 <span className="font-medium">Ngày Đăng:</span>{" "}
+            {formatDateTime(job.postedAt.slice(0, 10))}
+          </p>
+          <p className="flex items-center gap-1">
+            ⏰ <span className="font-medium">Hết hạn:</span>{" "}
+            {formatDateTime(job.deadline)}
+          </p>
+        </div>
       </div>
 
       {/* Button */}
@@ -62,7 +74,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             " triệu"}
         </p>
         <div className="flex items-center gap-2">
-          <ButtonApply isApply={isApply} />
+          <ButtonApply isApply={isApply} jobId={job.jobId} />
           {iconHeart && <ButtonSave job={job} />}
           {isButtonSave && <ButtonUnsaved job={job} />}
         </div>
