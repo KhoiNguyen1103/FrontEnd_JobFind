@@ -44,22 +44,21 @@ function App() {
     // Load jobCategory
     dispatch(fetchCategories());
 
-    if (user) {
-      // Load profile cho job seeker
-      if (user.role === "JOBSEEKER") {
-        // Load savedJobs
-        dispatch(fetchSavedJobs(user.userId));
-        // Load job seeker profile
-        dispatch(fetchJobSeekerProfileByUserId(user.id));
-        // Load application
-        dispatch(fetchApplicationByJSK(user.id));
-        // Load jobs proposed
-        dispatch(fetchJobsPropposeByJSKId(user.id));
-      }
+    // Load profile cho job seeker
+    if (user && user.role === "JOBSEEKER") {
+      // Load savedJobs
+      dispatch(fetchSavedJobs(user.userId));
+      // Load job seeker profile
+      dispatch(fetchJobSeekerProfileByUserId(user.id));
+      // Load application
+      dispatch(fetchApplicationByJSK(user.id));
+      // Load jobs proposed
+      dispatch(fetchJobsPropposeByJSKId(user.id));
     } else {
       // Nếu chưa đăng nhập thì load tất cả jobs lên
       dispatch(fetchAllJobs());
     }
+
   }, [dispatch, user]);
 
   const location = useLocation();
@@ -93,7 +92,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-        // style={{ backgroundColor: "#e7eee7" }}
+      // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}

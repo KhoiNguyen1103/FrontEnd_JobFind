@@ -25,7 +25,9 @@ const InfoCompany = ({ job }) => {
           </div>
           <div>
             <p className="ps-4 font-bold text-lg">
-              {job.company.companyName}
+              <Link to={"/company/" + job.company.companyName + "?id=" + job.company.companyId}>
+                {job.company.companyName}
+              </Link>
             </p>
             <p className="ps-4">
               <Link

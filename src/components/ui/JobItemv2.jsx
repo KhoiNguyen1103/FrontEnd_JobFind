@@ -10,9 +10,11 @@ import ButtonUnsaved from "../button/ButtonUnsaved";
 // redux
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
+import { useSelector } from "react-redux";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   const navigate = useNavigate();
+  const userRole = useSelector((state) => state.auth?.user?.role || null);
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -40,7 +42,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         onClick={navigateToJobDetail}
       >
         <p className="font-bold pb-2">{job.title}</p>
-        <p className="pb-2 text-black font-bold">
+        <p className="pb-2 text-gray-900">
           {job.company?.companyName || job.companyName}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -74,11 +76,18 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             new Intl.NumberFormat("de-DE").format(job.salaryMax / 1000000) +
             " triệu"}
         </p>
-        <div className="flex items-center gap-2">
-          <ButtonApply isApply={isApply} jobId={job.jobId} />
-          {iconHeart && <ButtonSave job={job} />}
-          {isButtonSave && <ButtonUnsaved job={job} />}
-        </div>
+        {userRole === "COMPANY" ? (
+          <div></div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <ButtonApply isApply={isApply} jobId={job.jobId} />
+              {iconHeart && <ButtonSave job={job} />}
+              {isButtonSave && <ButtonUnsaved job={job} />}
+            </div>
+          </>
+        )}
+
       </div>
     </div>
   );

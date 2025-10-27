@@ -56,6 +56,7 @@ const ApplicationsPage = () => {
         fetchApplications();
     }, [jobId]);
 
+
     const filteredApplications = sortStatus ? applications.filter((app) => app.status === sortStatus) : applications;
 
     const handleViewDetails = async (applicationId) => {
@@ -248,7 +249,7 @@ const ApplicationsPage = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {applications.map((app) => (
+                    {filteredApplications.map((app) => (
                         <div
                             key={app.applicationId}
                             className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition duration-300"

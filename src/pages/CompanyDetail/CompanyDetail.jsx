@@ -183,22 +183,20 @@ const CompanyDetail = () => {
           {/* Các tabs */}
           <div className="flex border-b border-gray-200">
             <button
-              className={`px-4 py-4 text-sm font-medium ${
-                activeTab === "jobs"
+              className={`px-4 py-4 text-sm font-medium ${activeTab === "jobs"
                   ? "text-green-600 border-b-2 border-green-600"
                   : "text-gray-500 hover:text-gray-700"
-              } cursor-pointer !rounded-button whitespace-nowrap`}
+                } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("jobs")}
             >
               {/* Jobs ({company.jobCount}) */}
               Công việc ( {jobsByCompanyId.length || 0} công việc)
             </button>
             <button
-              className={`px-4 py-4 text-sm font-medium ${
-                activeTab === "reviews"
+              className={`px-4 py-4 text-sm font-medium ${activeTab === "reviews"
                   ? "text-green-600 border-b-2 border-green-600"
                   : "text-gray-500 hover:text-gray-700"
-              } cursor-pointer !rounded-button whitespace-nowrap`}
+                } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("reviews")}
             >
               Reviews
@@ -308,9 +306,8 @@ const CompanyDetail = () => {
                 >
                   <FontAwesomeIcon
                     icon={faRotate}
-                    className={`transition-transform duration-500 ${
-                      rotating ? "rotate-[180deg]" : ""
-                    }`}
+                    className={`transition-transform duration-500 ${rotating ? "rotate-[180deg]" : ""
+                      }`}
                   />
                   <span className="px-2">Đặt lại bộ lọc</span>
                 </button>
@@ -394,9 +391,8 @@ const CompanyDetail = () => {
                 <span className="px-2">{selectedReviewFilter}</span>
                 <FontAwesomeIcon
                   icon={faAngleDown}
-                  className={`transition-transform ${
-                    isReviewDropdownOpen ? "rotate-180" : ""
-                  }`}
+                  className={`transition-transform ${isReviewDropdownOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 

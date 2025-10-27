@@ -44,7 +44,7 @@ const JobFilters = ({ filters, setFilters }) => {
     }, []);
 
     return (
-        <div className="bg-gradient-to-r from-white to-gray-50 shadow-md rounded-lg p-4 mb-8">
+        <div className="bg-gradient-to-r from-white to-green-50 shadow-md rounded-lg p-4 mb-8">
             <div className="flex items-center mb-4">
                 <FontAwesomeIcon icon={faFilter} className="text-green-600 mr-2" />
                 <h2 className="text-xl font-semibold text-gray-800">Bộ Lọc</h2>

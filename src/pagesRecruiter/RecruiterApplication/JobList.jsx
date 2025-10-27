@@ -51,7 +51,7 @@ const JobList = ({ jobs, filters, onJobClick }) => {
                 {paginatedJobs.map((job) => (
                     <div
                         key={job.jobId}
-                        className="p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:scale-[1.02] duration-300"
+                        className="p-6 bg-gradient-to-r from-purple-50 to-white rounded-2xl shadow-md hover:shadow-xl transition-transform transform hover:scale-[1.02] duration-300"
                     >
                         <div className="flex justify-between items-start mb-3">
                             <div>
@@ -105,7 +105,7 @@ const JobList = ({ jobs, filters, onJobClick }) => {
                             ))}
                         </div>
                         <div className="text-base font-medium text-gray-700 mt-auto">
-                            💰 Lương: <span className="text-gray-900">{job.salaryMin} triệu - {job.salaryMax} triệu</span>
+                            💰 Lương: <span className="text-gray-900">{job.salaryMin / 1000000}  triệu - {job.salaryMax / 1000000} triệu</span>
                         </div>
                     </div>
                 ))}

@@ -15,7 +15,7 @@ import ButtonSave from "../../components/button/ButtonSave";
 import { useSelector } from "react-redux";
 
 const JobInfo = ({ job }) => {
-  console.log(job);
+  const userRole = useSelector((state) => state.auth?.user?.role || null);
   const { title, location, yearsOfExperience, deadline } = job;
 
   // Kiểm tra job này được applied chưa
@@ -96,17 +96,25 @@ const JobInfo = ({ job }) => {
         {/* end: Hạn nộp */}
 
         {/* Ứng tuyển ngay - Lưu tin */}
-        <div className="pt-6 flex items-center mt-4" style={{ height: "72px" }}>
-          <div className="w-full h-full">
-            <ButtonApply isApply={isApplied} jobId={job.jobId} />
-          </div>
 
-          <div className="ps-4">
-            <ButtonSave job={job} />
-          </div>
-        </div>
-        {/* end: ứng tuyển ngay - lưu tin */}
-      </div>
+        {userRole === "COMPANY" ? (
+          <div></div>
+        ) : (
+          <>
+            <div className="pt-6 flex items-center mt-4" style={{ height: "72px" }}>
+              <div className="w-full h-full">
+                <ButtonApply isApply={isApplied} jobId={job.jobId} />
+              </div>
+
+              <div className="ps-4">
+                <ButtonSave job={job} />
+              </div>
+            </div>
+          </>
+        )}
+
+      </div >
+      {/* end: ứng tuyển ngay - lưu tin */}
       {/* end: thông tin job */}
     </>
   );

@@ -202,7 +202,7 @@ const ApplicationStatusModal = ({
                                     Thông tin khác
                                 </h3>
                                 <p className="text-gray-600">
-                                    Lương: {application.job.salaryMin} - {application.job.salaryMax}
+                                    Lương: {application.job.salaryMin / 1000000} - {application.job.salaryMax / 1000000}
                                 </p>
                                 <p className="text-gray-600">Địa điểm: {application.job.location}</p>
                                 <p className="text-gray-600">Hình thức: {application.job.jobType}</p>
