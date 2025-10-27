@@ -1,22 +1,70 @@
-import React, { useEffect, useState } from 'react';
-import companyApi from '../../api/companyApi';
-import userApi from '../../api/userApi';
-import { FiCamera, FiX } from 'react-icons/fi';
-import industryApi from '../../api/industryApi';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
+import companyApi from "../../api/companyApi";
+import industryApi from "../../api/industryApi";
+import userApi from "../../api/userApi";
+import JobItemv2 from "../../components/ui/JobItemv2";
+import ReviewCompanyItem from "../../components/ui/ReviewCompanyItem";
+import Pagination from "../../components/ui/Pagination";
+import { fetchJobsByCompanyId } from "../../redux/slices/jobSlice";
+import { fetchReviewsByCompanyId } from "../../redux/slices/companyReviewSlice";
+import { FiCamera, FiX } from 'react-icons/fi';
 import TipTapEditor from '../../untils/tipTapEditorHelper';
 
 const RecruiterCompanyProfile = () => {
+  const dispatch = useDispatch();
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState({});
   const [newAvatar, setNewAvatar] = useState(null);
   const [industryList, setIndustryList] = useState([]);
   const [selectedIndustryId, setSelectedIndustryId] = useState(null);
+  const [activeTab, setActiveTab] = useState("info"); // info, jobs, reviews
 
+  // Selector từ Redux
+  const jobsByCompanyId = useSelector((state) => state.jobs.jobsByCompanyId);
+  const reviewsRedux = useSelector((state) => state.companyReview.reviews);
+
+  // Phân trang cho jobs
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 4;
+  const totalPages = Math.ceil(jobsByCompanyId.length / jobsPerPage);
+  const startIndex = (currentPage - 1) * jobsPerPage;
+  const currentJobs = jobsByCompanyId.slice(startIndex, startIndex + jobsPerPage);
+
+  // Lấy thông tin công ty
+  useEffect(() => {
+    const fetchCompany = async () => {
+      const user = localStorage.getItem("user");
+      if (!user) {
+        console.warn("Không tìm thấy user trong localStorage");
+        setLoading(false);
+        return;
+      }
+
+      const userObject = JSON.parse(user);
+      const companyId = userObject?.userId;
+
+      try {
+        const res = await companyApi.getById(companyId);
+        setCompany(res);
+        setSelectedIndustryId(res.industry[0]?.industryId || null);
+        // Lấy danh sách jobs và reviews
+        dispatch(fetchJobsByCompanyId(companyId));
+        dispatch(fetchReviewsByCompanyId(companyId));
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin công ty:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompany();
+  }, [dispatch]);
+
+  // Mở modal chỉnh sửa
   const openEditModal = () => {
     setEditData(company);
     setNewAvatar(null);
@@ -26,7 +74,7 @@ const RecruiterCompanyProfile = () => {
         const resI = await industryApi.getAll();
         setIndustryList(resI);
       } catch (error) {
-        console.error('Lỗi khi lấy danh sách ngành nghề:', error);
+        console.error("Lỗi khi lấy danh sách ngành nghề:", error);
       }
     };
 
@@ -34,6 +82,7 @@ const RecruiterCompanyProfile = () => {
     setIsModalOpen(true);
   };
 
+  // Xử lý submit form chỉnh sửa
   const handleSubmit = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
@@ -46,7 +95,6 @@ const RecruiterCompanyProfile = () => {
     const id = userObject?.id;
 
     const avatarChanged = newAvatar && newAvatar instanceof File;
-
     const changedFields = Object.entries(editData).reduce((acc, [key, value]) => {
       if (company[key] !== value) {
         acc[key] = value;
@@ -54,7 +102,10 @@ const RecruiterCompanyProfile = () => {
       return acc;
     }, {});
 
-    const hasChanges = Object.keys(changedFields).length > 0 || avatarChanged || selectedIndustryId !== company.industry[0]?.industryId;
+    const hasChanges =
+      Object.keys(changedFields).length > 0 ||
+      avatarChanged ||
+      selectedIndustryId !== company.industry[0]?.industryId;
 
     if (!hasChanges) {
       setIsModalOpen(false);
@@ -62,23 +113,15 @@ const RecruiterCompanyProfile = () => {
     }
 
     const formData = new FormData();
-
-    ['companyName', 'phoneNumber', 'website', 'description'].forEach((field) => {
-      formData.append(field, editData[field] ?? company[field] ?? '');
+    ["companyName", "phoneNumber", "website", "description"].forEach((field) => {
+      formData.append(field, editData[field] ?? company[field] ?? "");
     });
-
-    formData.append('userId', id);
-
+    formData.append("userId", id);
     if (avatarChanged) {
-      formData.append('logoPath', newAvatar);
+      formData.append("logoPath", newAvatar);
     }
-
     if (selectedIndustryId) {
-      formData.append('industryIds', selectedIndustryId);
-    }
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+      formData.append("industryIds", selectedIndustryId);
     }
 
     try {
@@ -86,49 +129,20 @@ const RecruiterCompanyProfile = () => {
       const updatedUser = {
         ...userObject,
         phone: editData.phoneNumber,
-        avatar: avatarChanged
-          ? URL.createObjectURL(newAvatar)
-          : company.logoPath,
+        avatar: avatarChanged ? URL.createObjectURL(newAvatar) : company.logoPath,
       };
-
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      localStorage.setItem("user", JSON.stringify(updatedUser));
       setIsModalOpen(false);
       window.location.reload();
     } catch (err) {
       console.error(err);
-      toast.error('Có lỗi xảy ra khi cập nhật');
+      toast.error("Có lỗi xảy ra khi cập nhật");
     }
   };
 
   const handleEditorChange = (name) => (value) => {
     setEditData({ ...editData, [name]: value });
   };
-
-  useEffect(() => {
-    const fetchCompany = async () => {
-      const user = localStorage.getItem('user');
-      if (!user) {
-        console.warn('Không tìm thấy user trong localStorage');
-        setLoading(false);
-        return;
-      }
-
-      const userObject = JSON.parse(user);
-      const companyId = userObject?.userId;
-
-      try {
-        const res = await companyApi.getById(companyId);
-        setCompany(res);
-        setSelectedIndustryId(res.industry[0].industryId)
-      } catch (error) {
-        console.error('Lỗi khi lấy thông tin công ty:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCompany();
-  }, []);
 
   if (loading) {
     return (
@@ -138,73 +152,162 @@ const RecruiterCompanyProfile = () => {
     );
   }
 
-  if (!company)
+  if (!company) {
     return (
       <div className="text-center mt-10 text-red-500">
         Không tìm thấy công ty.
       </div>
     );
+  }
 
   return (
     <div className="rounded-md p-6 bg-white max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-2/3 flex flex-col items-center text-center md:text-left md:items-start">
-          <img
-            src={company.logoPath}
-            alt={`${company.companyName} logo`}
-            className="w-24 h-24 object-contain rounded-full border-2 border-gray-200 mb-4"
-          />
-          <h1 className="text-2xl font-bold text-gray-800">{company.companyName}</h1>
-          <div className="text-gray-600 mt-2 text-base" dangerouslySetInnerHTML={{ __html: company.description }} />
-        </div>
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 mb-6">
+        <button
+          className={`px-4 py-2 text-sm font-medium ${activeTab === "info"
+            ? "text-green-600 border-b-2 border-green-600"
+            : "text-gray-500 hover:text-gray-700"
+            } cursor-pointer whitespace-nowrap`}
+          onClick={() => setActiveTab("info")}
+        >
+          Thông tin công ty
+        </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium ${activeTab === "jobs"
+            ? "text-green-600 border-b-2 border-green-600"
+            : "text-gray-500 hover:text-gray-700"
+            } cursor-pointer whitespace-nowrap`}
+          onClick={() => setActiveTab("jobs")}
+        >
+          Công việc ({jobsByCompanyId.length || 0})
+        </button>
+        <button
+          className={`px-4 py-2 text-sm font-medium ${activeTab === "reviews"
+            ? "text-green-600 border-b-2 border-green-600"
+            : "text-gray-500 hover:text-gray-700"
+            } cursor-pointer whitespace-nowrap`}
+          onClick={() => setActiveTab("reviews")}
+        >
+          Đánh giá ({reviewsRedux.length || 0})
+        </button>
+      </div>
 
-        <div className="w-full md:w-1/3 flex flex-col gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">Thông tin công ty</h2>
-            <p className="text-gray-600 text-base mb-1">
-              <span className="font-medium">Website: </span>
-              <a
-                href={company.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {company.website}
-              </a>
-            </p>
-            <p className="text-gray-600 text-base mb-1">
-              <span className="font-medium">Email: </span>
-              {company.email}
-            </p>
-            <p className="text-gray-600 text-base">
-              <span className="font-medium">Phone: </span>
-              {company.phoneNumber}
-            </p>
+      {/* Tab: Thông tin công ty */}
+      {activeTab === "info" && (
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-2/3 flex flex-col items-center text-center md:text-left md:items-start">
+            <img
+              src={company.logoPath}
+              alt={`${company.companyName} logo`}
+              className="w-24 h-lares24 object-contain rounded-full border-2 border-gray-200 mb-4"
+            />
+            <h1 className="text-2xl font-bold text-gray-800">{company.companyName}</h1>
+            <div
+              className="text-gray-600 mt-2 text-base"
+              dangerouslySetInnerHTML={{ __html: company.description }}
+            />
+
+            <button
+              onClick={openEditModal}
+              className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Cập nhật thông tin
+            </button>
           </div>
 
-          <div>
-            <h2 className="text-lg font-semibold text-gray-700">Ngành nghề</h2>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {company.industry.map((ind, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+          <div className="w-full md:w-1/3 flex flex-col gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700 mb-2">Thông tin công ty</h2>
+              <p className="text-gray-600 text-base mb-1">
+                <span className="font-medium">Website: </span>
+                <a
+                  href={company.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
                 >
-                  {ind.name}
-                </span>
-              ))}
+                  {company.website || "Chưa có website"}
+                </a>
+              </p>
+              <p className="text-gray-600 text-base mb-1">
+                <span className="font-medium">Email: </span>
+                {company.email}
+              </p>
+              <p className="text-gray-600 text-base">
+                <span className="font-medium">Phone: </span>
+                {company.phoneNumber}
+              </p>
+            </div>
+
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700">Ngành nghề</h2>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {company.industry.map((ind, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    {ind.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <button
-        onClick={openEditModal}
-        className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        Cập nhật thông tin
-      </button>
+      {/* Tab: Công việc */}
+      {activeTab === "jobs" && (
+        <div className="bg-white/70 rounded-xl shadow-md p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {jobsByCompanyId.length} việc làm hiện có
+          </h2>
+          <div className="space-y-4">
+            {jobsByCompanyId.length > 0 ? (
+              currentJobs.map((job, index) => (
+                <div
+                  key={index}
+                  className="hover:shadow-lg hover:-translate-y-1 transition duration-300"
+                >
+                  <JobItemv2 job={job} />
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 py-4">
+                Không có công việc nào được tìm thấy.
+              </div>
+            )}
+          </div>
+          {totalPages > 0 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
+      {/* Tab: Đánh giá */}
+      {activeTab === "reviews" && (
+        <div className="bg-white/70 rounded-xl shadow-md p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Đánh giá công ty</h2>
+          <div className="space-y-4">
+            {reviewsRedux.length > 0 ? (
+              reviewsRedux.map((review) => (
+                <ReviewCompanyItem key={review.reviewId} review={review} />
+              ))
+            ) : (
+              <p className="text-gray-500">Chưa có đánh giá nào.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal chỉnh sửa (giữ nguyên) */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-md w-full max-w-3xl relative overflow-auto max-h-[90vh]">
@@ -319,7 +422,6 @@ const RecruiterCompanyProfile = () => {
           </div>
         </div>
       )}
-      <ToastContainer />
     </div>
   );
 };
