@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMessage, faEnvelope, faPhone, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { faMessage, faEnvelope, faPhone, faMapMarkerAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import jobSeekerApi from "../../api/jobSeekerApi";
 import ButtonSaveJobSeeker from "../../components/button/ButtonSaveJobSeeker";
 
@@ -133,6 +133,10 @@ const JobSeekerProfile = () => {
                 <p className="flex items-center text-base text-gray-700">
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="w-4 h-4 text-green-600 mr-2" />
                   <span><strong>Địa chỉ:</strong> {profile.address}</span>
+                </p>
+                <p className="flex items-center text-base text-gray-700">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="w-4 h-4 text-green-600 mr-2" />
+                  <span><strong>Ngày sinh:</strong> {new Date(profile.birthDay).toLocaleDateString('vi-VN')}</span>
                 </p>
               </div>
             </div>

@@ -16,6 +16,7 @@ const CVItem = ({ profile }) => {
     lastName,
     address,
     avatar,
+    birthDay,
     title,
     workExperiences,
     skills,
@@ -75,6 +76,9 @@ const CVItem = ({ profile }) => {
             </span>
             <span className="bg-slate-100 px-3 py-1 rounded-full">
               {address}
+            </span>
+            <span className="bg-slate-100 px-3 py-1 rounded-full">
+              {new Date(profile.birthDay).getFullYear()}
             </span>
           </div>
         </div>

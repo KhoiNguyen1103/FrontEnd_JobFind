@@ -63,7 +63,9 @@ const JobDetail = () => {
             {" "}
             <FontAwesomeIcon icon={faAngleRight} />{" "}
           </Link>
-          <span>{job ? job.title : "Đang tải..."}</span>
+          <span>{job ? job.title : <div className="flex justify-center items-center mt-16">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>}</span>
         </div>
         {/* end: Đường dẫn */}
 

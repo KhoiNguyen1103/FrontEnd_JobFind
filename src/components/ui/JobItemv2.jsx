@@ -28,7 +28,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
     <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
-          src={job.company?.logoPath || "/logo_no_bg.png"}
+          src={job.company?.logoPath || job.companyLogo || "/logo_no_bg.png"}
           alt="logo"
           className="h-32 w-32 object-cover"
         />
@@ -40,7 +40,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         onClick={navigateToJobDetail}
       >
         <p className="font-bold pb-2">{job.title}</p>
-        <p className="pb-2 text-slate-600">
+        <p className="pb-2 text-black font-bold">
           {job.company?.companyName || job.companyName}
         </p>
         <div className="flex flex-wrap gap-2">
