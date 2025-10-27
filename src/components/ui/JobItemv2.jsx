@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
-  // console.log("job", job);
   const navigate = useNavigate();
 
   const scrollTop = () => {
@@ -26,7 +25,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   };
 
   return (
-    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4">
+    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-[200px]">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
           src={job.company?.logoPath || "/logo_no_bg.png"}
@@ -56,7 +55,9 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         <div className="pt-6 flex flex-col justify-center items-start text-sm text-gray-500 min-w-[120px]">
           <p className="flex items-center gap-1">
             📅 <span className="font-medium">Ngày Đăng:</span>{" "}
-            {formatDateTime(job.postedAt.slice(0, 10))}
+            {formatDateTime(
+              job.postedAt?.slice(0, 10) || job.created?.slice(0, 10)
+            )}
           </p>
           <p className="flex items-center gap-1">
             ⏰ <span className="font-medium">Hết hạn:</span>{" "}

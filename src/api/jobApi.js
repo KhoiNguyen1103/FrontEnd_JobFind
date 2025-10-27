@@ -16,16 +16,23 @@ const jobApi = {
     return axiosClient.delete(url);
   },
 
-  search: (keyword, location, jobCategoryId) => {
+  search: (keyword, locations, jobCategoryIds) => {
     const url = "/job/searchJobs";
-    const params = {};
 
-    if (keyword && keyword.trim() !== "") params.keyword = keyword;
-    if (location) params.location = location;
-    if (jobCategoryId !== undefined && jobCategoryId !== null) {
-      params.jobCategoryId = jobCategoryId;
+    // Nếu không có tham số nào thì lấy tất cả job
+    if (!keyword && !locations && !jobCategoryIds) {
+      return axiosClient.get(url);
     }
-    // console.log("params", params);
+
+    const params = {};
+    if (keyword) params.keyword = keyword;
+    if (locations && locations.length > 0) {
+      params.location = locations;
+    }
+    if (jobCategoryIds && jobCategoryIds.length > 0)
+      params.jobCategoryId = jobCategoryIds;
+    // console.log("params: ", params);
+
     return axiosClient.get(url, { params });
   },
 
@@ -40,6 +47,11 @@ const jobApi = {
 
   getByCategory: (categoryId) => {
     const url = `/job/category/${categoryId}`;
+    return axiosClient.get(url);
+  },
+
+  getPropposeJobs: (jskId) => {
+    const url = `/job/proposedJobs/${jskId}`;
     return axiosClient.get(url);
   },
 

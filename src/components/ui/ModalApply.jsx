@@ -9,12 +9,13 @@ import { addApplication } from "../../redux/slices/applySlice";
 
 const ApplyModal = ({ onClose, jobId }) => {
   const dispatch = useDispatch();
+
+  // load data từ redux
   const jobSeekerKer = useSelector((state) => state.jobSeekerProfile.profile);
   const user = useSelector((state) => state.auth.user);
   const selectedJob = useSelector((state) => state.jobs.selectedJob);
-  // console.log("user: ", user);
-  // console.log("selected job: ", selectedJob);
 
+  // state
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState("upload"); // 'upload' hoặc 'existing'
   const [selectedCV, setSelectedCV] = useState(null); // File hoặc CV object
@@ -118,45 +119,47 @@ const ApplyModal = ({ onClose, jobId }) => {
         </div>
 
         {/* ==== CHỌN TỪ DANH SÁCH CÓ SẴN ==== */}
-        <div className="mt-4 border rounded-lg p-4 mx-4">
-          <label className="flex gap-2">
-            <input
-              type="radio"
-              name="cvOption"
-              value="existing"
-              checked={selectedOption === "existing"}
-              onChange={() => {
-                setSelectedOption("existing");
-                setSelectedCV(null);
-              }}
-            />
-            <p className="text-xl text-slate-700 grow cursor-pointer">
-              Chọn CV từ danh sách đã lưu
-            </p>
-          </label>
-          {selectedOption === "existing" && (
-            <div className="mt-2 space-y-2">
-              {(jobSeekerKer?.resumeList || []).map((cv) => (
-                <div
-                  key={cv.resumeId}
-                  className={`p-2 border rounded cursor-pointer ${
-                    selectedCV?.resumeId === cv.resumeId
-                      ? "bg-green-100"
-                      : "hover:bg-gray-100"
-                  }`}
-                  onClick={() => handleSelectExistingCV(cv)}
-                >
-                  📄 {cv.resumeName || "CV chưa đặt tên"}
-                </div>
-              ))}
-              {jobSeekerKer?.resumeList?.length === 0 && (
-                <p className="text-sm text-gray-500 italic">
-                  Không có CV nào được lưu.
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+        {user && user.role === "jobSeeker" && (
+          <div className="mt-4 border rounded-lg p-4 mx-4">
+            <label className="flex gap-2">
+              <input
+                type="radio"
+                name="cvOption"
+                value="existing"
+                checked={selectedOption === "existing"}
+                onChange={() => {
+                  setSelectedOption("existing");
+                  setSelectedCV(null);
+                }}
+              />
+              <p className="text-xl text-slate-700 grow cursor-pointer">
+                Chọn CV từ danh sách đã lưu
+              </p>
+            </label>
+            {selectedOption === "existing" && (
+              <div className="mt-2 space-y-2">
+                {(jobSeekerKer?.resumeList || []).map((cv) => (
+                  <div
+                    key={cv.resumeId}
+                    className={`p-2 border rounded cursor-pointer ${
+                      selectedCV?.resumeId === cv.resumeId
+                        ? "bg-green-100"
+                        : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => handleSelectExistingCV(cv)}
+                  >
+                    📄 {cv.resumeName || "CV chưa đặt tên"}
+                  </div>
+                ))}
+                {jobSeekerKer?.resumeList?.length === 0 && (
+                  <p className="text-sm text-gray-500 italic">
+                    Không có CV nào được lưu.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ===== Nút hành động ===== */}
         <div className="flex justify-end gap-4 mt-4 pb-4 px-4">

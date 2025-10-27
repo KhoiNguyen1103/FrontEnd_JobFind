@@ -6,45 +6,113 @@ import {
   faFilter,
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
-import filters from "../../data/filters";
-import {
-  convertSalaryDisplay,
-  convertExperienceDisplay,
-} from "../../untils/convertSalaryDisplay";
-import JobItem from "./JobItem";
-import { searchJobs } from "../../services/Job";
-import { toast } from "react-toastify";
-import jobApi from "../../api/jobApi";
+import { useDispatch, useSelector } from "react-redux";
+import { filterJob } from "../../redux/slices/jobSlice";
+import Pagination from "../../components/ui/Pagination";
+import JobItemVertical from "../../components/ui/JobItemVerical";
+
+const filtersJob = [
+  {
+    id: "LOCATION",
+    name: "Địa điểm",
+    options: [
+      { id: "000", name: "Tất cả" },
+      { id: "LC01", name: "Hà Nội" },
+      { id: "LC02", name: "Hồ Chí Minh" },
+      { id: "LC03", name: "Đà Nẵng" },
+      { id: "LC04", name: "Cần Thơ" },
+      { id: "LC05", name: "Nha Trang" },
+    ],
+  },
+  {
+    id: "CATEGORY",
+    name: "Ngành nghề",
+    options: [
+      { id: "000", name: "Tất cả" },
+      { id: "CT01", name: "Công nghệ thông tin" },
+      { id: "CT02", name: "Kinh doanh" },
+      { id: "CT03", name: "Marketing" },
+      { id: "CT04", name: "Thiết kế" },
+      { id: "CT05", name: "Tài chính" },
+    ],
+  },
+  {
+    id: "EXPERIENCE",
+    name: "Kinh nghiệm",
+    options: [
+      { id: "000", name: "Tất cả" },
+      { id: "EX01", name: "Thực tập" },
+      { id: "EX02", name: "Mới tốt nghiệp" },
+      { id: "EX03", name: "1-2 năm" },
+      { id: "EX04", name: "3-5 năm" },
+      { id: "EX05", name: "Trên 5 năm" },
+    ],
+  },
+  {
+    id: "SALARY",
+    name: "Mức lương",
+    options: [
+      { id: "000", name: "Tất cả" },
+      { id: "SL01", name: "< 10 triệu" },
+      { id: "SL02", name: "10 - 20 triệu" },
+      { id: "SL03", name: "20 - 30 triệu" },
+      { id: "SL04", name: "> 30 triệu" },
+    ],
+  },
+  {
+    id: "WORKE_TYPE",
+    name: "Hình thức làm việc",
+    options: [
+      { id: "000", name: "Tất cả" },
+      { id: "WT01", name: "Toàn thời gian" },
+      { id: "WT02", name: "Bán thời gian" },
+    ],
+  },
+];
 
 const BestJob = () => {
-  const [jobs, setJobs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 6;
-
-  // Lấy danh sách job từ api
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const data = await jobApi.search("", "", "");
-        setJobs(data);
-      } catch (error) {
-        console.error("Lỗi khi lấy danh sách jobs:", error);
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
-  // Mở model bộ lọc
+  const dispatch = useDispatch();
+  // state
   const [isOpenFilter, setIsOpenFilter] = useState(false);
+  const [filterSelected, setFilterSelected] = useState(filtersJob[0]);
+  const [filterItemSelected, setFilterItemSelected] = useState({
+    id: "000",
+    name: "Tất cả",
+  });
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  // console.log("filter selected: ", filterSelected);
+  // console.log("filter selected options: ", filterSelected.options);
+
+  // lấy data từ redux
+  const jobsRedux = useSelector((state) => state.jobs.jobs);
+  const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
+  const loading = useSelector((state) => state.jobs.loading);
+
+  // Phân trang
+  const jobsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filterJobsRedux.length / jobsPerPage);
+  const startIndex = (currentPage - 1) * jobsPerPage;
+  const endIndex = startIndex + jobsPerPage;
+  const currentJobs = filterJobsRedux.slice(startIndex, endIndex);
+
+  // Handle click
   const toggleFilterModal = () => {
     setIsOpenFilter(!isOpenFilter);
   };
 
+  const toggleFilter = (filter) => {
+    setFilterSelected(filter);
+    setFilterItemSelected(filter.options[0]);
+    setIsOpenFilter(false);
+  };
+
+  const toggleFilterOption = (option) => {
+    setFilterItemSelected(option);
+  };
+
   // Đóng model bộ lọc khi click bên ngoài
   const ref = useRef(null);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -57,60 +125,7 @@ const BestJob = () => {
     };
   }, []);
 
-  // Theo dõi sự thay đổi bộ lọc
-  const [filterSelected, setFilterSelected] = useState(filters[0]);
-  const toggleFilter = (filter) => {
-    setFilterSelected(filter);
-    setFilterItemSelected("Tất cả");
-    setIsOpenFilter(false);
-  };
-
-  // Lọc danh sách job theo filter đã chọn
-
-  // Chọn 1 giá trị của bộ lọc
-  const [filterItemSelected, setFilterItemSelected] = useState("Tất cả");
-  const [isLoading, setIsLoading] = useState(false);
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const toggleFilterItem = (item) => {
-    setFilterItemSelected(item);
-  };
-
-  // call api search item
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setIsLoading(true);
-      try {
-        if (filterItemSelected === "Tất cả") {
-          // Gọi API lấy tất cả job
-          const jobs = await searchJobs(""); // hoặc hàm searchAllJobs()
-          setFilteredJobs(jobs);
-        } else {
-          // console.log("item: ", [filterItemSelected]);
-          const jobs = await searchJobs({
-            keyword: "",
-            industries: "",
-            locations: [filterItemSelected],
-          });
-          // console.log("jobs", jobs);
-          setFilteredJobs(jobs);
-        }
-      } catch (error) {
-        toast.error("Lỗi khi tìm kiếm việc làm");
-        console.error("Lỗi khi tìm kiếm việc làm:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, [filterItemSelected]);
-
-  // Dùng useEffect để lọc danh sách job khi filterItemSelected thay đổi
-  // useEffect(() => {
-  //   dispatch(filterJob({ key: filterSelected.key, value: filterItemSelected }));
-  // }, [filterItemSelected, dispatch, filterSelected.key]);
-
-  // Nếu value của bộ lọc quá nhiều thì cho phép cuộn sang trái phải
+  // Nếu options của filter quá nhiều thì cho phép cuộn sang trái phải
   const listFilterRef = useRef(null);
 
   const scrollLeft = () => {
@@ -122,38 +137,6 @@ const BestJob = () => {
   const scrollRight = () => {
     if (listFilterRef.current) {
       listFilterRef.current.scrollLeft += 100;
-    }
-  };
-
-  // format lại cho đẹp để hiển thị danh sách filter item
-  const formatedFilterItems = () => {
-    if (filterSelected.key === "Mức lương") {
-      return convertSalaryDisplay(filterSelected.list);
-    } else if (filterSelected.key === "Kinh nghiệm") {
-      return convertExperienceDisplay(filterSelected.list);
-    } else {
-      return filterSelected.list;
-    }
-  };
-
-  // Lấy danh sách job phân trang
-  const indexOfLastJob = currentPage * jobsPerPage;
-  const indexOfFirstJob = indexOfLastJob - jobsPerPage;
-  const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  // Phân trang
-  const maxPageCount = Math.ceil(filteredJobs.length / jobsPerPage);
-
-  const increasePagination = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  };
-
-  const decreasePagination = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -173,7 +156,7 @@ const BestJob = () => {
 
         {/* start: filter */}
         <div className="pt-6 flex justify-between ">
-          <div className="relative" ref={ref}>
+          <div className="relative min-w-[200px]" ref={ref}>
             {/* label filter selector */}
             <div
               className="flex justify-between items-center 
@@ -185,12 +168,9 @@ const BestJob = () => {
                 className="pe-4 text-slate-400"
               />
               <span className="text-slate-400 pe-4">Lọc theo:</span>
-              <div
-                className="flex justify-between items-center"
-                style={{ width: "170px" }}
-              >
+              <div className="flex justify-between items-center">
                 <span className="text-base pe-12 text-slate-600">
-                  {filterSelected.key}
+                  {filterSelected.name}
                 </span>
                 <FontAwesomeIcon
                   icon={faAngleDown}
@@ -202,19 +182,19 @@ const BestJob = () => {
 
             {/* menu filter selector */}
             {isOpenFilter && (
-              <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 w-2/3 py-2 mt-0.5">
-                {filters.slice(0, 4).map((filter) => (
+              <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 py-2 mt-0.5">
+                {filtersJob.map((filter) => (
                   <div
-                    key={filter.key}
+                    key={filter.id}
                     className="px-2 py-2 cursor-pointer hover:bg-slate-300"
                     onClick={() => toggleFilter(filter)}
                   >
                     <span
                       className={
-                        filterSelected.key == filter.key ? "text-primary" : ""
+                        filterSelected.id == filter.id ? "text-primary" : ""
                       }
                     >
-                      {filter.key}
+                      {filter.name}
                     </span>
                   </div>
                 ))}
@@ -223,7 +203,7 @@ const BestJob = () => {
             {/* end: menu selector */}
           </div>
 
-          {/* filter item list */}
+          {/* start: filter options list */}
           <div className="flex justify-between items-center">
             <FontAwesomeIcon
               icon={faAngleLeft}
@@ -240,17 +220,17 @@ const BestJob = () => {
               }}
               ref={listFilterRef}
             >
-              {formatedFilterItems().map((v, index) => (
+              {filterSelected.options.map((filterOption) => (
                 <div
-                  key={index}
+                  key={filterOption.id}
                   className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${
-                    filterItemSelected === v
+                    filterItemSelected.id === filterOption.id
                       ? "bg-primary text-white"
                       : "bg-slate-200"
                   }`}
-                  onClick={() => toggleFilterItem(v)}
+                  onClick={() => toggleFilterOption(filterOption)}
                 >
-                  <span className="text-sm">{v}</span>
+                  <span className="text-sm">{filterOption.name}</span>
                 </div>
               ))}
             </div>
@@ -261,11 +241,11 @@ const BestJob = () => {
               onClick={scrollRight}
             />
           </div>
-          {/* end: list filter */}
+          {/* end: filter options list */}
         </div>
         {/* end: filter */}
 
-        {/* start: ============= danh sách công việc ================ */}
+        {/* start: jobs list */}
         <div
           className={
             currentJobs.length > 0
@@ -273,50 +253,28 @@ const BestJob = () => {
               : ""
           }
         >
-          {isLoading ? (
-            <p className="text-center block text-2xl text-slate-400 py-6">
-              Đang tải...
-            </p>
-          ) : currentJobs.length !== 0 ? (
-            currentJobs.map((job) => <JobItem key={job.jobId} job={job} />)
+          {!loading ? (
+            currentJobs.map((job, index) => (
+              <JobItemVertical key={job.jobId || index} job={job} />
+            ))
           ) : (
             <p className="text-center block text-2xl text-slate-400 py-6">
               Không tìm thấy job nào
             </p>
           )}
         </div>
-        {/* end: ============= danh sách công việc ================ */}
+        {/* end: jobs list */}
 
-        {/* start: ============== phân trang =========== */}
-        <div
-          className="flex justify-between items-center pt-6 mx-auto"
-          style={{ width: "200px" }}
-        >
-          <FontAwesomeIcon
-            icon={faAngleLeft}
-            className={
-              currentPage > 1
-                ? "me-4 btn-circle text-xl cursor-pointer"
-                : "me-4 btn-circle text-xl opacity-50 cursor-not-allowed"
-            }
-            onClick={decreasePagination}
-          />
-          <p>
-            <span className="text-primary">{currentPage}</span> /{" "}
-            <span className="text-slate-500">{maxPageCount} trang</span>
-          </p>
-          <FontAwesomeIcon
-            icon={faAngleRight}
-            className={
-              currentPage < maxPageCount
-                ? "btn-circle text-xl cursor-pointer"
-                : "btn-circle text-xl opacity-50 cursor-not-allowed"
-            }
-            onClick={increasePagination}
+        {/* start: phân trang */}
+        <div className="flex justify-center items-center pt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
           />
         </div>
+        {/* end: phân trang */}
       </div>
-      {/* end: ============== phân trang =========== */}
     </div>
   );
 };

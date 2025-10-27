@@ -8,7 +8,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 // proptypes
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 import PropTyes from "prop-types";
-import { unSaveJob } from "../../services/saveJob";
+import savedJobApi from "../../api/savedJobApi";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { removeSavedJob } from "../../redux/slices/savedJobSlice";
@@ -18,7 +18,7 @@ const ButtonUnsaved = ({ job }) => {
   const handleUnSaveJob = async () => {
     // Call API to unsave job
     try {
-      await unSaveJob(job.jobId);
+      await savedJobApi.unsave(job.jobId);
       dispatch(removeSavedJob(job.jobId));
       toast.success("Bỏ lưu job thành công", { autoClose: 1000 });
     } catch (error) {

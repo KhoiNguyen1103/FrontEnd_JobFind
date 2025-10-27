@@ -1,5 +1,3 @@
-// https://www.topcv.vn/?ref=you
-// import components
 import BestJob from "./BestJob";
 import BestCategory from "./BestCategory";
 

@@ -8,7 +8,6 @@ export const fetchReviewsByCompanyId = createAsyncThunk(
   async (companyId, { rejectWithValue }) => {
     try {
       const response = await companyReviewApi.getReviewsByCompanyId(companyId);
-      console.log("response", response);
       return response;
     } catch (error) {
       toast.error("Lỗi khi tải đánh giá công ty");

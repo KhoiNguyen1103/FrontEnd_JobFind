@@ -12,9 +12,9 @@ import { likeJob } from "../../redux/slices/jobSlice";
 import { toast } from "react-toastify";
 
 // service
-import { saveJob, unSaveJob } from "../../services/saveJob";
 import { removeSavedJob } from "../../redux/slices/savedJobSlice";
 import savedJobSeekerApi from "../../api/savedJobSeekerApi";
+import savedJobApi from "../../api/savedJobApi";
 
 const ButtonSave = ({ job }) => {
   // console.log("Job: ", job);
@@ -43,7 +43,7 @@ const ButtonSave = ({ job }) => {
       if (isHeart) {
         try {
           // Call unsaveJob API với jobId và jobSeekerId
-          await unSaveJob(job.jobId);
+          await savedJobApi.unsave(job.jobId);
           dispatch(removeSavedJob(job.jobId)); // Dispatch redux action nếu cần
           toast.success("Đã bỏ lưu công việc thành công!", { autoClose: 500 });
         } catch (error) {
@@ -56,7 +56,7 @@ const ButtonSave = ({ job }) => {
       }
       try {
         // Call saveJob API với jobId và jobSeekerId
-        const response = await saveJob(job.jobId);
+        const response = await savedJobApi.save(job.jobId);
 
         if (response) {
           setIsHeart(!isHeart);

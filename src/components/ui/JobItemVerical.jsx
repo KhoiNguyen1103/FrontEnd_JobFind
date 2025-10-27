@@ -1,21 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import createSlug from "../../untils/createSlug";
 import { useDispatch } from "react-redux";
 import { setSelectedJob } from "../../redux/slices/jobSlice";
-import jobPropType from "../../untils/propTypes/jobPropTypes"; // propTypes
-
-// component
+import jobPropTypes from "../../untils/propTypes/jobPropTypes";
+import createSlug from "../../untils/createSlug";
 import ButtonSave from "../button/ButtonSave";
 import ButtonApply from "../button/ButtonApply";
+import formatData from "../../untils/formatData";
 
-const JobItem = ({ job }) => {
+const JobItemVertical = ({ job }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // navigate to job detail
   const navigateToJobDetail = () => {
     dispatch(setSelectedJob(job));
-    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    navigate(`/job-detail/${createSlug(job.title)}?id=${job.jobId}`);
   };
 
   return (
@@ -27,12 +26,12 @@ const JobItem = ({ job }) => {
           className="border border-slate-300 rounded-lg p-1"
           style={{ width: "62px", height: "62px" }}
         >
-          <img src={job.image} alt="logo" />
+          <img src={job.company.logoPath} alt="logo" />
         </div>
         {/* thông tin công ty */}
         <div className="ps-4">
           <p className="font-bold pb-2">{job.title}</p>
-          <p className="font-light text-sm">{job.company}</p>
+          <p className="font-light text-sm">{job.company.companyName}</p>
         </div>
       </div>
 
@@ -40,30 +39,29 @@ const JobItem = ({ job }) => {
       <div className="flex justify-between items-center pt-2 text-sm whitespace-nowrap">
         <div className="flex flex-wrap items-center gap-2">
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.salary_min + " - " + job.salary_max + " triệu"}
+            {formatData.formatSalary(job.salaryMin) +
+              " - " +
+              formatData.formatSalary(job.salaryMax)}
           </p>
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.location}
+            {job.location || "Hồ Chí Minh"}
           </p>
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.experience} năm kinh nghiệm
-          </p>
-          <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.position}
+            {job.yearOfExperience || 5} năm kinh nghiệm
           </p>
         </div>
       </div>
 
       <div className="pt-4 flex justify-between items-center mt-auto">
-        <ButtonApply isApply={false} />
-        {/* Button Trái tim - lưu job */}
+        <ButtonApply jobId={job.jobId} />
         <ButtonSave job={job} />
       </div>
     </div>
   );
 };
-// JobItem.propTypes = {
-//   job: jobPropType,
-// };
 
-export default JobItem;
+JobItemVertical.propTypes = {
+  job: jobPropTypes.isRequired,
+};
+
+export default JobItemVertical;

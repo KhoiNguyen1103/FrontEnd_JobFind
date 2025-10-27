@@ -44,6 +44,6 @@ const locationSlice = createSlice({
 export const { searchLocation, saveCitySelected, clearCitysSelected } =
   locationSlice.actions;
 
-export const selectSearchLocations = (state) => state.locations.searchResults;
+export const selectSearchLocations = (state) => state.location.searchResults;
 
 export default locationSlice.reducer;

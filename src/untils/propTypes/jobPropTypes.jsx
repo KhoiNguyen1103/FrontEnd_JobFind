@@ -1,18 +1,19 @@
 import PropTypes from "prop-types";
 
 const jobPropTypes = PropTypes.shape({
-  jobId: PropTypes.number,
+  jobId: PropTypes.number.isRequired,
   company: PropTypes.shape({
-    companyId: PropTypes.number,
-    companyName: PropTypes.string,
-    logoPath: PropTypes.string,
+    companyId: PropTypes.number.isRequired,
+    companyName: PropTypes.string.isRequired,
+    logoPath: PropTypes.string.isRequired,
     industry: PropTypes.arrayOf(PropTypes.object),
-    website: PropTypes.string,
-    description: PropTypes.string,
-    email: PropTypes.string,
-    phone: PropTypes.string,
+    website: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phoneNumber: PropTypes.string.isRequired,
   }),
   title: PropTypes.string,
+  jobName: PropTypes.string,
   description: PropTypes.string,
   requirements: PropTypes.string,
   benefits: PropTypes.string,

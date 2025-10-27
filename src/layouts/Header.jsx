@@ -20,9 +20,13 @@ import conversationApi from "../api/conversationApi";
 import { setTotalUnreadCount } from "../redux/slices/chatBoxSlice";
 
 const Header = () => {
-  const location = useLocation();
-  const totalUnreadCount = useSelector((state) => state.chatBox.totalUnreadCount);
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  // Lấy data từ redux
+  const totalUnreadCount = useSelector(
+    (state) => state.chatBox.totalUnreadCount
+  );
   let user = useSelector((state) => state.auth.user);
 
   if (!user || user === null) {
@@ -34,11 +38,13 @@ const Header = () => {
   useEffect(() => {
     setIsLogin(!!user); // Cập nhật trạng thái khi user hoặc token thay đổi
     if (user?.id) {
-      conversationApi.countUnreadConversations(user.id)
-      .then((response) => {
-        dispatch(setTotalUnreadCount(response));
-      })
-      .catch((error) => console.error("Error fetching unread count:", error));
+      conversationApi
+        .countUnreadConversations(user.id)
+        .then((response) => {
+          // console.log("Total unread count:", response);
+          dispatch(setTotalUnreadCount(response.data));
+        })
+        .catch((error) => console.error("Error fetching unread count:", error));
     }
   }, [user, dispatch]);
 
@@ -192,12 +198,15 @@ const Header = () => {
               className="btn-header p-2 hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={openModelMessage}
             >
-              <FontAwesomeIcon icon={faMessage} className="text-xl text-primary" />
+              <FontAwesomeIcon
+                icon={faMessage}
+                className="text-xl text-primary"
+              />
             </div>
             {totalUnreadCount > 0 && (
               <div
                 className="absolute top-0 right-3 bg-red-600 rounded-full flex items-center justify-center text-white text-xs"
-                style={{ width: '18px', height: '18px' }}
+                style={{ width: "18px", height: "18px" }}
               >
                 {totalUnreadCount}
               </div>

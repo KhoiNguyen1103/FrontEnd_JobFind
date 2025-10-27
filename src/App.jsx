@@ -19,20 +19,24 @@ import PrivateRoute from "./components/PrivateRoute";
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
 import SearchBar from "./layouts/SearchBar";
-import { ToastContainer } from "react-toastify";
 import RoleBasedRedirect from "./components/RoleBaseRedirect";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCategories } from "./redux/slices/categorySlice";
 import { fetchSavedJobs } from "./redux/slices/savedJobSlice";
 import { fetchJobSeekerProfileByUserId } from "./redux/slices/JSKerProfileSlice";
+import {
+  fetchJobsPropposeByJSKId,
+  fetchAllJobs,
+} from "./redux/slices/jobSlice";
 import { fetchApplicationByJSK } from "./redux/slices/applySlice";
 import ChatBox from "./components/ui/ChatBox";
 
 function App() {
   const dispatch = useDispatch();
-  const chatBoxes = useSelector(state => state.chatBox.chatBoxes);
-  // Lấy user từ redux
+  // Lấy data từ redux
+  const chatBoxes = useSelector((state) => state.chatBox.chatBoxes);
   const user = useSelector((state) => state.auth.user);
 
   // ====================== Load các dữ liệu cần thiết vào redux
@@ -45,11 +49,16 @@ function App() {
       if (user.role === "JOBSEEKER") {
         // Load savedJobs
         dispatch(fetchSavedJobs(user.userId));
-        // console.log("user.userId", user.userId);
+        // Load job seeker profile
         dispatch(fetchJobSeekerProfileByUserId(user.id));
         // Load application
         dispatch(fetchApplicationByJSK(user.id));
+        // Load jobs proposed
+        dispatch(fetchJobsPropposeByJSKId(user.id));
       }
+    } else {
+      // Nếu chưa đăng nhập thì load tất cả jobs lên
+      dispatch(fetchAllJobs());
     }
   }, [dispatch, user]);
 
@@ -84,7 +93,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-      // style={{ backgroundColor: "#e7eee7" }}
+        // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}

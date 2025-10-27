@@ -5,6 +5,7 @@ import {
   faChevronLeft,
   faList,
   faLocationDot,
+  faRotate,
   faStar,
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
@@ -20,34 +21,35 @@ import jobApi from "../../api/jobApi";
 import ReviewCompanyItem from "../../components/ui/ReviewCompanyItem";
 import { sortReviews } from "../../redux/slices/companyReviewSlice";
 import { fetchReviewsByCompanyId } from "../../redux/slices/companyReviewSlice";
+import { filterJob, fetchJobsByCompanyId } from "../../redux/slices/jobSlice";
 
 const filters = [
   {
-    id: 1,
+    id: "CATEGORY",
     icon: faList,
     name: "Nghề nghiệp",
     options: [],
   },
   {
-    id: 2,
+    id: "LOCATION",
     icon: faLocationDot,
     name: "Địa điểm",
     options: ["Tất cả địa điểm", ...citys],
   },
   {
-    id: 3,
+    id: "DATE",
     icon: faCalendar,
     name: "Ngày đăng",
     options: [
       { id: 1, name: "Tất cả ngày đăng" },
-      { id: 2, name: "Hôm nay" },
+      { id: 2, name: "Mới nhất" },
       { id: 3, name: "Tuần trước" },
       { id: 4, name: "Tháng trước" },
       { id: 5, name: "3 tháng qua" },
     ],
   },
   {
-    id: 4,
+    id: "WORK_TYPE",
     icon: faList,
     name: "Hình thức",
     options: [
@@ -65,10 +67,9 @@ const CompanyDetail = () => {
   const companyId = queryParams.get("id");
 
   // state
-  const [activeTab, setActiveTab] = useState("reviews");
+  const [rotating, setRotating] = useState(false);
+  const [activeTab, setActiveTab] = useState("jobs"); // jobs - reviews
   const [company, setCompany] = useState(null);
-  const [jobs, setJobs] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
   const [isReviewDropdownOpen, setIsReviewDropdownOpen] = useState(false);
@@ -77,10 +78,12 @@ const CompanyDetail = () => {
   // selector from redux
   const categoriesRedux = useSelector((state) => state.category.categories);
   const reviewsRedux = useSelector((state) => state.companyReview.reviews);
+  const jobsByCompanyId = useSelector((state) => state.jobs.jobsByCompanyId);
+  const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
+  // console.log("filterJobsRedux", filterJobsRedux);
   useEffect(() => {
     // console.log("categoriesRedux", categoriesRedux);
     if (categoriesRedux && categoriesRedux.length > 0) {
-      setCategories(categoriesRedux);
       filters[0].options = categoriesRedux;
     }
   }, [categoriesRedux]);
@@ -108,15 +111,9 @@ const CompanyDetail = () => {
     };
 
     // Lấy danh sách job của công ty
-    const fetchJobsByCompanyId = async () => {
-      try {
-        const response = await jobApi.getByCompanyId(companyId, companyId);
-        // console.log("response", response);
-        setJobs(response);
-      } catch (error) {
-        console.log("Lỗi khi lấy danh sách công việc:", error);
-      }
-    };
+    if (companyId) {
+      dispatch(fetchJobsByCompanyId(companyId));
+    }
 
     // Lấy danh sách review của công ty
     const fetchReviews = async () => {
@@ -130,7 +127,6 @@ const CompanyDetail = () => {
     };
 
     fetchCompanyData();
-    fetchJobsByCompanyId();
     fetchReviews();
   }, [companyId, dispatch]);
 
@@ -138,6 +134,7 @@ const CompanyDetail = () => {
   const handleSelectFilterOption = (filterId, option) => {
     setSelectedFilters((prev) => ({ ...prev, [filterId]: option }));
     setOpenDropdownId(null);
+    dispatch(filterJob(selectedFilters));
   };
 
   const handleSelectReviewOption = (option) => {
@@ -146,12 +143,23 @@ const CompanyDetail = () => {
     dispatch(sortReviews(selectedReviewFilter));
   };
 
+  const handleResetFiltersJobs = () => {
+    setRotating(true);
+    setSelectedFilters({});
+    setOpenDropdownId(null);
+    setTimeout(() => setRotating(false), 600);
+    dispatch(filterJob({}));
+  };
+
   // Tính toán phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 4;
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const totalPages = Math.ceil(jobsByCompanyId.length / jobsPerPage);
   const startIndex = (currentPage - 1) * jobsPerPage;
-  const currentJobs = jobs.slice(startIndex, startIndex + jobsPerPage);
+  const currentJobs = jobsByCompanyId.slice(
+    startIndex,
+    startIndex + jobsPerPage
+  );
 
   return (
     <div className="container mx-auto py-4">
@@ -183,7 +191,7 @@ const CompanyDetail = () => {
               onClick={() => setActiveTab("jobs")}
             >
               {/* Jobs ({company.jobCount}) */}
-              Công việc ( {jobs.length || 0} công việc)
+              Công việc ( {jobsByCompanyId.length || 0} công việc)
             </button>
             <button
               className={`px-4 py-4 text-sm font-medium ${
@@ -253,7 +261,7 @@ const CompanyDetail = () => {
           <div className="bg-white/70 rounded-xl shadow-md p-8">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 pb-6">
-                {jobs?.length + " việc làm hiện có"}
+                {jobsByCompanyId?.length + " việc làm hiện có"}
               </h2>
 
               {/* Filters */}
@@ -292,13 +300,27 @@ const CompanyDetail = () => {
                     )}
                   </div>
                 ))}
+
+                {/* button reset filter */}
+                <button
+                  className="px-4 py-2 bg-green-500 text-white border border-gray-200 rounded-lg text-sm flex items-center cursor-pointer !rounded-button whitespace-nowrap                "
+                  onClick={handleResetFiltersJobs}
+                >
+                  <FontAwesomeIcon
+                    icon={faRotate}
+                    className={`transition-transform duration-500 ${
+                      rotating ? "rotate-[180deg]" : ""
+                    }`}
+                  />
+                  <span className="px-2">Đặt lại bộ lọc</span>
+                </button>
               </div>
               {/* End: filters */}
             </div>
 
             {/* jobs list + pagination */}
             <div className="space-y-4">
-              {jobs ? (
+              {jobsByCompanyId ? (
                 currentJobs.slice(0, 4).map((job, index) => (
                   <div
                     key={index}

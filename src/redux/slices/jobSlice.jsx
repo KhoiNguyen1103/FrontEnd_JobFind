@@ -1,11 +1,56 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import jobApi from "../../api/jobApi";
 import jobs from "../../data/jobs";
+
+// Thunk
+export const fetchJobsByCompanyId = createAsyncThunk(
+  "jobs/fetchJobsByCompanyId",
+  async (companyId, thunkAPI) => {
+    try {
+      const response = await jobApi.getByCompanyId(companyId, companyId);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Lỗi không xác định"
+      );
+    }
+  }
+);
+
+export const fetchJobsPropposeByJSKId = createAsyncThunk(
+  "jobs/fetchJobsProposeByJSKId",
+  async (jskId, thunkAPI) => {
+    try {
+      const response = await jobApi.getPropposeJobs(jskId);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Lỗi không xác định"
+      );
+    }
+  }
+);
+
+export const fetchAllJobs = createAsyncThunk(
+  "jobs/fetchAllJobs",
+  async (thunkAPI) => {
+    try {
+      const response = await jobApi.search();
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Lỗi không xác định"
+      );
+    }
+  }
+);
 
 const JOBS_PER_PAGE = 6;
 
 const initState = {
   jobs: jobs,
+  jobsPropose: [],
+  jobsByCompanyId: [], // Lưu job của công ty đang xem trong trang company detail
   filterJobs: [],
   renderJobs: [],
   selectedJob: null,
@@ -15,6 +60,8 @@ const initState = {
     salary: "", // Ví dụ: "10000000"
     workType: "Tất cả", // "Toàn thời gian", "Bán thời gian", "Tất cả"
   },
+  loading: true,
+  error: null,
 };
 
 const jobSlice = createSlice({
@@ -24,13 +71,6 @@ const jobSlice = createSlice({
     setSelectedJob: (state, action) => {
       // lưu job được chọn
       state.selectedJob = action.payload;
-
-      // lọc ra các job liên quan
-      // state.relatedJobs = state.jobs.filter(
-      //   (job) =>
-      //     job.category === action.payload.category &&
-      //     job.id !== action.payload.id
-      // );
     },
     setFilterJob: (state, action) => {
       // lưu job được chọn
@@ -108,6 +148,87 @@ const jobSlice = createSlice({
       );
       // console.log(state.filterJobs);
     },
+    filterJob: (state, action) => {
+      const { CATEGORY, WORK_TYPE, DATE, LOCATION, SALARY, EXPERIENCE } =
+        action.payload;
+
+      const now = new Date();
+      state.filterJobs = state.jobsByCompanyId.filter((job) => {
+        const matchCategory = CATEGORY ? job.category === CATEGORY : true;
+        const matchWorkType = WORK_TYPE ? job.workType === WORK_TYPE : true;
+        const matchLocation = LOCATION ? job.location === LOCATION : true;
+        const matchExperience = EXPERIENCE
+          ? job.experience === EXPERIENCE
+          : true;
+        // const matchSalary = SALARY
+        //   ? job.salary >= SALARY.min && job.salary <= SALARY.max
+        //   : true;
+
+        // const matchDate = DATE
+        //   ? (() => {
+        //       const jobDate = new Date(job.postedDate);
+        //       const diffDays = Math.floor(
+        //         (now - jobDate) / (1000 * 60 * 60 * 24)
+        //       );
+        //       return diffDays <= DATE;
+        //     })()
+        //   : true;
+
+        return (
+          matchCategory && matchWorkType && matchLocation && matchExperience
+          // matchSalary &&
+          // matchDate
+        );
+      });
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // ----- fetchJobsByCompanyId -----
+      .addCase(fetchJobsByCompanyId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchJobsByCompanyId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobsByCompanyId = action.payload;
+        state.filterJobs = action.payload;
+      })
+      .addCase(fetchJobsByCompanyId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ----- fetchJobsPropposeByJSKId -----
+      .addCase(fetchJobsPropposeByJSKId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchJobsPropposeByJSKId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = action.payload;
+        state.filterJobs = action.payload;
+      })
+      .addCase(fetchJobsPropposeByJSKId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ----- fetchAllJobs -----
+      .addCase(fetchAllJobs.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(fetchAllJobs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = action.payload;
+        state.filterJobs = action.payload;
+      })
+
+      .addCase(fetchAllJobs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
