@@ -7,6 +7,8 @@ import { setConversationId, minimizeChatBox, maximizeChatBox, closeChatBox, setT
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faTimes, faExpand, faPaperclip, faPaperPlane, faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+import WebSocketService from '../../services/WebSocketService';
+import { TOPICS } from '../../data/topics';
 
 const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, index }) => {
     const [messages, setMessages] = useState([]);
@@ -24,7 +26,8 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
     const navigate = useNavigate();
     const hasMarkedAsRead = useRef(false);
     const hasMinimizedOnce = useRef(false);
-
+    const wsService = WebSocketService.getInstance();
+    
     useEffect(() => {
         if (!user?.id) {
             console.error('User ID is missing');
@@ -37,6 +40,25 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
             return;
         }
 
+        if (!wsService.isConnected()) {
+            wsService.connect(user.id, [conversationId]);
+        } else {
+            wsService.subscribeToConversation(conversationId);
+        }
+
+        const conversationTopic = TOPICS.CONVERSATION(conversationId.toString());
+        const handleNewMessage = (data) => {
+            setMessages((prevMessages) => [...prevMessages, data]);
+        };
+
+        const metaTopic = TOPICS.CONVERSATION_DATA(conversationId.toString());
+        const handleMetaUpdate = (data) => {
+            setConversationInfo(data);
+            setInitialUnreadCount(data.unreadCount || 0);
+        };
+        wsService.subscribe(metaTopic, handleMetaUpdate);
+        wsService.subscribe(conversationTopic, handleNewMessage);
+
         const fetchConversationData = async () => {
             try {
                 setLoading(true);
@@ -47,10 +69,10 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
                 const messagesResponse = await conversationApi.getMessagesByConversationId(conversationId);
                 setMessages(messagesResponse || []);
 
-                await conversationApi.markMessagesAsRead(conversationId, user.id);
-                setConversationInfo(prev => ({ ...prev, unreadCount: 0 }));
-                const totalUnread = await conversationApi.countUnreadConversations(user.id);
-                dispatch(setTotalUnreadCount(totalUnread));
+                wsService.sendMessage('/app/messages/read', {
+                    conversationId,
+                    userId: user.id,
+                });
             } catch (error) {
                 console.error('Error fetching conversation data:', error);
             } finally {
@@ -59,6 +81,10 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
         };
 
         fetchConversationData();
+        return () => {
+            wsService.unsubscribe(conversationTopic, handleNewMessage);
+            wsService.unsubscribe(metaTopic, handleMetaUpdate);
+        };
     }, [conversationId, user?.id]);
 
     useEffect(() => {
@@ -80,10 +106,10 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
             let currentConversationId = conversationId;
 
             if (!currentConversationId) {
-                if (user.role === "COMPANY") {
+                if (user.role === 'COMPANY') {
                     const conversationResponse = await conversationApi.createConversation(userId, user.id);
-
                     currentConversationId = conversationResponse.conversationId;
+                    console.log(`✅ Tạo conversation mới: conversationId ${currentConversationId}`);
                     dispatch(setConversationId({ profileId, conversationId: currentConversationId }));
 
                     const convResponse = await conversationApi.getConversationById(
@@ -91,12 +117,15 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
                         user.id
                     );
                     setConversationInfo(convResponse || {});
-                    const messagesResponse = await conversationApi.getMessagesByConversationId(
-                        currentConversationId
-                    );
-                    setMessages(messagesResponse || []);
+                    wsService.subscribeToConversation(currentConversationId);
+                } else {
+                    throw new Error('Không thể tạo conversation: Vai trò người dùng không hợp lệ');
                 }
             }
+
+            let destination;
+            let payload;
+            let fileData = null;
 
             if (selectedFile) {
                 const fileRequest = {
@@ -112,26 +141,36 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
                         'Content-Type': selectedFile.type,
                     },
                 });
-                if (!uploadResponse.ok) throw new Error('Failed to upload file to S3');
 
-                const fileData = {
-                    conversationId: currentConversationId,
-                    senderId: user.id,
-                    content: newMessage || null,
+                fileData = {
                     fileName: selectedFile.name,
                     fileType: selectedFile.type,
                     filePath: url.split('?')[0],
                 };
-                const response = await conversationApi.sendFileMessage(fileData);
-                setMessages([...messages, response]);
-            } else if (newMessage.trim()) {
-                const data = {
+            }
+
+            if (selectedFile) {
+                destination = '/app/message/file';
+                payload = {
                     conversationId: currentConversationId,
                     senderId: user.id,
-                    content: newMessage,
+                    content: newMessage.trim() || null,
+                    fileName: fileData.fileName,
+                    fileType: fileData.fileType,
+                    filePath: fileData.filePath,
                 };
-                const response = await conversationApi.sendTextMessage(data);
-                setMessages([...messages, response]);
+            } else {
+                destination = '/app/message/text';
+                payload = {
+                    conversationId: currentConversationId,
+                    senderId: user.id,
+                    content: newMessage.trim(),
+                };
+            }
+
+            const sent = wsService.sendMessage(destination, payload);
+            if (!sent) {
+                throw new Error(`Gửi tin nhắn qua WebSocket tới ${destination} thất bại`);
             }
 
             setNewMessage('');
@@ -144,18 +183,15 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
         }
     };
 
-    const handleMarkAsRead = async () => {
+    const handleMarkAsRead = () => {
         if (!hasMarkedAsRead.current && conversationId && initialUnreadCount > 0) {
-            try {
-                await conversationApi.markMessagesAsRead(conversationId, user.id);
-                hasMarkedAsRead.current = true;
-                setConversationInfo(prev => ({ ...prev, unreadCount: 0 }));
-                setInitialUnreadCount(0);
-                const totalUnread = await conversationApi.countUnreadConversations(user.id);
-                dispatch(setTotalUnreadCount(totalUnread));
-            } catch (error) {
-                console.error('Error marking messages as read:', error);
-            }
+            const wsService = WebSocketService.getInstance();
+            wsService.sendMessage('/app/messages/read', {
+                conversationId,
+                userId: user.id,
+            });
+            hasMarkedAsRead.current = true;
+            setInitialUnreadCount(0);
         }
     };
 
@@ -177,7 +213,6 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
     const handleMinimize = () => {
         if (!hasMinimizedOnce.current) {
             hasMinimizedOnce.current = true;
-            setInitialUnreadCount(0);
             setConversationInfo(prev => ({ ...prev, unreadCount: 0 }));
         }
         dispatch(minimizeChatBox({ profileId, conversationId }));
@@ -407,41 +442,43 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
                                 className="flex-1 resize-none p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300 max-h-[6rem] overflow-y-auto"
                                 disabled={uploading}
                             />
-                            <button
-                                type="submit"
-                                className={`text-green-600 hover:text-green-700 ${uploading || (!newMessage.trim() && !selectedFile)
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : ''
-                                    }`}
-                                disabled={uploading || (!newMessage.trim() && !selectedFile)}
-                            >
-                                <FontAwesomeIcon icon={faPaperPlane} size="lg" />
-                            </button>
-                        </div>
-                        {uploading && (
                             <div className="flex justify-end">
-                                <svg
-                                    className="animate-spin h-5 w-5 text-green-600"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                    ></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8 8 8 0 01-8-8z"
-                                    ></path>
-                                </svg>
+                                {uploading ? (
+                                    <svg
+                                        className="animate-spin h-5 w-5 text-green-600"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8 8 8 0 01-8-8z"
+                                        ></path>
+                                    </svg>
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        className={`text-green-600 hover:text-green-700 ${(!newMessage.trim() && !selectedFile)
+                                            ? 'opacity-50 cursor-not-allowed'
+                                            : ''
+                                            }`}
+                                        disabled={!newMessage.trim() && !selectedFile}
+                                    >
+                                        <FontAwesomeIcon icon={faPaperPlane} size="lg" />
+                                    </button>
+                                )}
                             </div>
-                        )}
+
+                        </div>
                         {previewImage && (
                             <div
                                 className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[2000]"

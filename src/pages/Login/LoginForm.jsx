@@ -33,7 +33,7 @@ const LoginForm = () => {
 
     try {
       const user = await authApi.login(formData);
-      // console.log("Login response:", user);
+      console.log("Login response:", user);
       toast.success("Đăng nhập thành công!", { autoClose: 2000 });
 
       // Lưu thông tin người dùng vào localStorage

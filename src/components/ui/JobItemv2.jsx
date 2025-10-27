@@ -25,7 +25,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   };
 
   return (
-    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-[200px]">
+    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4">
       <div className="cursor-pointer" onClick={navigateToJobDetail}>
         <img
           src={job.company?.logoPath || "/logo_no_bg.png"}
@@ -88,7 +88,7 @@ JobItemv2.propTypes = {
   iconHeart: PropTypes.bool,
   isApply: PropTypes.bool,
   isButtonSave: PropTypes.bool,
-  job: jobPropTypes,
+  // job: jobPropTypes,
 };
 
 export default JobItemv2;

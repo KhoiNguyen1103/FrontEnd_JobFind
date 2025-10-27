@@ -16,23 +16,22 @@ const jobApi = {
     return axiosClient.delete(url);
   },
 
-  search: (keyword, locations, jobCategoryIds) => {
+  search: (keyword, location, jobCategoryId) => {
     const url = "/job/searchJobs";
 
-    // Nếu không có tham số nào thì lấy tất cả job
-    if (!keyword && !locations && !jobCategoryIds) {
+    // Không có tham số thì lấy tất cả job
+    if (!keyword && !location && !jobCategoryId) {
       return axiosClient.get(url);
     }
 
+    // Có tham số thì truyền vào
     const params = {};
-    if (keyword) params.keyword = keyword;
-    if (locations && locations.length > 0) {
-      params.location = locations;
-    }
-    if (jobCategoryIds && jobCategoryIds.length > 0)
-      params.jobCategoryId = jobCategoryIds;
-    // console.log("params: ", params);
 
+    if (keyword && keyword.trim() !== "") params.keyword = keyword;
+    if (location) params.location = location;
+    if (jobCategoryId !== undefined && jobCategoryId !== null) {
+      params.jobCategoryId = jobCategoryId;
+    }
     return axiosClient.get(url, { params });
   },
 
@@ -50,7 +49,7 @@ const jobApi = {
     return axiosClient.get(url);
   },
 
-  getPropposeJobs: (jskId) => {
+  getProposedJobs: (jskId) => {
     const url = `/job/proposedJobs/${jskId}`;
     return axiosClient.get(url);
   },

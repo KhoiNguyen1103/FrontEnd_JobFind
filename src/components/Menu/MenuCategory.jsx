@@ -2,39 +2,43 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  toggleCategories,
+  saveCategory,
   clearSelectedCategories,
+  // fetchCategories,
 } from "../../redux/slices/categorySlice";
 
 const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
-  // load data từ redux và local storage
+
   const categories = useSelector((state) => state.category.categories);
   const selectedCategories = useSelector(
     (state) => state.category.selectedCategories
   );
 
-  // react hook
   const [searchText, setSearchText] = useState("");
-  const [searchCategories, setSearchCategories] = useState([]);
 
-  // handle search category
   const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // handle click item
   const handleClickItem = (category) => {
-    dispatch(toggleCategories(category));
+    dispatch(saveCategory(category));
   };
 
-  // handle clear selectedCategories
+  const handleSaveSelected = () => {
+    localStorage.setItem(
+      "selectedCategories",
+      JSON.stringify(selectedCategories)
+    );
+    setIsOpen(false);
+  };
+
   const handleClear = () => {
     dispatch(clearSelectedCategories());
   };
 
   return (
-    <div className="min-w-[300px]">
+    <div className="">
       <input
         type="text"
         value={searchText}
@@ -68,12 +72,18 @@ const MenuCategory = ({ setIsOpen }) => {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 grid grid-cols-2 gap-4">
         <p
           className="text-slate-300 cursor-pointer flex items-center"
           onClick={handleClear}
         >
           Bỏ chọn tất cả
+        </p>
+        <p
+          className="bg-primary rounded-full text-white active:opacity-80 px-4 py-2 text-center cursor-pointer"
+          onClick={handleSaveSelected}
+        >
+          Áp dụng
         </p>
       </div>
     </div>

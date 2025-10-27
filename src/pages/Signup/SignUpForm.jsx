@@ -9,6 +9,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
+import registerUser from "../../services/registerService";
 import authApi from "../../api/authApi";
 import logo from "../../assets/logo.png";
 import axiosClient from "../../api/axiosClient";
@@ -37,6 +38,37 @@ const SignUpForm = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   let newErrors = {};
+  //   if (!validateEmail(formData.email)) newErrors.email = "Email không hợp lệ";
+  //   if (!validatePhone(formData.phone))
+  //     newErrors.phone = "Số điện thoại phải có 10 chữ số";
+  //   if (formData.password !== formData.confirmPassword)
+  //     newErrors.confirmPassword = "Mật khẩu và xác nhận không khớp";
+
+  //   setErrors(newErrors);
+  //   if (Object.keys(newErrors).length > 0) return;
+
+  //   const payload = {
+  //     ...formData,
+  //     role: "JOBSEEKER",
+  //   };
+  //   delete payload.confirmPassword;
+  //   console.log("payload", payload);
+
+  //   // const response = await registerUser(payload);
+  //   const response = await authApi.register(payload);
+  //   if (!response.success) {
+  //     alert(`Đăng ký thất bại: ${response}`);
+  //     return;
+  //   }
+
+  //   alert("Đăng ký thành công!");
+  //   navigate("/login", { replace: true });
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -64,7 +96,6 @@ const SignUpForm = () => {
       const response = await axiosClient.post("/auth/register", null, {
         params: queryParams,
       });
-      console.log("Response:", response);
 
       if (!response) {
         alert(`Đăng ký thất bại: ${JSON.stringify(response.infoMessage)}`);
@@ -74,8 +105,8 @@ const SignUpForm = () => {
       alert("Đăng ký thành công!");
       navigate("/login", { replace: true });
     } catch (error) {
-      // console.error("Lỗi gửi query:", error);
-      alert(`Đăng ký thất bại: ${error.response.data.message}`);
+      console.error("Lỗi gửi query:", error);
+      alert("Lỗi khi đăng ký!");
     }
   };
 

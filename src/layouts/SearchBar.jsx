@@ -20,26 +20,19 @@ import MenuCategory from "../components/Menu/MenuCategory";
 // redux
 import { useSelector, useDispatch } from "react-redux";
 import { setSelectedCategories } from "../redux/slices/categorySlice";
-import { searchJobs } from "../redux/slices/searchJobSlice";
 
 const SearchBar = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // load data từ redux
   const user = useSelector((state) => state.auth.user);
   const auth_role = useSelector((state) => state.auth.user)?.role;
-  const citysSelected = useSelector((state) => state.location.citySelected);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState("");
+
+  // Lấy dữ liệu từ redux
+  const citysSelected = useSelector((state) => state.locations.citySelected);
   const categoriesSelected = useSelector(
     (state) => state.category.selectedCategories
   );
-
-  // state
-  const ref = useRef(null);
-  const refCategory = useRef(null);
-  const [searchText, setSearchText] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpenCategory, setIsOpenCategory] = useState(false);
 
   // Lấy dữu liệu search Text từ localstorage
   useEffect(() => {
@@ -51,7 +44,12 @@ const SearchBar = () => {
     }
   }, []);
 
+  // Mở/Tắt model chọn tỉnh thành quận huyện
+  const [isOpen, setIsOpen] = useState(false);
+
   // Đóng model chọn location khi click bên ngoài
+  const ref = useRef(null);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
@@ -65,6 +63,9 @@ const SearchBar = () => {
   }, []);
 
   // ============ Đóng/mở menu categories
+  const [isOpenCategory, setIsOpenCategory] = useState(false);
+  const refCategory = useRef(null);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (refCategory.current && !refCategory.current.contains(event.target)) {
@@ -78,7 +79,7 @@ const SearchBar = () => {
   }, []);
 
   const handleButtonSearch = () => {
-    const companyId = user ? user.userId : "";
+    const companyId = user.userId;
     const queryParams = new URLSearchParams();
 
     const hasSearchText = searchText.trim().length > 0;
@@ -90,7 +91,7 @@ const SearchBar = () => {
     }
 
     if (hasCity) {
-      if (auth_role === "JOBSEEKER" || auth_role === undefined) {
+      if (auth_role === "JOBSEEKER") {
         const cities = citysSelected.join(",");
         queryParams.append("location", cities);
       } else {
@@ -100,22 +101,24 @@ const SearchBar = () => {
       }
     }
 
-    if (hasCategory && (auth_role === "JOBSEEKER" || auth_role === undefined)) {
+    if (hasCategory && auth_role === "JOBSEEKER") {
       const categoryIds = categoriesSelected
         .map((cat) => cat.jobCategoryId)
         .join(",");
-      queryParams.append("jobCategoryId", categoryIds);
+      queryParams.append("categoryIds", categoryIds);
     }
 
-    if (auth_role !== "JOBSEEKER" && auth_role !== undefined) {
+    if (auth_role !== "JOBSEEKER") {
       queryParams.append("companyId", companyId);
     }
 
     localStorage.setItem("searchText", JSON.stringify(searchText));
 
-    if (auth_role === "JOBSEEKER" || auth_role === undefined) {
+    if (auth_role === "JOBSEEKER") {
       navigate(`/search?${queryParams.toString()}`);
+      window.location.reload();
     } else {
+      console.log("response: ", queryParams.toString());
       navigate(`/search-cv?${queryParams.toString()}`);
     }
   };

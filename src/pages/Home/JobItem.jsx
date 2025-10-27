@@ -1,20 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import createSlug from "../../untils/createSlug";
+import jobPropType from "../../untils/propTypes/jobPropTypes"; // propTypes
+import applicationApi from "../../api/applicationApi";
+import { toast } from "react-toastify";
+
+// component
+import ButtonSave from "../../components/button/ButtonSave";
+import ButtonApply from "../../components/button/ButtonApply";
 import { useDispatch } from "react-redux";
 import { setSelectedJob } from "../../redux/slices/jobSlice";
-import jobPropTypes from "../../untils/propTypes/jobPropTypes";
-import createSlug from "../../untils/createSlug";
-import ButtonSave from "../button/ButtonSave";
-import ButtonApply from "../button/ButtonApply";
-import formatData from "../../untils/formatData";
+import { use, useEffect } from "react";
 
-const JobItemVertical = ({ job }) => {
+const JobItem = ({ job }) => {
+  // console.log("JobItem - home: ", job);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // navigate to job detail
   const navigateToJobDetail = () => {
-    dispatch(setSelectedJob(job));
-    navigate(`/job-detail/${createSlug(job.title)}`, { state: job });
+    const slug = createSlug(job.title);
+    dispatch(setSelectedJob(job)); // lưu job vào redux
+    navigate(`/job-detail/${slug}?id=${job.jobId}`);
   };
 
   return (
@@ -26,7 +32,13 @@ const JobItemVertical = ({ job }) => {
           className="border border-slate-300 rounded-lg p-1"
           style={{ width: "62px", height: "62px" }}
         >
-          <img src={job.company.logoPath} alt="logo" />
+          <img
+            src={
+              job.company.logoPath ||
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6CkfRreFUwou55lvRWataKzz21cendRZmfMP1HF5dqzqYa6BjhUAxsY-wZZUDBT-Ve-U&usqp=CAU"
+            }
+            alt="logo"
+          />
         </div>
         {/* thông tin công ty */}
         <div className="ps-4">
@@ -39,16 +51,18 @@ const JobItemVertical = ({ job }) => {
       <div className="flex justify-between items-center pt-2 text-sm whitespace-nowrap">
         <div className="flex flex-wrap items-center gap-2">
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {formatData.formatSalary(job.salaryMin) +
+            {new Intl.NumberFormat("de-DE").format(job.salaryMin / 1000000) +
               " - " +
-              formatData.formatSalary(job.salaryMax)}
+              new Intl.NumberFormat("de-DE").format(job.salaryMax / 1000000) +
+              " triệu"}
           </p>
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.location || "Hồ Chí Minh"}
+            {job.location}
           </p>
-          <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.yearOfExperience || 5} năm kinh nghiệm
-          </p>
+          {/* Nếu có experience thì dùng: */}
+          {/* <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
+        {job.experience} năm kinh nghiệm
+      </p> */}
         </div>
       </div>
 
@@ -59,9 +73,8 @@ const JobItemVertical = ({ job }) => {
     </div>
   );
 };
-
-JobItemVertical.propTypes = {
-  job: jobPropTypes.isRequired,
+JobItem.propTypes = {
+  job: jobPropType.isRequired,
 };
 
-export default JobItemVertical;
+export default JobItem;

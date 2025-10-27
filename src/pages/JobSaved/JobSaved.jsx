@@ -7,9 +7,7 @@ const JobSaved = () => {
   return (
     <div className="py-8">
       <div className="container mx-auto">
-        <p className="font-bold text-2xl text-primary py-4">
-          Việc làm đã lưu ({savedJobs.length + " công việc"})
-        </p>
+        <p className="font-bold text-2xl text-primary py-4">Việc làm đã lưu</p>
         <div>
           <div className="container mx-auto">
             {savedJobs.length > 0 ? (

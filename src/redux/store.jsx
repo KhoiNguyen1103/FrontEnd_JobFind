@@ -11,10 +11,10 @@ import chatBoxReducer from "./slices/chatBoxSlice";
 import applicationReducer from "./slices/applySlice";
 import CompanyReducer from "./slices/companySlide";
 import CompanyReviewReducer from "./slices/companyReviewSlice";
-import SearchJobReducer from "./slices/searchJobSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import storage from "redux-persist/lib/storage";
+
 import {
   persistReducer,
   persistStore,
@@ -29,12 +29,12 @@ import {
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["savedJobseeker", "category", "location"],
+  whitelist: ["savedJobseeker"],
 };
 
 const rootReducer = combineReducers({
   jobs: jobReducer,
-  location: locationReducer,
+  locations: locationReducer,
   auth: authReducer,
   industry: industrySlice,
   cv: cvReducer,
@@ -46,7 +46,6 @@ const rootReducer = combineReducers({
   company: CompanyReducer,
   companyReview: CompanyReviewReducer,
   chatBox: chatBoxReducer,
-  searchJob: SearchJobReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

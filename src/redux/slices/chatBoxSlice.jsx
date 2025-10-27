@@ -4,6 +4,7 @@ const chatBoxSlice = createSlice({
     name: 'chatBox',
     initialState: {
         chatBoxes: [],
+        totalUnreadCount: 0, // Khởi tạo totalUnreadCount là số để tránh lỗi undefined
     },
     reducers: {
         openChatBox: (state, action) => {
@@ -53,7 +54,9 @@ const chatBoxSlice = createSlice({
                 .map((box, index) => ({ ...box, index }));
         },
         setTotalUnreadCount: (state, action) => {
-            state.totalUnreadCount = action.payload;
+            state.totalUnreadCount = typeof action.payload === 'number'
+                ? action.payload
+                : action.payload?.data || 0; 
         },
     },
 });

@@ -17,7 +17,7 @@ export const fetchCategories = createAsyncThunk(
 const initialState = {
   categories: [],
   selectedCategories: [],
-  loading: true,
+  loading: false,
   error: null,
 };
 
@@ -25,26 +25,25 @@ const categorySlice = createSlice({
   name: "category",
   initialState,
   reducers: {
-    setCategories: (state, action) => {
-      state.categories = action.payload;
-    },
-    setSelectedCategories: (state, action) => {
-      state.selectedCategories = action.payload;
-    },
-    toggleCategories: (state, action) => {
+    saveCategory: (state, action) => {
       const category = action.payload;
-      const exists = state.selectedCategories.some(
+      const exists = state.selectedCategories.find(
         (item) => item.jobCategoryId === category.jobCategoryId
       );
-
-      state.selectedCategories = exists
-        ? state.selectedCategories.filter(
-            (item) => item.jobCategoryId !== category.jobCategoryId
-          )
-        : [...state.selectedCategories, category];
+      if (exists) {
+        state.selectedCategories = state.selectedCategories.filter(
+          (item) => item.jobCategoryId !== category.jobCategoryId
+        );
+      } else {
+        state.selectedCategories = [...state.selectedCategories, category];
+      }
+      // localStorage.setItem("categories", JSON.stringify(action.payload));
     },
     clearSelectedCategories: (state) => {
       state.selectedCategories = [];
+    },
+    setSelectedCategories: (state, action) => {
+      state.selectedCategories = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -64,11 +63,7 @@ const categorySlice = createSlice({
   },
 });
 
-export const {
-  setCategories,
-  toggleCategories,
-  clearSelectedCategories,
-  setSelectedCategories,
-} = categorySlice.actions;
+export const { saveCategory, clearSelectedCategories, setSelectedCategories } =
+  categorySlice.actions;
 
 export default categorySlice.reducer;

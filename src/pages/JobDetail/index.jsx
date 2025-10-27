@@ -1,25 +1,35 @@
 import { Link, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-import InfoCompany from "./InfoCompany";
-import JobItemv2 from "../../components/ui/JobItemv2";
 import JobInfo from "./JobInfo";
-import jobApi from "../../api/jobApi";
+import JobDescription from "./JobDescription";
+import JobItemv2 from "../../components/ui/JobItemv2";
+import InfoCompany from "./InfoCompany";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+
+// test công việc liên quan
+// import jobs from '../../data/jobs'
+
+// call api
+import { getJobById } from "../../services/Job";
 
 const JobDetail = () => {
+  // Lấy dữ liệu từ job truyền qua navigate
+  // const location = useLocation();
+  // const job = location.state;
+
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const jobId = parseInt(queryParams.get("id"), 10);
 
   const [job, setJob] = useState(null);
-  const [relatedJobs, setRelativeJobs] = useState([]);
 
   // call api
   useEffect(() => {
     const fetchJobDetail = async () => {
       try {
-        const data = await jobApi.getById(jobId);
+        const data = await getJobById(jobId);
         setJob(data);
       } catch (error) {
         console.error("Lỗi khi lấy chi tiết job:", error);
@@ -31,26 +41,8 @@ const JobDetail = () => {
     }
   }, [jobId]);
 
-  // ========== Phần này lấy công việc liên quan nhưn gapi đang bắt phải đăng nhập mới lấy
-  // useEffect(() => {
-  //   const fetchRelatedJobs = async () => {
-  //     try {
-  //       const response = await jobApi.getByCategory(
-  //         job.categories[0].jobCategoryId
-  //       );
-  //       console.log(response);
-  //       const data = response.data.filter((item) => item.jobId !== jobId);
-  //       setRelativeJobs(data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy công việc liên quan:", error);
-  //     }
-  //   };
-
-  //   if (job && job.categories) {
-  //     console.log(job);
-  //     fetchRelatedJobs();
-  //   }
-  // }, [job, jobId]);
+  // Lấy danh sách job liên quan
+  const relatedJobs = useSelector((state) => state.jobs.relatedJobs);
 
   return (
     <div className="py-4" style={{ background: "#f5f5f5" }}>
@@ -82,6 +74,7 @@ const JobDetail = () => {
             {job ? (
               <>
                 <JobInfo job={job} />
+                <JobDescription job={job} />
 
                 {/* Công việc liên quan */}
                 <div className="bg-white p-4 mt-4">

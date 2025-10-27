@@ -21,7 +21,7 @@ export const fetchJobsPropposeByJSKId = createAsyncThunk(
   "jobs/fetchJobsProposeByJSKId",
   async (jskId, thunkAPI) => {
     try {
-      const response = await jobApi.getPropposeJobs(jskId);
+      const response = await jobApi.getProposedJobs(jskId);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(

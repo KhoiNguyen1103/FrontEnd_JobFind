@@ -5,22 +5,16 @@ import {
   faArrowRightFromBracket,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
+import ApplyModal from "../ui/ModalApply";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import ApplyModal from "../ui/ModalApply";
 
 const ButtonApply = ({ jobId, job }) => {
   // console.log("jobId: ", jobId);
-  const navigate = useNavigate();
-
-  // load data từ redux vaf localstorage
   const jobsApplied = useSelector((state) => state.application.list);
-  const user = useSelector((state) => state.auth.user);
-
-  // state
   const [showModal, setShowModal] = useState(false);
   const [applicationList, setApplicationList] = useState([]);
+  const navigate = useNavigate();
 
   const isApply = jobsApplied.some((job) => {
     return job.job.jobId === jobId;
@@ -30,10 +24,6 @@ const ButtonApply = ({ jobId, job }) => {
     if (isApply) {
       navigate("/job-applied");
     } else {
-      if (!user) {
-        toast.error("Vui lòng đăng nhập để ứng tuyển.", { autoClose: 2000 });
-        return;
-      }
       setShowModal(true);
     }
   };

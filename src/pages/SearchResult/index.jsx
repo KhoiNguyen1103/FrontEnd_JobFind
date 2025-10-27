@@ -2,50 +2,83 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import FilterSideBar from "./FilterSideBar";
 import ListJobFiltered from "./ListJobFiltered";
+import { searchJobs } from "../../services/Job";
 import { setFilterJob } from "../../redux/slices/jobSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import jobApi from "../../api/jobApi";
-import { use } from "react";
-import { searchJobs } from "../../redux/slices/searchJobSlice";
-import JobItemv2 from "../../components/ui/JobItemv2";
 
 const SearchResult = () => {
   const dispatch = useDispatch();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
 
-  // Lấy dữ liệu từ url
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
   const keyword = queryParams.get("keyword") || "";
-  const locationParam = queryParams.get("location") || "";
-  const jobCategoryId = queryParams.get("jobCategoryId") || "";
+  const industryIds =
+    queryParams
+      .get("industry")
+      ?.split(",")
+      .map((id) => Number(id)) || [];
+  const locationIds =
+    queryParams
+      .get("location")
+      ?.split(",")
+      .map((loc) => loc.trim()) || [];
+  // console.log("locationIds", locationIds[0]);
 
-  // console.log("UI search result: ", keyword, locationParam, jobCategoryId);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // fetch data
+  // Call API search
+  // useEffect(() => {
+  //   // console.log("LocationIds", locationIds[0]); // ỉn ra đc Hà Nội
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const result = await searchJobs({
+  //         keyword,
+  //         industries:
+  //           industryIds === null
+  //             ? null
+  //             : industryIds.length === 0
+  //             ? null
+  //             : industryIds,
+  //         locations:
+  //           locationIds === null
+  //             ? null
+  //             : locationIds.length === 0
+  //             ? null
+  //             : locationIds,
+  //       });
+  //       // console.log(result); // in ra đc danh sách job
+  //       setJobs(result);
+  //       dispatch(setFilterJob(result)); // lưu job vào redux
+  //     } catch (error) {
+  //       console.error("Lỗi khi tìm kiếm job:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [dispatch]);
+
   useEffect(() => {
-    // Xử lý dữ liệu
-    const keyWordTrimed = keyword.trim();
-    const locationsArray = locationParam
-      .split(",")
-      .map((l) => l.trim())
-      .filter((l) => l !== "");
-    const jobCategoryIdsArray = jobCategoryId
-      .split(",")
-      .map((id) => parseInt(id.trim(), 10))
-      .filter((id) => !isNaN(id));
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const result = await jobApi.search(keyword, locationIds);
+        // console.log(result); // in ra đc danh sách job
+        setJobs(result);
+        dispatch(setFilterJob(result)); // lưu job vào redux
+      } catch (error) {
+        console.error("Lỗi khi tìm kiếm job:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    dispatch(
-      searchJobs({
-        keyword: keyWordTrimed,
-        locations: locationsArray,
-        jobCategoryIds: jobCategoryIdsArray,
-      })
-    );
-  }, [keyword, locationParam, jobCategoryId, dispatch]);
-
-  // load data từ redux
-  const loading = useSelector((state) => state.searchJob.loading);
-  const searchJobResults = useSelector((state) => state.searchJob.results);
+    fetchData();
+  }, [dispatch]);
 
   return (
     <div className="container mx-auto py-4">
@@ -59,16 +92,8 @@ const SearchResult = () => {
         <div className="w-3/4">
           {loading ? (
             <p>Đang tải dữ liệu công việc...</p>
-          ) : searchJobResults.length > 0 ? (
-            <div>
-              <p className="text-2xl py-3">
-                {searchJobResults.length} công việc hiện có
-              </p>
-
-              {searchJobResults.map((job) => (
-                <JobItemv2 job={job} key={job.jobId} isApply={false} />
-              ))}
-            </div>
+          ) : jobs.length > 0 ? (
+            <ListJobFiltered />
           ) : (
             <p>Không có công việc nào phù hợp.</p>
           )}

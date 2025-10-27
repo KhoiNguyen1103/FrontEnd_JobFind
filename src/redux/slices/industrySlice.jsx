@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getAllIndustry } from "../../services/Industry";
 
 // Thunk để fetch danh sách industry từ API
 export const fetchIndustries = createAsyncThunk(
   "industry/fetchIndustries",
   async (_, thunkAPI) => {
     try {
-      // const industries = await getAllIndustry();
-      const response = null;
-      return response;
+      const industries = await getAllIndustry();
+      return industries;
     } catch (error) {
       console.error("Error fetching industries:", error);
       return thunkAPI.rejectWithValue("Không thể lấy danh sách ngành nghề");
