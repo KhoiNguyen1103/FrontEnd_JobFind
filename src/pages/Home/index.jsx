@@ -56,7 +56,12 @@ const Home = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     } else {
-      setCurrentIndex(Math.max(0, Math.floor((priorityJobs.length - 1) / jobsPerPage) * jobsPerPage)); // Loop to last set
+      setCurrentIndex(
+        Math.max(
+          0,
+          Math.floor((priorityJobs.length - 1) / jobsPerPage) * jobsPerPage
+        )
+      ); // Loop to last set
     }
   };
 
@@ -64,14 +69,16 @@ const Home = () => {
     setShowPopup(false);
   };
 
-  const displayedJobs = priorityJobs.slice(currentIndex, currentIndex + jobsPerPage);
+  const displayedJobs = priorityJobs.slice(
+    currentIndex,
+    currentIndex + jobsPerPage
+  );
   const totalJobs = priorityJobs.length;
-
 
   const navigateToJobDetail = (job) => {
     const slug = createSlug(job.title || job.jobName);
     navigate(`/job-detail/${slug}?id=${job.jobId}`);
-    scrollTop();
+    // scrollTop();
   };
 
   // Animation variants for sliding
@@ -99,7 +106,7 @@ const Home = () => {
             {priorityJobs.length > jobsPerPage && (
               <button
                 onClick={handlePrev}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-3 rounded-full shadow-md hover:bg-green-700 transition-all duration-200"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-md hover:bg-blue-700 transition-all duration-200"
               >
                 <FaChevronLeft size={20} />
               </button>
@@ -118,11 +125,17 @@ const Home = () => {
               {/* Job Counter */}
               {totalJobs > 0 && (
                 <p className="text-center text-gray-600 mb-4">
-                  Đang xem {currentIndex + 1} - {Math.min(currentIndex + jobsPerPage, totalJobs)} / {totalJobs} công việc
+                  Đang xem {currentIndex + 1} -{" "}
+                  {Math.min(currentIndex + jobsPerPage, totalJobs)} /{" "}
+                  {totalJobs} công việc
                 </p>
               )}
               {displayedJobs.length > 0 ? (
-                <AnimatePresence initial={false} mode="popLayout" custom={direction}>
+                <AnimatePresence
+                  initial={false}
+                  mode="popLayout"
+                  custom={direction}
+                >
                   <motion.div
                     key={currentIndex}
                     custom={direction}
@@ -145,25 +158,33 @@ const Home = () => {
                             className="w-16 h-16 rounded-full object-contain mr-4"
                           />
                           <div>
-                            <h3 className="text-xl font-semibold text-gray-800">{job.title}</h3>
-                            <p className="text-gray-600">{job.company.companyName}</p>
+                            <h3 className="text-xl font-semibold text-gray-800">
+                              {job.title}
+                            </h3>
+                            <p className="text-gray-600">
+                              {job.company.companyName}
+                            </p>
                           </div>
                         </div>
                         <p className="text-gray-700 mb-2 text-lg">
-                          <span className="font-medium">Địa điểm:</span> {job.location}
+                          <span className="font-medium">Địa điểm:</span>{" "}
+                          {job.location}
                         </p>
                         <p className="text-green-600 font-bold mb-2 text-lg">
                           <span className="font-medium">Mức lương:</span>{" "}
-                          {job.salaryMin.toLocaleString()} - {job.salaryMax.toLocaleString()} VND
+                          {job.salaryMin.toLocaleString()} -{" "}
+                          {job.salaryMax.toLocaleString()} VND
                         </p>
                         <p className="text-gray-700 mb-2 text-lg">
                           <span className="font-medium"></span> {job.jobType}
                         </p>
                         <p className="text-gray-700 mb-2 text-lg">
-                          <span className="font-medium">Kinh nghiệm:</span> {job.yearsOfExperience} năm
+                          <span className="font-medium">Kinh nghiệm:</span>{" "}
+                          {job.yearsOfExperience} năm
                         </p>
                         <p className="text-gray-700 mb-2 text-lg">
-                          <span className="font-medium">Trình độ:</span> {job.educationLevel}
+                          <span className="font-medium">Trình độ:</span>{" "}
+                          {job.educationLevel}
                         </p>
                         <p className="text-gray-700 mb-2 text-lg">
                           <span className="font-medium">Kỹ năng:</span>{" "}
@@ -178,7 +199,7 @@ const Home = () => {
                           {new Date(job.deadline).toLocaleDateString("vi-VN")}
                         </p>
                         <button
-                          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 w-full"
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 w-full"
                           onClick={() => navigateToJobDetail(job)}
                         >
                           Xem chi tiết
@@ -188,7 +209,9 @@ const Home = () => {
                   </motion.div>
                 </AnimatePresence>
               ) : (
-                <p className="text-center text-gray-600">Không có việc làm nổi bật.</p>
+                <p className="text-center text-gray-600">
+                  Không có việc làm nổi bật.
+                </p>
               )}
             </div>
 
@@ -196,7 +219,7 @@ const Home = () => {
             {priorityJobs.length > jobsPerPage && (
               <button
                 onClick={handleNext}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 text-white p-3 rounded-full shadow-md hover:bg-green-700 transition-all duration-200"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-3 rounded-full shadow-md hover:bg-blue-700 transition-all duration-200"
               >
                 <FaChevronRight size={20} />
               </button>

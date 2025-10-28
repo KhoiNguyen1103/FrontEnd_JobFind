@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { searchJobs } from "../../redux/slices/searchJobSlice";
 import JobItemv2 from "../../components/ui/JobItemv2";
 import { filterJobs } from "../../untils/filterJobs";
+import NotFoundItem from "../../components/ui/NotFoundItem";
+import Spinner from "../../components/ui/Spinner";
 
 const filters = [
   {
@@ -69,7 +71,7 @@ const SearchResult = () => {
   const locationParam = queryParams.get("location") || "";
   const jobCategoryId = queryParams.get("jobCategoryId") || "";
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [location.pathname]);
   // fetch data search result
   useEffect(() => {
@@ -152,7 +154,7 @@ const SearchResult = () => {
             className="flex justify-between mt-4 pe-4"
             onClick={handleResetFilterJob}
           >
-            <button className="py-2 bg-green-500 rounded-lg w-full text-white hover:bg-green-600">
+            <button className="py-2 bg-primary rounded-lg w-full text-white hover:bg-blue-600 transition-all">
               Đặt lại bộ lọc
             </button>
           </div>
@@ -162,7 +164,11 @@ const SearchResult = () => {
         {/* List Job */}
         <div className="w-3/4">
           {loading ? (
-            <p>Đang tải dữ liệu công việc...</p>
+            <div className="flex justify-center items-center h-full">
+              <div
+                className={`ms-4 w-20 h-20 border-4 border-blue-600 border-t-transparent rounded-full animate-spin`}
+              ></div>
+            </div>
           ) : jobs.length > 0 ? (
             <div>
               <p className="text-2xl py-3">{jobs.length} công việc hiện có</p>
@@ -172,7 +178,9 @@ const SearchResult = () => {
               ))}
             </div>
           ) : (
-            <p>Không có công việc nào phù hợp.</p>
+            <div className="flex justify-center items-center h-full">
+              <NotFoundItem title={"Không tìm thấy công việc phù hợp!"} />
+            </div>
           )}
         </div>
       </div>

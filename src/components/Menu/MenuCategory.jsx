@@ -9,7 +9,7 @@ import {
 const MenuCategory = ({ setIsOpen }) => {
   const dispatch = useDispatch();
   // load data từ redux và local storage
-  const categories = useSelector((state) => state.category.categories);
+  const { categories, error } = useSelector((state) => state.category);
   const selectedCategories = useSelector(
     (state) => state.category.selectedCategories
   );

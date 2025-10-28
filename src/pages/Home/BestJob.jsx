@@ -15,6 +15,7 @@ import {
 import Pagination from "../../components/ui/Pagination";
 import JobItemVertical from "../../components/ui/JobItemVerical";
 import jobApi from "../../api/jobApi";
+import NotFoundItem from "../../components/ui/NotFoundItem";
 
 const filtersJob = [
   {
@@ -188,11 +189,19 @@ const BestJob = () => {
               className="flex justify-between items-center border border-slate-300 rounded-md px-4 py-2 cursor-pointer bg-white"
               onClick={toggleFilterModal}
             >
-              <FontAwesomeIcon icon={faFilter} className="pe-4 text-slate-400" />
+              <FontAwesomeIcon
+                icon={faFilter}
+                className="pe-4 text-slate-400"
+              />
               <span className="text-slate-400 pe-4">Lọc theo:</span>
               <div className="flex items-center">
-                <span className="text-base pe-12 text-slate-600">{filterSelected.name}</span>
-                <FontAwesomeIcon icon={faAngleDown} className="text-slate-600" />
+                <span className="text-base pe-12 text-slate-600">
+                  {filterSelected.name}
+                </span>
+                <FontAwesomeIcon
+                  icon={faAngleDown}
+                  className="text-slate-600"
+                />
               </div>
             </div>
             {isOpenFilter && (
@@ -239,10 +248,11 @@ const BestJob = () => {
               {filterSelected.options.map((option) => (
                 <div
                   key={option.id}
-                  className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${filterItemSelected.id === option.id
-                    ? "bg-primary text-white"
-                    : "bg-slate-200"
-                    }`}
+                  className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${
+                    filterItemSelected.id === option.id
+                      ? "bg-primary text-white"
+                      : "bg-slate-200"
+                  }`}
                   onClick={() => toggleFilterOption(option)}
                 >
                   <span className="text-sm">
@@ -250,8 +260,8 @@ const BestJob = () => {
                       ? option.name === "5-100"
                         ? "Trên 5 năm"
                         : option.name === "Tất cả"
-                          ? "Tất cả"
-                          : option.name + " năm"
+                        ? "Tất cả"
+                        : option.name + " năm"
                       : option.name}
                   </span>
                 </div>
@@ -282,9 +292,7 @@ const BestJob = () => {
               <JobItemVertical key={job.jobId || index} job={job} />
             ))
           ) : (
-            <p className="text-center text-2xl text-slate-400 py-6">
-              Không tìm thấy job nào
-            </p>
+            <NotFoundItem title={"Không có công việc phù hợp"} />
           )}
         </div>
 

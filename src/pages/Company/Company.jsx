@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import CompanyItem from "../../components/ui/CompanyItem";
 import { fetchCompanies } from "../../redux/slices/companySlide";
+import NotFoundItem from "../../components/ui/NotFoundItem";
 import { useEffect } from "react";
 
 const Company = () => {
@@ -19,10 +20,7 @@ const Company = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Danh sách công ty
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Khám phá các công ty hàng đầu trong ngành và cơ hội nghề nghiệp mà họ
-          cung cấp
-        </p>
+        <NotFoundItem title={"Hiện chưa có công ty nào"} />
       </div>
 
       {/* Danh sách công ty */}

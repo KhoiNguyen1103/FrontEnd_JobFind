@@ -1,44 +1,52 @@
-const categories = [
+const categoriesFake = [
   {
-    id: 1,
-    name: "Lập trình viên Backend",
+    jobCategoryId: 1,
+    image: "/image_categories/marketing.jpg",
+    name: "Marketing",
+    count: 100,
   },
   {
-    id: 2,
-    name: "Lập trình viên Frontend",
+    jobCategoryId: 2,
+    image: "/image_categories/cong_nghe_thong_tin.jpg",
+    name: "Công nghệ thông tin",
+    count: 80,
   },
   {
-    id: 3,
-    name: "Kỹ sư dữ liệu",
+    jobCategoryId: 3,
+    image: "/image_categories/quan_tri_ban_hang.jpg",
+    name: "Quản lý bán hàng",
+    count: 120,
   },
   {
-    id: 4,
-    name: "Chuyên viên kiểm thử phần mềm",
+    jobCategoryId: 4,
+    image: "/image_categories/quan_tri_ban_hang.jpg",
+    name: "Bất động sản",
+    count: 60,
   },
   {
-    id: 5,
-    name: "Chuyên viên UI/UX",
+    jobCategoryId: 5,
+    image: "/image_categories/quan_tri_ban_hang.jpg",
+    name: "Tài chính",
+    count: 50,
   },
   {
-    id: 6,
-    name: "Quản trị viên hệ thống",
+    jobCategoryId: 6,
+    image: "/image_categories/quan_tri_ban_hang.jpg",
+    name: "Thiết kế",
+    count: 40,
   },
   {
-    id: 7,
-    name: "Chuyên gia AI/ML",
+    jobCategoryId: 7,
+    image: "/image_categories/quan_tri_nhan_su.jpg",
+    name: "Quản lý nhân sự",
+    count: 70,
   },
   {
-    id: 8,
-    name: "Lập trình viên Mobile",
-  },
-  {
-    id: 9,
-    name: "Kỹ sư DevOps",
-  },
-  {
-    id: 10,
-    name: "Chuyên viên an ninh mạng",
+    jobCategoryId: 8,
+    image: "/image_categories/quan_tri_ban_hang.jpg",
+    name: "Giáo dục",
+    count: 30,
   },
 ];
 
-export default categories;
+export default categoriesFake;

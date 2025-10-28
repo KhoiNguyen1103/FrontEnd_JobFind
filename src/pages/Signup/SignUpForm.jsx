@@ -5,6 +5,7 @@ import {
   faEnvelope,
   faPhone,
   faHome,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
@@ -13,21 +14,23 @@ import authApi from "../../api/authApi";
 import logo from "../../assets/logo.png";
 import axiosClient from "../../api/axiosClient";
 import { toast } from "react-toastify";
+import Spinner from "../../components/ui/Spinner";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: "Nguyễn Minh",
-    lastName: "Nhật",
+    firstName: "Nguyễn Xuân",
+    lastName: "Khôi",
     phone: "0147258369",
     address: "123 Gò Vấp, Hồ Chí Minh",
-    email: "nhat@gmail.com",
+    email: "khoi@gmail.com",
     password: "StrongPass@123",
     confirmPassword: "StrongPass@123",
   });
 
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateEmail = (email) =>
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
@@ -62,6 +65,7 @@ const SignUpForm = () => {
     };
 
     try {
+      setIsLoading(true);
       const response = await axiosClient.post("/auth/register", null, {
         params: queryParams,
       });
@@ -76,7 +80,9 @@ const SignUpForm = () => {
         navigate("/login", { replace: true });
       }, 3000);
     } catch (error) {
-      toast.error("Email đã tồn tại", { autoClose: 1500 });
+      toast.error("Đăng ký thất bại", { autoClose: 1500 });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -169,44 +175,14 @@ const SignUpForm = () => {
           />
         </div>
 
-        {/* Chính sách */}
-        <div className="flex items-start gap-2 text-sm mt-4">
-          <input type="checkbox" className="mt-1" required />
-          <p>
-            Tôi đồng ý với{" "}
-            <Link to="/" className="text-primary underline">
-              Điều khoản dịch vụ
-            </Link>{" "}
-            và{" "}
-            <Link to="/" className="text-primary underline">
-              Chính sách bảo mật
-            </Link>
-            .
-          </p>
-        </div>
-
         {/* Nút đăng ký */}
-        <div className="mt-6 flex justify-center">
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-14 py-2 rounded-md font-semibold hover:bg-green-700"
-          >
-            Đăng ký
-          </button>
-        </div>
-
-        {/* Hoặc đăng ký bằng */}
-        <p className="text-center text-gray-400 my-4">Hoặc đăng ký bằng</p>
-        <div className="flex gap-4">
-          <Link className="flex-1 bg-[#e73b2f] text-white py-2 rounded-lg flex items-center justify-center gap-2">
-            <FontAwesomeIcon icon={faGoogle} />
-            Google
-          </Link>
-          <Link className="flex-1 bg-[#1877f2] text-white py-2 rounded-lg flex items-center justify-center gap-2">
-            <FontAwesomeIcon icon={faSquareFacebook} />
-            Facebook
-          </Link>
-        </div>
+        <button
+          type="submit"
+          className="flex justify-center mx-auto mt-4 items-center bg-primary w-96 text-white py-2 rounded-md font-semibold hover:opacity-80 transition-all"
+        >
+          Đăng ký
+          {isLoading && <Spinner />}
+        </button>
 
         {/* Đã có tài khoản */}
         <div className="mt-6 flex justify-center">
@@ -220,20 +196,14 @@ const SignUpForm = () => {
             </Link>
           </p>
         </div>
-      </form>
 
-      <style>{`
-        .input {
-          padding: 0.5rem;
-          border: 1px solid #d1d5db;
-          border-radius: 0.5rem;
-          width: 100%;
-          outline: none;
-        }
-        .input:focus {
-          border-color: #3b82f6;
-        }
-      `}</style>
+        <div className="mt-6 flex justify-center items-center">
+          <Link to="/" className=" font-medium">
+            Tới trang công việc
+          </Link>
+          <FontAwesomeIcon icon={faArrowRight} className="ps-2" />
+        </div>
+      </form>
     </div>
   );
 };

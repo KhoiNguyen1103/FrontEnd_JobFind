@@ -1,11 +1,4 @@
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebook,
-  faTwitter,
-  faLinkedin,
-  faInstagram,
-} from "@fortawesome/free-brands-svg-icons";
 import logo from "../assets/logo.png";
 
 const Footer = () => {
@@ -23,60 +16,21 @@ const Footer = () => {
           <div className="flex justify-center space-x-6 text-gray-600">
             <p>
               <strong>Hotline:</strong>{" "}
-              <a href="tel:0123456789" className="text-green-500 hover:underline">
-                0123 456 789
+              <a href="tel:0123456789" className="text-primary hover:underline">
+                0999 999 999
               </a>
             </p>
             <p>
               <strong>Email:</strong>{" "}
               <a
                 href="mailto:hotro@JobFind.vn"
-                className="text-green-500 hover:underline"
+                className="text-primary hover:underline"
               >
-                hotro@JobFind.vn
+                lienhe@JobConnect.com
               </a>
             </p>
           </div>
-          {/* Social Media Icons */}
-          <div className="flex justify-center space-x-4 mt-6">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-500 hover:text-green-600 transition"
-            >
-              <FontAwesomeIcon icon={faFacebook} className="text-xl" />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-500 hover:text-green-600 transition"
-            >
-              <FontAwesomeIcon icon={faTwitter} className="text-xl" />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-500 hover:text-green-600 transition"
-            >
-              <FontAwesomeIcon icon={faLinkedin} className="text-xl" />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-green-500 hover:text-green-600 transition"
-            >
-              <FontAwesomeIcon icon={faInstagram} className="text-xl" />
-            </a>
-          </div>
-          <div className="text-center text-sm text-gray-500 mt-8">
-            © 2025 JobFind. All rights reserved.
-          </div>
         </div>
-
       </div>
     </footer>
   );

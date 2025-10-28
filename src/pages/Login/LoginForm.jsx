@@ -1,5 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLock,
+  faEnvelope,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faGoogle, faSquareFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useState } from "react";
@@ -8,10 +12,12 @@ import logo from "../../assets/logo.png";
 import authApi from "../../api/authApi";
 import { toast } from "react-toastify";
 import { login } from "../../redux/slices/authSlice";
+import Spinner from "../../components/ui/Spinner";
 
 const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Theo dõi trạng thái form
   const [formData, setFormData] = useState({
@@ -32,6 +38,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
+      setIsLoading(true);
       const user = await authApi.login(formData);
       // console.log("Login response:", user);
       toast.success("Đăng nhập thành công!", { autoClose: 2000 });
@@ -46,6 +53,8 @@ const LoginForm = () => {
       toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.", {
         autoClose: 2000,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,45 +104,12 @@ const LoginForm = () => {
 
         <button
           type="submit"
-          className="w-full bg-primary text-white text-lg py-2 rounded-lg hover:opacity-90 transition"
+          className="flex justify-center items-center bg-primary w-96 text-white py-2 rounded-md font-semibold hover:opacity-80 transition-all"
         >
           Đăng nhập
+          {isLoading && <Spinner />}
         </button>
 
-        {/* Đăng nhập bằng MXH */}
-        <p className="py-3 text-center text-slate-400">Hoặc đăng nhập bằng</p>
-        <div className="flex justify-between items-center gap-4">
-          <Link
-            className="flex-1 py-2 rounded-lg text-white flex items-center justify-center hover:opacity-80"
-            style={{ backgroundColor: "#e73b2f" }}
-          >
-            <FontAwesomeIcon icon={faGoogle} className="me-2" />
-            Google
-          </Link>
-          <Link
-            className="flex-1 py-2 rounded-lg text-white flex items-center justify-center hover:opacity-80"
-            style={{ backgroundColor: "#1877f2" }}
-          >
-            <FontAwesomeIcon icon={faSquareFacebook} className="me-2" />
-            Facebook
-          </Link>
-        </div>
-
-        {/* Chính sách */}
-        <div className="pt-4 flex items-start gap-2 text-sm">
-          <input type="checkbox" style={{ height: "20px", width: "20px" }} />
-          <label>
-            Tôi đã đọc và đồng ý với
-            <Link to="/" className="text-primary underline mx-1">
-              Điều khoản dịch vụ
-            </Link>
-            và
-            <Link to="/" className="text-primary underline mx-1">
-              Chính sách bảo mật
-            </Link>
-            của FindJob
-          </label>
-        </div>
         <div className="mt-6 flex justify-center">
           <p>
             Chưa có tài khoản?{" "}
@@ -144,6 +120,13 @@ const LoginForm = () => {
               Đăng ký
             </Link>
           </p>
+        </div>
+
+        <div className="mt-6 flex justify-center items-center">
+          <Link to="/" className=" font-medium">
+            Tới trang công việc
+          </Link>
+          <FontAwesomeIcon icon={faArrowRight} className="ps-2" />
         </div>
       </form>
     </div>

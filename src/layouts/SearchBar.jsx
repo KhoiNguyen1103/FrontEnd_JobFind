@@ -104,12 +104,21 @@ const SearchBar = () => {
             .join(",");
           queryParams.append("jobCategoryId", categoryIds);
         }
-        localStorage.setItem("searchData", JSON.stringify({ keyword: searchText, categories: categoriesSelected }));
+        localStorage.setItem(
+          "searchData",
+          JSON.stringify({
+            keyword: searchText,
+            categories: categoriesSelected,
+          })
+        );
         navigate(`/search?${queryParams.toString()}`);
       } else {
         // Không ở job market => tìm kiếm CV
         queryParams.append("companyId", companyId);
-        localStorage.setItem("searchData", JSON.stringify({ keyword: searchText, categories: [] }));
+        localStorage.setItem(
+          "searchData",
+          JSON.stringify({ keyword: searchText, categories: [] })
+        );
         navigate(`/search-cv?${queryParams.toString()}`);
       }
       return;
@@ -123,13 +132,16 @@ const SearchBar = () => {
       queryParams.append("jobCategoryId", categoryIds);
     }
 
-    localStorage.setItem("searchData", JSON.stringify({ keyword: searchText, categories: categoriesSelected }));
+    localStorage.setItem(
+      "searchData",
+      JSON.stringify({ keyword: searchText, categories: categoriesSelected })
+    );
     navigate(`/search?${queryParams.toString()}`);
   };
 
   return (
     <div
-      className="flex justify-center items-center py-6 px-4 z-50"
+      className="flex flex-col md:flex-row justify-center items-center py-6 px-4 z-50"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",
@@ -164,7 +176,8 @@ const SearchBar = () => {
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             placeholder={
-              auth_role === "COMPANY" && !["/", "/search", "/company"].includes(location.pathname)
+              auth_role === "COMPANY" &&
+              !["/", "/search", "/company"].includes(location.pathname)
                 ? "Tìm kiếm CV..."
                 : "Nhập công việc..."
             }
@@ -199,7 +212,10 @@ const SearchBar = () => {
               <span className="ml-2 flex-none">
                 {citysSelected.length === 0
                   ? "Địa điểm"
-                  : citysSelected[0] + (citysSelected.length > 1 ? ` (+${citysSelected.length - 1})` : "")}
+                  : citysSelected[0] +
+                    (citysSelected.length > 1
+                      ? ` (+${citysSelected.length - 1})`
+                      : "")}
               </span>
             </div>
             <FontAwesomeIcon icon={faAngleDown} />

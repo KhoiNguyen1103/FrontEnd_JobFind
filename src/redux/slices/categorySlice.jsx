@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import jobCategoryApi from "../../api/jobCategoryApi";
+import categoriesFake from "../../data/categories";
 
 export const fetchCategories = createAsyncThunk(
   "category/fetchCategories",
@@ -15,7 +16,7 @@ export const fetchCategories = createAsyncThunk(
 );
 
 const initialState = {
-  categories: [],
+  categories: [...categoriesFake],
   selectedCategories: [],
   loading: true,
   error: null,
@@ -60,6 +61,7 @@ const categorySlice = createSlice({
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.categories = [...categoriesFake];
       });
   },
 });

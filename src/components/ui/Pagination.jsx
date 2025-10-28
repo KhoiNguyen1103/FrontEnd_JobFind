@@ -38,7 +38,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-3 py-1 border rounded-full bg-green-600 text-white disabled:opacity-50"
+        className="px-3 py-1 border rounded-full bg-primary text-white disabled:opacity-50"
       >
         <FontAwesomeIcon icon={faAngleLeft} />
       </button>
@@ -60,7 +60,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-3 py-1 border rounded-full text-white bg-green-600 disabled:opacity-50"
+        className="px-3 py-1 border rounded-full text-white bg-primary disabled:opacity-50"
       >
         <FontAwesomeIcon icon={faAngleRight} />
       </button>
