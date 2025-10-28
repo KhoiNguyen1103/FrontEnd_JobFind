@@ -1,9 +1,11 @@
 import { useState } from "react";
 import userApi from "../../api/userApi";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
 
 const ChangePassword = () => {
+  const dispatch = useDispatch();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -29,6 +31,7 @@ const ChangePassword = () => {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+      dispatch(logout());
     } catch (error) {
       console.error("Lỗi đổi mật khẩu:", error);
       toast.error(error?.response?.data?.message || "Đổi mật khẩu thất bại!");

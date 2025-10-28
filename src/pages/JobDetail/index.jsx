@@ -32,25 +32,25 @@ const JobDetail = () => {
   }, [jobId]);
 
   // ========== Phần này lấy công việc liên quan nhưn gapi đang bắt phải đăng nhập mới lấy
-  // useEffect(() => {
-  //   const fetchRelatedJobs = async () => {
-  //     try {
-  //       const response = await jobApi.getByCategory(
-  //         job.categories[0].jobCategoryId
-  //       );
-  //       console.log(response);
-  //       const data = response.data.filter((item) => item.jobId !== jobId);
-  //       setRelativeJobs(data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy công việc liên quan:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchRelatedJobs = async () => {
+      try {
+        const response = await jobApi.getByCategory(
+          job.categories[0].jobCategoryId
+        );
+        console.log(response);
+        const data = response.filter((item) => item.jobId !== jobId);
+        setRelativeJobs(data);
+      } catch (error) {
+        console.error("Lỗi khi lấy công việc liên quan:", error);
+      }
+    };
 
-  //   if (job && job.categories) {
-  //     console.log(job);
-  //     fetchRelatedJobs();
-  //   }
-  // }, [job, jobId]);
+    if (job && job.categories) {
+      console.log(job);
+      fetchRelatedJobs();
+    }
+  }, [job, jobId]);
 
   return (
     <div className="py-4" style={{ background: "#f5f5f5" }}>
@@ -71,9 +71,15 @@ const JobDetail = () => {
             {" "}
             <FontAwesomeIcon icon={faAngleRight} />{" "}
           </Link>
-          <span>{job ? job.title : <div className="flex justify-center items-center mt-16">
-            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>}</span>
+          <span>
+            {job ? (
+              job.title
+            ) : (
+              <div className="flex justify-center items-center mt-16">
+                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </span>
         </div>
         {/* end: Đường dẫn */}
 

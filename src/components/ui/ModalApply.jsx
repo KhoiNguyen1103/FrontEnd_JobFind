@@ -119,7 +119,7 @@ const ApplyModal = ({ onClose, jobId }) => {
         </div>
 
         {/* ==== CHỌN TỪ DANH SÁCH CÓ SẴN ==== */}
-        {user && user.role === "jobSeeker" && (
+        {user && user.role === "JOBSEEKER" && (
           <div className="mt-4 border rounded-lg p-4 mx-4">
             <label className="flex gap-2">
               <input

@@ -3,12 +3,15 @@ import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightFromBracket,
+  faCalendarAlt,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import ApplicationModalJSK from "../Menu/ApplicationModalJSK";
 import ApplyModal from "../ui/ModalApply";
+import { use } from "react";
 
 const ButtonApply = ({ jobId, job }) => {
   // console.log("jobId: ", jobId);
@@ -21,20 +24,46 @@ const ButtonApply = ({ jobId, job }) => {
   // state
   const [showModal, setShowModal] = useState(false);
   const [applicationList, setApplicationList] = useState([]);
+  const [isModalApplicationJSKOpen, setIsModalApplicationJSKOpen] =
+    useState(false);
 
   const isApply = jobsApplied.some((job) => {
     return job.job.jobId === jobId;
   });
 
+  const applicationIdSelected = jobsApplied.find((job) => {
+    return job.job.jobId === jobId;
+  });
+
   const handleClick = () => {
     if (isApply) {
-      navigate("/job-applied");
+      // Hiện modal trạng thái ứng tuyển
+      setIsModalApplicationJSKOpen(true);
     } else {
       if (!user) {
         toast.error("Vui lòng đăng nhập để ứng tuyển.", { autoClose: 2000 });
         return;
       }
       setShowModal(true);
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "INTERVIEWING":
+        return "Đang phỏng vấn";
+      case "PENDING":
+        return "Đang chờ";
+      case "HIRED":
+        return "Đã thuê";
+      case "REJECTED":
+        return "Đã từ chối";
+      case "REVIEWING":
+        return "Đang xem xét";
+      case "SHORTLISTED":
+        return "Danh sách sơ tuyển";
+      default:
+        return status;
     }
   };
 
@@ -46,7 +75,7 @@ const ButtonApply = ({ jobId, job }) => {
       >
         {isApply ? (
           <div className="flex items-center">
-            <p className="px-4">Đang ứng tuyển </p>
+            <p className="px-4">Xem tình trạng ứng tuyển </p>
             <FontAwesomeIcon icon={faArrowRightFromBracket} />
           </div>
         ) : (
@@ -56,6 +85,58 @@ const ButtonApply = ({ jobId, job }) => {
           </>
         )}
       </div>
+      {isModalApplicationJSKOpen && (
+        <ApplicationModalJSK
+          isOpen={isModalApplicationJSKOpen}
+          onClose={() => setIsModalApplicationJSKOpen(false)}
+          applicationId={
+            applicationIdSelected ? applicationIdSelected.applicationId : null
+          }
+          getStatusColor={(status) => {
+            switch (status) {
+              case "INTERVIEWING":
+                return "bg-blue-300";
+              case "PENDING":
+                return "bg-yellow-300";
+              case "HIRED":
+                return "bg-green-200";
+              case "REJECTED":
+                return "bg-red-300";
+              case "REVIEWING":
+                return "bg-pink-300";
+              default:
+                return "bg-gray-300";
+            }
+          }}
+          getStatusIcon={() => faCalendarAlt}
+          getStatusText={getStatusText}
+          getAvailableStatuses={(currentStatus) => {
+            const statuses = [
+              "PENDING",
+              "REVIEWING",
+              "INTERVIEWING",
+              "HIRED",
+              "REJECTED",
+            ];
+            return statuses.filter((status) => status !== currentStatus);
+          }}
+          formatDate={(date) => new Date(date).toLocaleDateString("vi-VN")}
+          formatDateTime={(date) =>
+            new Date(date).toLocaleString("vi-VN", {
+              dateStyle: "short",
+              timeStyle: "short",
+            })
+          }
+          calculateDuration={(start, end) => {
+            const startDate = new Date(start);
+            const endDate = end ? new Date(end) : new Date();
+            const months =
+              (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+              (endDate.getMonth() - startDate.getMonth());
+            return months > 0 ? `${months} tháng` : "Dưới 1 tháng";
+          }}
+        />
+      )}
 
       {showModal && (
         <ApplyModal

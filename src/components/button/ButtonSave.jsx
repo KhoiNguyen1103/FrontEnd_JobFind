@@ -43,7 +43,7 @@ const ButtonSave = ({ job }) => {
       if (isHeart) {
         try {
           // Call unsaveJob API với jobId và jobSeekerId
-          await savedJobApi.unsave(job.jobId);
+          await savedJobApi.unsave(job.jobId, user.id);
           dispatch(removeSavedJob(job.jobId)); // Dispatch redux action nếu cần
           toast.success("Đã bỏ lưu công việc thành công!", { autoClose: 500 });
         } catch (error) {
@@ -56,7 +56,7 @@ const ButtonSave = ({ job }) => {
       }
       try {
         // Call saveJob API với jobId và jobSeekerId
-        const response = await savedJobApi.save(job.jobId);
+        const response = await savedJobApi.save(job.jobId, user.id);
 
         if (response) {
           setIsHeart(!isHeart);

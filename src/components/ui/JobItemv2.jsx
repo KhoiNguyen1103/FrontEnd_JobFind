@@ -87,7 +87,6 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             </div>
           </>
         )}
-
       </div>
     </div>
   );

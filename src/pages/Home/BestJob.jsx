@@ -7,9 +7,14 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { filterJobs, resetFilter } from "../../redux/slices/filterJobSlice";
+import {
+  filterJobs,
+  resetFilter,
+  setJobsRaw,
+} from "../../redux/slices/filterJobSlice";
 import Pagination from "../../components/ui/Pagination";
 import JobItemVertical from "../../components/ui/JobItemVerical";
+import jobApi from "../../api/jobApi";
 
 const filtersJob = [
   {
@@ -72,34 +77,48 @@ const filtersJob = [
 
 const BestJob = () => {
   const dispatch = useDispatch();
-  // state
+  const user = useSelector((state) => state.auth.user);
+  const role = user?.role;
+
+  const jobsRedux = useSelector((state) => state.jobs.jobs);
+  const filterJobsRedux = useSelector((state) => state.filterJob.jobsFiltered);
+
   const [isOpenFilter, setIsOpenFilter] = useState(false);
   const [filterSelected, setFilterSelected] = useState(filtersJob[0]);
   const [filterItemSelected, setFilterItemSelected] = useState({
     id: "000",
     name: "Tất cả",
   });
-  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // lấy data từ redux
-  const jobsRedux = useSelector((state) => state.jobs.jobs);
-  // const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
-  const filterJobsRedux = useSelector((state) => state.filterJob.jobsFiltered);
-  console.log("filterJobsRedux", filterJobsRedux);
-  const loading = useSelector((state) => state.jobs.loading);
+  useEffect(() => {
+    if (role === "COMPANY") {
+      const fetchCompanyJobs = async () => {
+        setIsLoading(true);
+        try {
+          const response = await jobApi.search();
+          dispatch(setJobsRaw({ jobs: response, context: "company" }));
+        } catch (err) {
+          console.error("Lỗi lấy jobs cho company:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchCompanyJobs();
+    }
+  }, [role, dispatch]);
 
-  // Phân trang
+  // Pagination
   const jobsPerPage = 6;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(filterJobsRedux.length / jobsPerPage);
-  const startIndex = (currentPage - 1) * jobsPerPage;
-  const endIndex = startIndex + jobsPerPage;
-  const currentJobs = filterJobsRedux.slice(startIndex, endIndex);
+  const currentJobs = filterJobsRedux.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
 
-  // Handle click
-  const toggleFilterModal = () => {
-    setIsOpenFilter(!isOpenFilter);
-  };
+  // Toggle filter modal
+  const toggleFilterModal = () => setIsOpenFilter(!isOpenFilter);
 
   const toggleFilter = (filter) => {
     setFilterSelected(filter);
@@ -113,7 +132,7 @@ const BestJob = () => {
     dispatch(filterJobs({ [filterSelected.id]: option.name }));
   };
 
-  // Đóng model bộ lọc khi click bên ngoài
+  // Đóng modal khi click ngoài vùng filter
   const ref = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -127,15 +146,13 @@ const BestJob = () => {
     };
   }, []);
 
-  // Nếu options của filter quá nhiều thì cho phép cuộn sang trái phải
+  // Scroll horizontal filter option
   const listFilterRef = useRef(null);
-
   const scrollLeft = () => {
     if (listFilterRef.current) {
       listFilterRef.current.scrollLeft -= 100;
     }
   };
-
   const scrollRight = () => {
     if (listFilterRef.current) {
       listFilterRef.current.scrollLeft += 100;
@@ -145,52 +162,37 @@ const BestJob = () => {
   return (
     <div className="pt-6 pb-6" style={{ backgroundColor: "#f3f5f7" }}>
       <div className="container mx-auto">
-        {/* start: header */}
         <div className="flex justify-between items-center">
-          <h1 className="text-primary text-3xl font-bold">Việc làm tốt nhất</h1>
-          <div className="flex justify-between items-center">
+          <h1 className="text-primary text-3xl font-bold">
+            {role === "COMPANY" ? "Danh Sách Công Việc" : "Việc Làm Tốt Nhất"}
+          </h1>
+          <div>
             <p className="pe-4 underline text-sm cursor-pointer hover:no-underline">
               Xem tất cả
             </p>
           </div>
         </div>
-        {/* end: header */}
 
-        {/* start: filter */}
-        <div className="pt-6 flex justify-between ">
+        {/* Bộ lọc và danh sách option */}
+        <div className="pt-6 flex justify-between">
+          {/* Bộ lọc chính */}
           <div className="relative min-w-[200px]" ref={ref}>
-            {/* label filter selector */}
             <div
-              className="flex justify-between items-center 
-              border border-slate-300 rounded-md px-4 py-2 cursor-pointer bg-white"
+              className="flex justify-between items-center border border-slate-300 rounded-md px-4 py-2 cursor-pointer bg-white"
               onClick={toggleFilterModal}
             >
-              <FontAwesomeIcon
-                icon={faFilter}
-                className="pe-4 text-slate-400"
-              />
+              <FontAwesomeIcon icon={faFilter} className="pe-4 text-slate-400" />
               <span className="text-slate-400 pe-4">Lọc theo:</span>
-              <div className="flex justify-between items-center">
-                <span className="text-base pe-12 text-slate-600">
-                  {filterSelected.name}
-                </span>
-                <FontAwesomeIcon
-                  icon={faAngleDown}
-                  className="text-slate-600"
-                />
+              <div className="flex items-center">
+                <span className="text-base pe-12 text-slate-600">{filterSelected.name}</span>
+                <FontAwesomeIcon icon={faAngleDown} className="text-slate-600" />
               </div>
             </div>
-            {/* end: label filter selector */}
-
-            {/* menu filter selector */}
             {isOpenFilter && (
-              <div className="min-w-[200px] absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 py-2 mt-0.5">
+              <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 py-2 mt-0.5">
                 {filtersJob
-                  .filter(
-                    (f) =>
-                      f.id === "LOCATION" ||
-                      f.id === "EXPERIENCE" ||
-                      f.id === "WORKTYPE"
+                  .filter((f) =>
+                    ["LOCATION", "EXPERIENCE", "WORKTYPE"].includes(f.id)
                   )
                   .map((filter) => (
                     <div
@@ -200,7 +202,7 @@ const BestJob = () => {
                     >
                       <span
                         className={
-                          filterSelected.id == filter.id ? "text-primary" : ""
+                          filterSelected.id === filter.id ? "text-primary" : ""
                         }
                       >
                         {filter.name}
@@ -209,19 +211,17 @@ const BestJob = () => {
                   ))}
               </div>
             )}
-            {/* end: menu selector */}
           </div>
 
-          {/* start: filter options list */}
-          <div className="flex justify-between items-center">
+          {/* Danh sách filter options */}
+          <div className="flex items-center">
             <FontAwesomeIcon
               icon={faAngleLeft}
               className="btn-circle text-xl me-4"
               onClick={scrollLeft}
             />
-
             <div
-              className="flex items-center space-x-2 overflow-hidden overflow-x-auto scroll-smooth"
+              className="flex items-center space-x-2 overflow-x-auto scroll-smooth"
               style={{
                 whiteSpace: "nowrap",
                 maxWidth: "700px",
@@ -229,60 +229,59 @@ const BestJob = () => {
               }}
               ref={listFilterRef}
             >
-              {filterSelected.options.map((filterOption) => (
+              {filterSelected.options.map((option) => (
                 <div
-                  key={filterOption.id}
-                  className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${
-                    filterItemSelected.id === filterOption.id
-                      ? "bg-primary text-white"
-                      : "bg-slate-200"
-                  }`}
-                  onClick={() => toggleFilterOption(filterOption)}
+                  key={option.id}
+                  className={`rounded-full py-2 px-4 mx-1 cursor-pointer border-base ${filterItemSelected.id === option.id
+                    ? "bg-primary text-white"
+                    : "bg-slate-200"
+                    }`}
+                  onClick={() => toggleFilterOption(option)}
                 >
                   <span className="text-sm">
                     {filterSelected.id === "EXPERIENCE"
-                      ? filterOption.name === "5-100"
+                      ? option.name === "5-100"
                         ? "Trên 5 năm"
-                        : filterOption.name === "Tất cả"
-                        ? "Tất cả"
-                        : filterOption.name + " năm"
-                      : filterOption.name}
+                        : option.name === "Tất cả"
+                          ? "Tất cả"
+                          : option.name + " năm"
+                      : option.name}
                   </span>
                 </div>
               ))}
             </div>
-
             <FontAwesomeIcon
               icon={faAngleRight}
               className="ms-4 btn-circle text-xl"
               onClick={scrollRight}
             />
           </div>
-          {/* end: filter options list */}
         </div>
-        {/* end: filter */}
 
-        {/* start: jobs list */}
+        {/* Danh sách job */}
         <div
           className={
             currentJobs.length > 0
-              ? `pt-6 grid grid-cols-3 gap-4 grid-rows-2 overflow-hidden`
+              ? "pt-6 grid grid-cols-3 gap-4 grid-rows-2"
               : ""
           }
         >
-          {!loading ? (
+          {isLoading ? (
+            <p className="text-center text-2xl text-slate-400 py-6">
+              Đang tải...
+            </p>
+          ) : currentJobs.length > 0 ? (
             currentJobs.map((job, index) => (
               <JobItemVertical key={job.jobId || index} job={job} />
             ))
           ) : (
-            <p className="text-center block text-2xl text-slate-400 py-6">
+            <p className="text-center text-2xl text-slate-400 py-6">
               Không tìm thấy job nào
             </p>
           )}
         </div>
-        {/* end: jobs list */}
 
-        {/* start: phân trang */}
+        {/* Phân trang */}
         <div className="flex justify-center items-center pt-6">
           <Pagination
             currentPage={currentPage}
@@ -290,7 +289,6 @@ const BestJob = () => {
             onPageChange={(page) => setCurrentPage(page)}
           />
         </div>
-        {/* end: phân trang */}
       </div>
     </div>
   );
