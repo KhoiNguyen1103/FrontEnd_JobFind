@@ -30,8 +30,8 @@ const RecruiterLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    email: "CompanyTonHoaSen@gmail.com",
-    password: "StrongPass@123",
+    email: "hr@fptsoftware.com",
+    password: "Test#123",
   });
   const [error, setError] = useState(null);
 

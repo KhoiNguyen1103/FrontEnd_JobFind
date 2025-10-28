@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import authApi from "../../api/authApi";
 import industryApi from "../../api/industryApi";
 import logo from "../../assets/logo.png";
@@ -24,6 +23,12 @@ const RecruiterRegister = () => {
 
   const [businessFields, setBusinessFields] = useState([]);
   const [selectedIndustries, setSelectedIndustries] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [countdown, setCountdown] = useState(60);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   useEffect(() => {
     const fetchIndustries = async () => {
@@ -37,6 +42,23 @@ const RecruiterRegister = () => {
 
     fetchIndustries();
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (showOtpModal && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            setIsResendDisabled(false);
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [showOtpModal, countdown]);
 
   const handleChangeFormData = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,7 +78,7 @@ const RecruiterRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const form = new FormData();
     form.append("email", formData.email);
     form.append("phone", formData.phone);
@@ -73,10 +95,49 @@ const RecruiterRegister = () => {
 
     try {
       await authApi.register(form);
-      toast.success("Đăng ký thành công!", { autoClose: 3000 });
-      setTimeout(() => navigate("/recruiter/home"), 3000);
+      toast.success("Vui lòng kiểm tra email để nhận OTP", { autoClose: 3000 });
+      setShowOtpModal(true);
     } catch (error) {
-      toast.error("Đăng ký thất bại. Vui lòng thử lại!", { autoClose: 3000 });
+      toast.error(error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!", { autoClose: 3000 });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp || otp.length !== 6) {
+      toast.error("Vui lòng nhập OTP 6 chữ số!", { autoClose: 3000 });
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      await authApi.verifyOtp({ email: formData.email, otp });
+      toast.success("Xác minh OTP thành công", { autoClose: 1500 });
+      setShowOtpModal(false);
+      toast.success("Đăng ký thành công", { autoClose: 1500 });
+      setTimeout(() => {
+        setShowOtpModal(false);
+        navigate("/recruiter/login");
+      }, 3000);
+    } catch (error) {
+      toast.error("OTP không đúng, vui lòng kiểm tra lại hộp thư", { autoClose: 2000 });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setIsResendDisabled(true);
+    setCountdown(60);
+
+    try {
+      await authApi.resendOtp(formData.email);
+      toast.success("OTP mới đã được gửi!", { autoClose: 3000 });
+    } catch (error) {
+      toast.error("Gửi lại OTP thất bại. Vui lòng thử lại!", { autoClose: 2000 });
+      setIsResendDisabled(false);
+      setCountdown(0);
     }
   };
 
@@ -223,8 +284,9 @@ const RecruiterRegister = () => {
           <button
             type="submit"
             className="bg-green-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-700"
+            disabled={loading}
           >
-            Đăng ký
+            {loading ? "Đang xử lý..." : "Đăng ký"}
           </button>
         </div>
         <div className="flex justify-center mt-6">
@@ -236,8 +298,52 @@ const RecruiterRegister = () => {
             <FontAwesomeIcon icon={faArrowRight} />
           </Link>
         </div>
-        <ToastContainer />
       </form>
+
+      {showOtpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Xác minh OTP</h3>
+            <p className="mb-4">Vui lòng nhập mã OTP được gửi đến email {formData.email}</p>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Nhập OTP (6 chữ số)"
+              maxLength={6}
+              className="input mb-4"
+            />
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={handleResendOtp}
+                disabled={isResendDisabled}
+                className={`text-blue-600 font-medium ${isResendDisabled ? "opacity-50 cursor-not-allowed" : "hover:underline"}`}
+              >
+                Gửi lại OTP {isResendDisabled && `(${countdown}s)`}
+              </button>
+              <button
+                onClick={handleVerifyOtp}
+                disabled={isVerifying}
+                className={`bg-green-600 text-white px-4 py-2 rounded-md font-semibold ${isVerifying ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
+              >
+                {isVerifying ? "Đang xác minh..." : "Xác minh"}
+              </button>
+            </div>
+            <button
+              onClick={() => setShowOtpModal(false)}
+              className="text-gray-600 hover:underline"
+            >
+              Hủy
+            </button>
+          </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
       <style>{`
         .input {
@@ -253,5 +359,6 @@ const RecruiterRegister = () => {
       `}</style>
     </div>
   );
-}
+};
+
 export default RecruiterRegister;

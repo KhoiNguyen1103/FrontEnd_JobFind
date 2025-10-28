@@ -10,6 +10,16 @@ const authApi = {
     const url = "/auth/register";
     return axiosClient.post(url, registrationRequest);
   },
+
+  verifyOtp: (verifyOtpRequest) => {
+    const url = "/auth/verify-otp";
+    return axiosClient.post(url, verifyOtpRequest);
+  },
+
+  resendOtp: (email) => {
+    const url = "/auth/resend-otp";
+    return axiosClient.post(url, { email });
+  },
 };
 
 export default authApi;

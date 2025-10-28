@@ -11,19 +11,26 @@ const JobList = ({ jobs, filters, onJobClick }) => {
             const postedDate = new Date(job.postedAt);
             const from = filters.fromDate ? new Date(filters.fromDate) : null;
             const to = filters.toDate ? new Date(filters.toDate) : null;
+            const matchKeyword =
+                !filters.keyword ||
+                job.title.toLowerCase().includes(filters.keyword.toLowerCase());
 
             const matchLocation = filters.location.length === 0 || filters.location.includes(job.location);
             const matchJobType = !filters.jobType || job.jobType === filters.jobType;
             const matchDate = (!from || postedDate >= from) && (!to || postedDate <= to);
 
             let matchStatus = true;
-            if (filters.isActive === "true" || filters.isActive === "false") {
-                matchStatus = job.isActive === (filters.isActive === "true") && job.isApproved;
+            if (filters.isActive === "true") {
+                matchStatus = job.isActive === true && job.isApproved === true;
+            } else if (filters.isActive === "false") {
+                matchStatus = job.isActive === false && job.isApproved === true;
             } else if (filters.isActive === "pending") {
-                matchStatus = job.isApproved === false;
+                matchStatus = job.isApproved === false && (!job.note || job.note.trim() === "");
+            } else if (filters.isActive === "rejected") {
+                matchStatus = job.isApproved === false && job.note && job.note.trim() !== "";
             }
 
-            return matchLocation && matchJobType && matchDate && matchStatus;
+            return matchLocation && matchJobType && matchDate && matchStatus && matchKeyword;
         })
         .sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt));
 
@@ -75,15 +82,19 @@ const JobList = ({ jobs, filters, onJobClick }) => {
                             </div>
                             <span
                                 className={`px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap
-                  ${!job.isApproved
-                                        ? 'bg-yellow-100 text-yellow-800'
-                                        : job.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
+                  ${!job.isApproved && job.note && job.note.trim() !== ""
+                                        ? 'bg-red-100 text-red-800'
+                                        : !job.isApproved
+                                            ? 'bg-yellow-100 text-yellow-800'
+                                            : job.isActive
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-red-100 text-red-800'
                                     }`}
                             >
                                 {!job.isApproved
-                                    ? '⏳ Chờ duyệt'
+                                    ? job.note && job.note.trim() !== ""
+                                        ? '❌ Bị từ chối'
+                                        : '⏳ Chờ duyệt'
                                     : job.isActive
                                         ? '🟢 Đã đăng'
                                         : '🔴 Ẩn'}
@@ -105,7 +116,7 @@ const JobList = ({ jobs, filters, onJobClick }) => {
                             ))}
                         </div>
                         <div className="text-base font-medium text-gray-700 mt-auto">
-                            💰 Lương: <span className="text-gray-900">{job.salaryMin / 1000000}  triệu - {job.salaryMax / 1000000} triệu</span>
+                            💰 Lương: <span className="text-gray-900">{job.salaryMin / 1000000} triệu - {job.salaryMax / 1000000} triệu</span>
                         </div>
                     </div>
                 ))}
@@ -126,7 +137,8 @@ const JobList = ({ jobs, filters, onJobClick }) => {
                         onClick={decreasePagination}
                     />
                     <p className="text-sm text-gray-600">
-                        Trang <span className="font-semibold text-green-600">{currentPage}</span> / <span className="text-gray-500">{maxPageCount}</span>
+                        Trang <span className="font-semibold text-green-600">{currentPage}</span> /{' '}
+                        <span className="text-gray-500">{maxPageCount}</span>
                     </p>
                     <FontAwesomeIcon
                         icon={faAngleRight}

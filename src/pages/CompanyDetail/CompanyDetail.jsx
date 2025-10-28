@@ -20,16 +20,22 @@ import JobItemv2 from "../../components/ui/JobItemv2";
 import jobApi from "../../api/jobApi";
 import ReviewCompanyItem from "../../components/ui/ReviewCompanyItem";
 import { sortReviews } from "../../redux/slices/companyReviewSlice";
-import { fetchReviewsByCompanyId } from "../../redux/slices/companyReviewSlice";
-import { filterJob, fetchJobsByCompanyId } from "../../redux/slices/jobSlice";
+import {
+  fetchReviewsByCompanyId,
+  updateCompanyReview,
+  deleteCompanyReview,
+} from "../../redux/slices/companyReviewSlice";
+import {
+  filterJob,
+  fetchJobsByCompanyId,
+  applyAdvancedFilters,
+} from "../../redux/slices/jobSlice";
+import CompanyReviewInput from "./CompanyReviewInput";
+import companyReviewApi from "../../api/companyReviewApi";
+import { filterJobs } from "../../untils/filterJobs";
+import jobs from "../../data/jobs";
 
 const filters = [
-  {
-    id: "CATEGORY",
-    icon: faList,
-    name: "Nghề nghiệp",
-    options: [],
-  },
   {
     id: "LOCATION",
     icon: faLocationDot,
@@ -43,9 +49,9 @@ const filters = [
     options: [
       { id: 1, name: "Tất cả ngày đăng" },
       { id: 2, name: "Mới nhất" },
-      { id: 3, name: "Tuần trước" },
-      { id: 4, name: "Tháng trước" },
-      { id: 5, name: "3 tháng qua" },
+      { id: 3, name: "Cũ nhất" },
+      { id: 4, name: "Hạn nộp gần nhất" },
+      { id: 5, name: "Hạn nộp xa nhất" },
     ],
   },
   {
@@ -74,19 +80,28 @@ const CompanyDetail = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [isReviewDropdownOpen, setIsReviewDropdownOpen] = useState(false);
   const [selectedReviewFilter, setSelectedReviewFilter] = useState("Mới nhất");
+  const [isComment, setIsComment] = useState(false);
+  const [jobsFiltered, setJobsFiltered] = useState([]);
 
   // selector from redux
+  const user = JSON.parse(localStorage.getItem("user"));
   const categoriesRedux = useSelector((state) => state.category.categories);
   const reviewsRedux = useSelector((state) => state.companyReview.reviews);
   const jobsByCompanyId = useSelector((state) => state.jobs.jobsByCompanyId);
-  const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
-  // console.log("filterJobsRedux", filterJobsRedux);
+  const applicationListByJSKReux = useSelector(
+    (state) => state.application.list
+  );
+
   useEffect(() => {
-    // console.log("categoriesRedux", categoriesRedux);
-    if (categoriesRedux && categoriesRedux.length > 0) {
-      filters[0].options = categoriesRedux;
+    if (jobsByCompanyId && jobsByCompanyId.length > 0) {
+      setJobsFiltered(jobsByCompanyId);
     }
-  }, [categoriesRedux]);
+  }, [jobsByCompanyId]);
+
+  // Kiểm tra xem người dùng đã apply công việc của công ty này hay chưa
+  const isApply = applicationListByJSKReux.some((item) => {
+    return item.job.company.companyId + "" === companyId + "";
+  });
 
   // fetch data
   useEffect(() => {
@@ -130,11 +145,27 @@ const CompanyDetail = () => {
     fetchReviews();
   }, [companyId, dispatch]);
 
+  // Handle update + delete review
+  const handleUpdateReview = async (updateData) => {
+    dispatch(updateCompanyReview(updateData));
+    // reload laij trang
+    window.location.reload();
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    dispatch(deleteCompanyReview(reviewId));
+    // reload laij trang
+    // window.location.reload();
+  };
+
   // handle filter dropdown selected
   const handleSelectFilterOption = (filterId, option) => {
-    setSelectedFilters((prev) => ({ ...prev, [filterId]: option }));
+    const newFilter = { ...selectedFilters, [filterId]: option };
+    setSelectedFilters(newFilter);
     setOpenDropdownId(null);
-    dispatch(filterJob(selectedFilters));
+    // dispatch(filterJob(selectedFilters));
+    const jobsFiltered = filterJobs(jobsByCompanyId, newFilter);
+    setJobsFiltered(jobsFiltered);
   };
 
   const handleSelectReviewOption = (option) => {
@@ -148,18 +179,15 @@ const CompanyDetail = () => {
     setSelectedFilters({});
     setOpenDropdownId(null);
     setTimeout(() => setRotating(false), 600);
-    dispatch(filterJob({}));
+    setJobsFiltered(jobsByCompanyId);
   };
 
   // Tính toán phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const jobsPerPage = 4;
-  const totalPages = Math.ceil(jobsByCompanyId.length / jobsPerPage);
+  const totalPages = Math.ceil(jobsFiltered.length / jobsPerPage);
   const startIndex = (currentPage - 1) * jobsPerPage;
-  const currentJobs = jobsByCompanyId.slice(
-    startIndex,
-    startIndex + jobsPerPage
-  );
+  const currentJobs = jobsFiltered.slice(startIndex, startIndex + jobsPerPage);
 
   return (
     <div className="container mx-auto py-4">
@@ -184,8 +212,8 @@ const CompanyDetail = () => {
           <div className="flex border-b border-gray-200">
             <button
               className={`px-4 py-4 text-sm font-medium ${activeTab === "jobs"
-                  ? "text-green-600 border-b-2 border-green-600"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-green-600 border-b-2 border-green-600"
+                : "text-gray-500 hover:text-gray-700"
                 } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("jobs")}
             >
@@ -194,8 +222,8 @@ const CompanyDetail = () => {
             </button>
             <button
               className={`px-4 py-4 text-sm font-medium ${activeTab === "reviews"
-                  ? "text-green-600 border-b-2 border-green-600"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-green-600 border-b-2 border-green-600"
+                : "text-gray-500 hover:text-gray-700"
                 } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("reviews")}
             >
@@ -208,7 +236,7 @@ const CompanyDetail = () => {
 
       {/* Banner */}
       {company && (
-        <div className="relative rounded-xl overflow-hidden mb-12 mt-2">
+        <div className="relative rounded-xl overflow-hidden mb-2 mt-2">
           <div className="h-80 w-full">
             <img
               src={company.logoPath ? company.logoPath : "/image_error.png"}
@@ -251,7 +279,15 @@ const CompanyDetail = () => {
         </div>
       )}
       {/* End: Banner */}
-
+      {company && company.description && (
+        <div className="bg-white/70 rounded-xl shadow-md p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Giới thiệu công ty</h2>
+          <div
+            className="text-gray-800 text-lg leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: company.description }}
+          />
+        </div>
+      )}
       {/* Tab jobs */}
       {activeTab === "jobs" && (
         <>
@@ -280,9 +316,9 @@ const CompanyDetail = () => {
 
                     {openDropdownId === filter.id && (
                       <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
-                        {filter.options.map((option) => (
+                        {filter.options.map((option, index) => (
                           <button
-                            key={option.id || option.name}
+                            key={index}
                             className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 cursor-pointer !rounded-button whitespace-nowrap"
                             onClick={() =>
                               handleSelectFilterOption(
@@ -317,7 +353,7 @@ const CompanyDetail = () => {
 
             {/* jobs list + pagination */}
             <div className="space-y-4">
-              {jobsByCompanyId ? (
+              {jobsFiltered ? (
                 currentJobs.slice(0, 4).map((job, index) => (
                   <div
                     key={index}
@@ -376,7 +412,6 @@ const CompanyDetail = () => {
                     />
                   </div>
                 </div>
-                <span className="text-gray-500">Dựa trên 127 đánh giá</span>
               </div>
             </div>
             {/* End: rating star + rating count */}
@@ -421,8 +456,13 @@ const CompanyDetail = () => {
           <div>
             {reviewsRedux.length > 0 ? (
               <div>
-                {reviewsRedux.map((review) => (
-                  <ReviewCompanyItem key={review.reviewId} review={review} />
+                {reviewsRedux.map((review, index) => (
+                  <ReviewCompanyItem
+                    key={index}
+                    review={review}
+                    onEdit={handleUpdateReview}
+                    onDelete={handleDeleteReview}
+                  />
                 ))}
               </div>
             ) : (
@@ -435,6 +475,12 @@ const CompanyDetail = () => {
             )}
           </div>
           {/* End: reviews list */}
+
+          {/* Start: review input */}
+          {isApply && !isComment && (
+            <CompanyReviewInput companyId={companyId} jobSeekerId={user.userId} />
+          )}
+          {/* End: review input */}
         </div>
       )}
     </div>

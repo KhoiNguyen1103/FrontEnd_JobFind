@@ -56,7 +56,7 @@ const ButtonSave = ({ job }) => {
       }
       try {
         // Call saveJob API với jobId và jobSeekerId
-        const response = await savedJobApi.save(job.jobId, user.id);
+        const response = await savedJobApi.save(job.jobId, user.userId);
 
         if (response) {
           setIsHeart(!isHeart);

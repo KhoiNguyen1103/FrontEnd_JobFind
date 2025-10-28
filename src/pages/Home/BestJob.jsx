@@ -79,7 +79,6 @@ const BestJob = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const role = user?.role;
-
   const jobsRedux = useSelector((state) => state.jobs.jobs);
   const filterJobsRedux = useSelector((state) => state.filterJob.jobsFiltered);
 
@@ -92,21 +91,29 @@ const BestJob = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (role === "COMPANY") {
-      const fetchCompanyJobs = async () => {
+    const fetchJobs = async () => {
+      if (filterJobsRedux.length === 0 || role === "COMPANY") {
         setIsLoading(true);
         try {
           const response = await jobApi.search();
-          dispatch(setJobsRaw({ jobs: response, context: "company" }));
+          dispatch(
+            setJobsRaw({
+              jobs: response,
+              context: role === "COMPANY" ? "company" : "jobseeker",
+            })
+          );
         } catch (err) {
-          console.error("Lỗi lấy jobs cho company:", err);
+          console.error(`Lỗi lấy jobs cho ${role}:`, err);
         } finally {
           setIsLoading(false);
         }
-      };
-      fetchCompanyJobs();
+      }
+    };
+
+    if (role) {
+      fetchJobs();
     }
-  }, [role, dispatch]);
+  }, [role, filterJobsRedux.length, dispatch]);
 
   // Pagination
   const jobsPerPage = 6;

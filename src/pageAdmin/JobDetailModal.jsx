@@ -1,8 +1,27 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { Button } from "@mui/material";
+import jobApi from "../api/jobApi";
+import RejectModal from "./RejectModal";
+import { useState } from "react";
 
 const JobDetailModal = ({ open, onClose, job, onApprove, onViewApplications }) => {
     if (!job) return null;
+    const [openRejectModal, setOpenRejectModal] = useState(false);
+
+    const handleRejectJob = async (reason) => {
+        try {
+            const rejectJobRequest = {
+                jobId: job.jobId,
+                reason: reason,
+            };
+
+            await jobApi.reject(rejectJobRequest);
+            setOpenRejectModal(false);
+            onClose();
+        } catch (error) {
+            console.error("Lỗi khi reject job:", error);
+        }
+    };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -69,15 +88,31 @@ const JobDetailModal = ({ open, onClose, job, onApprove, onViewApplications }) =
                     </div>
                     <div>
                         <label className="text-sm font-medium text-gray-700">Trạng thái duyệt</label>
-                        <p className="border p-3 rounded-lg bg-gray-50">{job.isApproved ? "Đã duyệt" : "Chờ duyệt"}</p>
+                        <p className="border p-3 rounded-lg bg-gray-50"> {!job.isApproved
+                            ? job.note && job.note.trim() !== ""
+                                ? "Đã từ chối"
+                                : "Chờ duyệt"
+                            : "Đã duyệt"}</p>
                     </div>
+                    {job.note && job.note.trim() !== "" && (
+                        <div>
+                            <label className="text-sm font-medium text-gray-700">Lý do từ chối</label>
+                            <p className="border p-3 rounded-lg bg-red-50 text-red-700 whitespace-pre-wrap">{job.note}</p>
+                        </div>
+                    )}
+
                 </div>
             </DialogContent>
             <DialogActions>
                 {!job.isApproved && (
-                    <Button onClick={() => onApprove(job.jobId)} variant="contained" color="success">
-                        Duyệt
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button onClick={() => onApprove(job.jobId)} variant="contained" color="success">
+                            Duyệt
+                        </Button>
+                        <Button onClick={() => setOpenRejectModal(true)} variant="contained" color="error">
+                            Từ chối
+                        </Button>
+                    </div>
                 )}
                 <Button onClick={() => onViewApplications(job.jobId)} variant="contained" color="primary">
                     Xem đơn ứng tuyển
@@ -86,6 +121,11 @@ const JobDetailModal = ({ open, onClose, job, onApprove, onViewApplications }) =
                     Đóng
                 </Button>
             </DialogActions>
+            <RejectModal
+                open={openRejectModal}
+                onClose={() => setOpenRejectModal(false)}
+                onSubmit={handleRejectJob}
+            />
         </Dialog>
     );
 };

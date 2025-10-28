@@ -22,6 +22,16 @@ const companyApi = {
 
     return axiosClient.get('/company/searchCompany', { params });
   },
+
+  createCard: (cardRequest) => {
+    const url = '/company/createCard';
+    return axiosClient.post(url, cardRequest);
+  },
+
+  getCardInfo: (userId) => {
+    const url = `/company/cardInfo/${userId}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default companyApi;

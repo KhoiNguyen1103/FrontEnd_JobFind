@@ -168,3 +168,34 @@
   position: relative;
   z-index: 1000;
 }
+
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-right {
+  animation: slideInRight 0.5s ease-in-out;
+}
+
+.slide-left {
+  animation: slideInLeft 0.5s ease-in-out;
+}

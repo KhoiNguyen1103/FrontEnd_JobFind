@@ -10,15 +10,17 @@ import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 import PropTyes from "prop-types";
 import savedJobApi from "../../api/savedJobApi";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeSavedJob } from "../../redux/slices/savedJobSlice";
 
 const ButtonUnsaved = ({ job }) => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user) || storedUser;
+
   const handleUnSaveJob = async () => {
     // Call API to unsave job
     try {
-      await savedJobApi.unsave(job.jobId);
+      await savedJobApi.unsave(job.jobId, user.id);
       dispatch(removeSavedJob(job.jobId));
       toast.success("Bỏ lưu job thành công", { autoClose: 1000 });
     } catch (error) {

@@ -197,11 +197,19 @@ const RecruiterCompanyProfile = () => {
       {activeTab === "info" && (
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-2/3 flex flex-col items-center text-center md:text-left md:items-start">
-            <img
-              src={company.logoPath}
-              alt={`${company.companyName} logo`}
-              className="w-24 h-lares24 object-contain rounded-full border-2 border-gray-200 mb-4"
-            />
+            <div className="flex items-center space-x-4">
+              <img
+                src={company.logoPath}
+                alt={`${company.companyName} logo`}
+                className="w-24 h-24 object-contain rounded-full border-2 border-gray-200 mb-4"
+              />
+              <div className="flex flex-col">
+                {company.vip && (
+                  <span className="text-sm font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-md mt-2">VIP</span>
+                )}
+              </div>
+            </div>
+
             <h1 className="text-2xl font-bold text-gray-800">{company.companyName}</h1>
             <div
               className="text-gray-600 mt-2 text-base"

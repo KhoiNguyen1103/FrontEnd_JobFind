@@ -67,12 +67,12 @@ const itemsForRecruiter = [
   {
     title: "Gói dịch vụ & Thanh toán",
     icon: faMoneyBill,
-    path: "/",
+    path: "/recruiter/subscribe",
   },
   {
-    title: "Thêm thẻ thanh toán",
+    title: "Thanh toán",
     icon: faCreditCard,
-    path: "/",
+    path: "/recruiter/card",
   },
 ];
 

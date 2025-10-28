@@ -31,7 +31,6 @@ const JobDetail = () => {
     }
   }, [jobId]);
 
-  // ========== Phần này lấy công việc liên quan nhưn gapi đang bắt phải đăng nhập mới lấy
   useEffect(() => {
     const fetchRelatedJobs = async () => {
       try {
@@ -103,13 +102,13 @@ const JobDetail = () => {
                 </div>
               </>
             ) : (
-              <div>Đang tải...</div>
+              <div></div>
             )}
           </div>
 
           {/* Thông tin chung - thông tin công ty */}
           <div className="ms-6" style={{ width: "30%" }}>
-            {job ? <InfoCompany job={job} /> : <div>Đang tải...</div>}
+            {job ? <InfoCompany job={job} /> : <div></div>}
           </div>
           {/* End: body */}
         </div>

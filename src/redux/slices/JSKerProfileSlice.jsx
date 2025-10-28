@@ -46,11 +46,14 @@ export const addCV = createAsyncThunk(
       formData.append("resumeName", nameWithoutExtension);
       formData.append("resume", file);
 
-      await resumeApi.cretaeResume(userId, formData);
+      await resumeApi.createResume(userId, formData);
       await thunkAPI.dispatch(fetchJobSeekerProfileByUserId(userId));
     } catch (error) {
-      console.error("Lỗi khi thêm CV:", error);
-      return thunkAPI.rejectWithValue("Thêm CV thất bại");
+      const errorData = error.response?.data;
+      return thunkAPI.rejectWithValue({
+        errorCode: errorData?.errorCode,
+        message: errorData?.message,
+      });
     }
   }
 );

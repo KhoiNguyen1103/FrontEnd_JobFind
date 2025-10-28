@@ -94,7 +94,6 @@ const MenuMessage = ({ userId, onClose }) => {
       conversationId,
       userId: user.id,
     });
-    console.log(`📤 Dispatch openChatBox cho conversationId ${conversationId}`);
     dispatch(
       openChatBox({
         conversationId,

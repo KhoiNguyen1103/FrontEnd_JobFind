@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot, faAngleDown, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faAngleDown, faFilter, faSearch } from '@fortawesome/free-solid-svg-icons'; // Thêm faSearch
 import filtersData from '../../data/filters';
+import { debounce } from 'lodash';
 
 const JobFilters = ({ filters, setFilters }) => {
     const [isLocationOpen, setIsLocationOpen] = useState(false);
@@ -9,8 +10,13 @@ const JobFilters = ({ filters, setFilters }) => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFilters({ ...filters, [name]: value });
+        const trimmedValue = name === 'keyword' ? value.trimStart() : value;
+        debounceSetFilters({ ...filters, [name]: trimmedValue });
     };
+
+    const debounceSetFilters = debounce((newFilters) => {
+        setFilters(newFilters);
+    }, 50);
 
     const handleLocationChange = (location) => {
         if (location === "Tất cả") {
@@ -25,6 +31,7 @@ const JobFilters = ({ filters, setFilters }) => {
 
     const clearFilters = () => {
         setFilters({
+            keyword: "", // Thêm keyword
             fromDate: "",
             toDate: "",
             location: [],
@@ -50,6 +57,24 @@ const JobFilters = ({ filters, setFilters }) => {
                 <h2 className="text-xl font-semibold text-gray-800">Bộ Lọc</h2>
             </div>
             <div className="space-y-2">
+                {/* Thêm input tìm kiếm theo tên */}
+                <div className="flex flex-col">
+                    <label htmlFor="keyword" className="text-sm font-medium text-gray-700 mb-1">Tên công việc</label>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            name="keyword"
+                            value={filters.keyword || ""}
+                            onChange={handleChange}
+                            placeholder="Nhập tên công việc..."
+                            className="border p-3 pl-10 rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition w-full"
+                        />
+                        <FontAwesomeIcon
+                            icon={faSearch}
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                        />
+                    </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex flex-col">
                         <label htmlFor="fromDate" className="text-sm font-medium text-gray-700 mb-1">Từ ngày</label>
@@ -121,6 +146,7 @@ const JobFilters = ({ filters, setFilters }) => {
                             <option value="true">Đã đăng</option>
                             <option value="false">Ẩn</option>
                             <option value="pending">Chờ duyệt</option>
+                            <option value="rejected">Bị từ chối</option>
                         </select>
                     </div>
                     <div className="flex flex-col">

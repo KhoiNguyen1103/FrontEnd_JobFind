@@ -41,7 +41,13 @@ const conversationApi = {
     countUnreadConversations: (userId) => {
         const url = `/chat/conversations/unread/${userId}`;
         return axiosClient.get(url);
-    }
+    },
+
+    conversationIdByParticipantId: (userId, employerId) => {
+        const url = '/chat/conversationIdByUserIdAndEmployerId';
+        const params = { userId, employerId };
+        return axiosClient.get(url, { params });
+    },
 };
 
 export default conversationApi;

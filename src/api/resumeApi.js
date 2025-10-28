@@ -1,9 +1,7 @@
 import axiosClient from "./axiosClient";
 
 const resumeApi = {
-  cretaeResume: (profileId, resumeRequest) => {
-    console.log("resumeRequest", resumeRequest);
-    console.log("profileId", profileId);
+  createResume: (profileId, resumeRequest) => {
     const url = `/resume/create/${profileId}`;
     return axiosClient.post(url, resumeRequest);
   },

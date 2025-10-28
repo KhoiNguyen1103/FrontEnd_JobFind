@@ -9,6 +9,11 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
     const isEditMode = mode === 'edit';
     const isCreateMode = mode === 'create';
 
+    const educationLevelOptions = [
+        { value: 'Đại Học', label: 'Đại Học' },
+        { value: 'Cao Đẳng', label: 'Cao Đẳng' },
+    ];
+
     const initialJobState = isViewMode || isEditMode ? {
         ...(job || {}),
         skillIds: job?.skills?.map(s => {
@@ -17,6 +22,8 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         }) || [],
         categoryIds: job?.categories?.map(c => c.jobCategoryId) || [],
         isActive: job?.isActive ?? false,
+        yearsOfExperience: job?.yearsOfExperience ?? 0,
+        educationLevel: job?.educationLevel ?? '',
     } : {
         companyId,
         title: "",
@@ -30,7 +37,9 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         deadline: "",
         skillIds: [],
         categoryIds: [],
-        isActive: true, 
+        isActive: true,
+        yearsOfExperience: 0,
+        educationLevel: "",
     };
 
     const [formData, setFormData] = useState(initialJobState);
@@ -68,6 +77,11 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         setErrors({ ...errors, [fieldName]: "" });
     };
 
+    const handleEducationLevelChange = (selectedOption) => {
+        setFormData({ ...formData, educationLevel: selectedOption ? selectedOption.value : '' });
+        setErrors({ ...errors, educationLevel: "" });
+    };
+
     const validateForm = () => {
         const newErrors = {};
         if (!formData.title) newErrors.title = "Tiêu đề là bắt buộc";
@@ -80,6 +94,8 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
         if (!formData.location) newErrors.location = "Địa điểm là bắt buộc";
         if (!formData.deadline) newErrors.deadline = "Hạn chót là bắt buộc";
         if (isEditMode && formData.isActive === undefined) newErrors.isActive = "Trạng thái là bắt buộc";
+        if (formData.yearsOfExperience === undefined || formData.yearsOfExperience < 0) newErrors.yearsOfExperience = "Số năm kinh nghiệm phải >= 0";
+        if (!formData.educationLevel) newErrors.educationLevel = "Trình độ học vấn là bắt buộc";
         return newErrors;
     };
 
@@ -117,7 +133,7 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] shadow-2xl flex flex-col">
+            <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] shadow-2xl flex flex-col">
                 <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10 rounded-t-xl">
                     <h2 className="text-2xl font-bold text-gray-800">
                         {isViewMode ? 'Chi Tiết Công Việc' : isEditMode ? 'Chỉnh Sửa Công Việc' : 'Thêm Công Việc Mới'}
@@ -159,6 +175,14 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                                 </div>
                             </div>
                             <div>
+                                <label className="text-sm font-medium text-gray-700">Số năm kinh nghiệm</label>
+                                <p className="border p-3 rounded-lg bg-gray-50">{formData.yearsOfExperience} năm</p>
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Trình độ học vấn</label>
+                                <p className="border p-3 rounded-lg bg-gray-50">{formData.educationLevel || 'Không có'}</p>
+                            </div>
+                            <div>
                                 <label className="text-sm font-medium text-gray-700">Kỹ năng</label>
                                 <p className="border p-3 rounded-lg bg-gray-50">
                                     {formData.skillIds.map(id => skills.find(s => s.skillId === id)?.name).filter(Boolean).join(', ') || 'Không có'}
@@ -186,6 +210,23 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                                 <label className="text-sm font-medium text-gray-700">Trạng thái</label>
                                 <p className="border p-3 rounded-lg bg-gray-50">{formData.isActive ? 'Đăng' : 'Ẩn'}</p>
                             </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Trạng thái duyệt</label>
+                                <p className={`border p-3 rounded-lg bg-gray-50 font-semibold
+                                    ${formData.isApproved ? 'text-green-600' : formData.note && formData.note.trim() !== '' ? 'text-red-600' : 'text-yellow-600'}`}>
+                                    {formData.isApproved
+                                        ? '🟢 Đã duyệt'
+                                        : formData.note && formData.note.trim() !== ''
+                                            ? '❌ Đã từ chối'
+                                            : '⏳ Chờ duyệt'}
+                                </p>
+                            </div>
+                            {formData.isApproved === false && formData.note && formData.note.trim() !== '' && (
+                                <div>
+                                    <label className="text-sm font-medium text-gray-700">Lý do từ chối</label>
+                                    <p className="border p-3 rounded-lg bg-gray-50">{formData.note}</p>
+                                </div>
+                            )}
                             <div className="flex justify-end space-x-3 pt-6">
                                 <button
                                     onClick={() => onEdit(job)}
@@ -282,6 +323,30 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                                     />
                                     {errors.salaryMax && <p className="text-red-500 text-sm mt-1">{errors.salaryMax}</p>}
                                 </div>
+                                <div className="flex flex-col">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">Số năm kinh nghiệm *</label>
+                                    <input
+                                        type="number"
+                                        name="yearsOfExperience"
+                                        value={formData.yearsOfExperience}
+                                        onChange={handleChange}
+                                        className="border p-3 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500"
+                                        min="0"
+                                    />
+                                    {errors.yearsOfExperience && <p className="text-red-500 text-sm mt-1">{errors.yearsOfExperience}</p>}
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="text-sm font-medium text-gray-700 mb-1">Trình độ học vấn *</label>
+                                    <Select
+                                        options={educationLevelOptions}
+                                        value={educationLevelOptions.find(opt => opt.value === formData.educationLevel)}
+                                        onChange={handleEducationLevelChange}
+                                        className="react-select-container"
+                                        classNamePrefix="react-select"
+                                        placeholder="Chọn trình độ học vấn..."
+                                    />
+                                    {errors.educationLevel && <p className="text-red-500 text-sm mt-1">{errors.educationLevel}</p>}
+                                </div>
                                 <div className="flex flex-col md:col-span-2">
                                     <label className="text-sm font-medium text-gray-700 mb-1">Kỹ năng</label>
                                     <Select
@@ -373,7 +438,7 @@ const JobModal = ({ mode, setMode, job, skills, categories, companyId, onClose, 
                             <div className="flex justify-end mt-6 gap-4">
                                 <button
                                     type="button"
-                                    onClick={isCreateMode ? onClose : () => setMode('view')} // Close modal in create mode
+                                    onClick={isCreateMode ? onClose : () => setMode('view')}
                                     className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition"
                                 >
                                     {isViewMode ? 'Đóng' : 'Hủy'}

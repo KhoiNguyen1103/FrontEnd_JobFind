@@ -12,6 +12,7 @@ import { useState } from "react";
 import authApi from "../../api/authApi";
 import logo from "../../assets/logo.png";
 import axiosClient from "../../api/axiosClient";
+import { toast } from "react-toastify";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -64,18 +65,18 @@ const SignUpForm = () => {
       const response = await axiosClient.post("/auth/register", null, {
         params: queryParams,
       });
-      console.log("Response:", response);
 
       if (!response) {
         alert(`Đăng ký thất bại: ${JSON.stringify(response.infoMessage)}`);
         return;
       }
 
-      alert("Đăng ký thành công!");
-      navigate("/login", { replace: true });
+      toast.success("Đăng ký thành công", { autoClose: 1500 });
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 3000);
     } catch (error) {
-      // console.error("Lỗi gửi query:", error);
-      alert(`Đăng ký thất bại: ${error.response.data.message}`);
+      toast.error("Email đã tồn tại", { autoClose: 1500 });
     }
   };
 

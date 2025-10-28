@@ -4,21 +4,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { submitCV } from "../../redux/slices/cvSlice";
 import selectFile from "../../untils/handleUpLoadFile";
 import applicationApi from "../../api/applicationApi";
+import resumeApi from "../../api/resumeApi";
+import jobSeekerApi from "../../api/jobSeekerApi";
 import { toast } from "react-toastify";
 import { addApplication } from "../../redux/slices/applySlice";
 
 const ApplyModal = ({ onClose, jobId }) => {
   const dispatch = useDispatch();
 
-  // load data từ redux
+  // Load data từ redux
   const jobSeekerKer = useSelector((state) => state.jobSeekerProfile.profile);
   const user = useSelector((state) => state.auth.user);
   const selectedJob = useSelector((state) => state.jobs.selectedJob);
 
-  // state
+  // State
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState("upload"); // 'upload' hoặc 'existing'
   const [selectedCV, setSelectedCV] = useState(null); // File hoặc CV object
+  const [isSubmitting, setIsSubmitting] = useState(false); // Trạng thái đang submit
 
   const handleUploadFile = (event) => {
     const file = selectFile(event);
@@ -34,10 +37,8 @@ const ApplyModal = ({ onClose, jobId }) => {
   };
 
   const handleSubmit = async () => {
-    console.log("CV đã chọn:", selectedCV);
-    // Gọi submitCV với dữ liệu phù hợp
-    // dispatch(submitCV(selectedCV));
-    // onClose();
+    if (isSubmitting) return; // Ngăn submit nhiều lần
+    setIsSubmitting(true);
 
     try {
       if (!user) {
@@ -50,18 +51,70 @@ const ApplyModal = ({ onClose, jobId }) => {
         return;
       }
 
+      let resumeId = null;
+
+      // Xử lý khi chọn upload CV mới
+      if (selectedOption === "upload" && selectedCV) {
+        // Tạo FormData
+
+        const formData = new FormData();
+        const nameWithoutExtension = selectedCV.name.split('.').slice(0, -1).join('.'); // Lấy tên file không có phần mở rộng
+        formData.append("resumeName", nameWithoutExtension);
+        formData.append("resume", selectedCV);
+
+        // Lưu CV vào CSDL
+        try {
+          await resumeApi.createResume(user.userId, formData);
+        } catch (error) {
+          if (error.response?.status === 400) {
+            toast.error("Tên CV đã tồn tại");
+          } else {
+            toast.error("Không thể tạo CV. Vui lòng thử lại.");
+          }
+          return; // Dừng lại nếu lỗi, không chạy tiếp
+        }
+
+        // Gọi API để lấy profile mới chứa resumeList cập nhật
+        const profileResponse = await jobSeekerApi.getProfileById(user.userId);
+        const updatedProfile = profileResponse;
+
+        // Tìm resumeId từ resumeList mới
+        const resumeList = updatedProfile.resumeList || [];
+        const newlyUploadedResume = resumeList.find(
+          (resume) => resume.resumeName === nameWithoutExtension
+        );
+
+        if (!newlyUploadedResume) {
+          throw new Error("Không tìm thấy CV vừa tải lên trong danh sách. Vui lòng thử lại.");
+        }
+
+        resumeId = newlyUploadedResume.resumeId;
+      }
+      // Xử lý khi chọn CV có sẵn
+      else if (selectedOption === "existing" && selectedCV) {
+        resumeId = selectedCV.resumeId;
+      } else {
+        toast.error("Vui lòng chọn CV để ứng tuyển.");
+        return;
+      }
+
       const response = await applicationApi.applyForJob({
         jobId: jobId || selectedJob?.jobId,
-        jobSeekerProfileId: user?.id,
-        resumeId: selectedCV?.resumeId || null,
+        jobSeekerProfileId: user?.userId,
+        resumeId,
       });
-      console.log("response: ", response);
+
       toast.success("Nộp hồ sơ ứng tuyển thành công!");
-      // dispatch(addApplication(response)); // Cập nhật danh sách ứng tuyển trong Redux
-      window.location.reload(); // Tải lại trang để cập nhật danh sách ứng tuyển
-      onClose(); // Đóng modal sau khi nộp hồ sơ thành công
+      dispatch(addApplication(response)); // Cập nhật danh sách ứng tuyển trong Redux
+      setTimeout(() => {
+        onClose();
+        window.location.reload(); 
+      }, 500); 
     } catch (error) {
-      toast.error("Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển.");
+      console.error("Lỗi khi nộp hồ sơ:", error);
+      toast.error(error.message || "Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,11 +194,10 @@ const ApplyModal = ({ onClose, jobId }) => {
                 {(jobSeekerKer?.resumeList || []).map((cv) => (
                   <div
                     key={cv.resumeId}
-                    className={`p-2 border rounded cursor-pointer ${
-                      selectedCV?.resumeId === cv.resumeId
-                        ? "bg-green-100"
-                        : "hover:bg-gray-100"
-                    }`}
+                    className={`p-2 border rounded cursor-pointer ${selectedCV?.resumeId === cv.resumeId
+                      ? "bg-green-100"
+                      : "hover:bg-gray-100"
+                      }`}
                     onClick={() => handleSelectExistingCV(cv)}
                   >
                     📄 {cv.resumeName || "CV chưa đặt tên"}
@@ -171,14 +223,13 @@ const ApplyModal = ({ onClose, jobId }) => {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!selectedCV}
-            className={`px-4 py-2 rounded-lg text-white ${
-              selectedCV
-                ? "bg-green-500 hover:bg-green-600"
-                : "bg-gray-400 cursor-not-allowed"
-            }`}
+            disabled={!selectedCV || isSubmitting}
+            className={`px-4 py-2 rounded-lg text-white ${selectedCV && !isSubmitting
+              ? "bg-green-500 hover:bg-green-600"
+              : "bg-gray-400 cursor-not-allowed"
+              }`}
           >
-            Nộp hồ sơ ứng tuyển
+            {isSubmitting ? "Đang nộp..." : "Nộp hồ sơ ứng tuyển"}
           </button>
         </div>
       </div>
@@ -188,6 +239,7 @@ const ApplyModal = ({ onClose, jobId }) => {
 
 ApplyModal.propTypes = {
   onClose: PropTypes.func.isRequired,
+  jobId: PropTypes.string,
 };
 
 export default ApplyModal;

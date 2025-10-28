@@ -56,9 +56,9 @@ function App() {
         // Load job seeker profile
         dispatch(fetchJobSeekerProfileByUserId(user.id));
         // Load application
-        dispatch(fetchApplicationByJSK(user.id));
+        dispatch(fetchApplicationByJSK(user.userId));
         // Load jobs proposed
-        dispatch(fetchJobsPropposeByJSKId(user.id)).then((res) => {
+        dispatch(fetchJobsPropposeByJSKId(user.userId)).then((res) => {
           if (res.meta.requestStatus === "fulfilled") {
             console.log("load filterjob propose");
             dispatch(setJobsRaw({ jobs: res.payload, context: "recommend" })); // Gửi sang filterJobsSlice

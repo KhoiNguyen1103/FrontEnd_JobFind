@@ -16,7 +16,7 @@ const Footer = () => {
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Liên hệ chúng tôi</h3>
-                        <p className="text-gray-400">Email: hotro@topcv.vn</p>
+                        <p className="text-gray-400">Email: hotro@jobfind.vn</p>
                         <p className="text-gray-400">Phone: 0123 456 789</p>
                     </div>
                 </div>

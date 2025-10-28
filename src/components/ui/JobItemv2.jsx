@@ -52,6 +52,15 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
           <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
             {job.jobType}
           </span>
+          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
+            {job.yearsOfExperience?.match(/^\d+\s*-\s*\d+$/)
+              ? `${job.yearsOfExperience
+                  .replace(/\s*/g, "")
+                  .replace("-", " - ")} năm`
+              : job.yearsOfExperience?.match(/^\d+\+$/)
+              ? `Trên ${job.yearsOfExperience.replace("+", "")} năm`
+              : "Không yêu cầu kinh nghiệm"}
+          </span>
         </div>
         {/* Ngày đăng - ngày end */}
         <div className="pt-6 flex flex-col justify-center items-start text-sm text-gray-500 min-w-[120px]">

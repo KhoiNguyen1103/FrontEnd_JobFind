@@ -1,11 +1,16 @@
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMessage, faEnvelope, faPhone, faMapMarkerAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import jobSeekerApi from "../../api/jobSeekerApi";
 import ButtonSaveJobSeeker from "../../components/button/ButtonSaveJobSeeker";
+import conversationApi from "../../api/conversationApi";
+import { openChatBox } from '../../redux/slices/chatBoxSlice';
 
 const JobSeekerProfile = () => {
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
   const { profileId } = useParams();
   const [profile, setProfile] = useState(null);
 
@@ -41,6 +46,25 @@ const JobSeekerProfile = () => {
     return `${years > 0 ? years + " năm" : ""}${months > 0 ? (years > 0 ? " " : "") + months + " tháng" : ""}`;
   };
 
+  async function handleOpenChat() {
+    try {
+      const conversationId = await conversationApi.conversationIdByParticipantId(profile.userId, user.id);
+      const userId = profile.userId;
+      if (conversationId > 0) {
+      
+        const displayName = `${profile.firstName} ${profile.astName}`;
+        console.log("conversationId", conversationId);
+        dispatch(openChatBox({ conversationId, profileId, userId, displayName }));
+      } else {
+        const displayName = `${profile.firstName} ${profile.lastName}`;
+        dispatch(openChatBox({ profileId, userId, displayName }));
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu từ API:", error);
+    }
+  }
+
+
   return (
     <div className="profile py-8 bg-gray-100 min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,10 +87,15 @@ const JobSeekerProfile = () => {
           </div>
           <div>
             <ButtonSaveJobSeeker profileId={profileId} />
-            <FontAwesomeIcon
-              icon={faMessage}
-              className="h-5 w-5 text-green-600 cursor-pointer hover:text-green-700 transition"
-            />
+            <button
+              onClick={handleOpenChat}
+              className="text-green-600 hover:text-green-700"
+            >
+              <FontAwesomeIcon
+                icon={faMessage}
+                className="h-5 w-5 text-green-600 cursor-pointer hover:text-green-700 transition"
+              />
+            </button>
           </div>
 
         </div>

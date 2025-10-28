@@ -21,7 +21,7 @@ const companyReviewApi = {
 
   // Xoá review
   deleteReview: (reviewId) => {
-    const url = `/company/review/delete/reviewId?reviewId=${reviewId}`;
+    const url = `/company/review/delete?reviewId=${reviewId}`;
     return axiosClient.delete(url);
   },
 };

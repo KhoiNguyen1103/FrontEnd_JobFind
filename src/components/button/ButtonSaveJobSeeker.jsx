@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
 import { saveJobseeker, unsaveJobseeker } from "../../redux/slices/savedJobseekerSlice";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const ButtonSaveJobSeeker = ({ profileId }) => {
   const dispatch = useDispatch();
@@ -31,8 +32,12 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
 
     if (isSaved) {
       dispatch(unsaveJobseeker({ profileId: numericProfileId, companyId }));
+      toast.success("Đã bỏ lưu thành công!", { autoClose: 500 });
+
     } else {
       dispatch(saveJobseeker({ profileId: numericProfileId, companyId }));
+      toast.success("Lưu thành công!", { autoClose: 500 });
+
     }
   };
 

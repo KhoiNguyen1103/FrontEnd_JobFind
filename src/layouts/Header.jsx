@@ -149,12 +149,20 @@ const Header = () => {
   if (user?.role === "JOBSEEKER") {
     text = "Bạn là nhà tuyển dụng?";
     link = "/recruiter/login";
-  } else if (user?.role === "COMPANY" && location.pathname !== "/") {
-    text = "Xem thị trường công việc";
-    link = "/";
-  } else if (user?.role === "COMPANY" && location.pathname === "/") {
-    text = "Xem Profile đề cử";
-    link = "/recruiter/home";
+  }
+
+  const jobMarketPaths = ["/", "/search", "/company"]; 
+  const isJobMarket = jobMarketPaths.some((path) => location.pathname === path);
+  console.log("pathname" + location.pathname)
+
+  if (user?.role === "COMPANY") {
+    if (isJobMarket) {
+      text = "Xem Profile đề cử";
+      link = "/recruiter/home";
+    } else {
+      text = "Xem thị trường công việc";
+      link = "/";
+    }
   }
 
   return (

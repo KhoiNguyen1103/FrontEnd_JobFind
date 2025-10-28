@@ -8,6 +8,8 @@ import RecruiterProfileSaved from "../pagesRecruiter/RecruiterProfileSaved/Recru
 import JobSeekerProfile from "../pagesRecruiter/JobSeekerProfile/JobSeekerProfile";
 import SearchResultCV from "../pagesRecruiter/SearchResultCV/SearchResultCV";
 import ApplicationsPage from "../pagesRecruiter/Application/ApplicationPage";
+import CardManagement from "../pagesRecruiter/RecruiterCardManagement/CardManagement";
+import RecruiterSubcribe from "../pagesRecruiter/RecruiterSubcribe/RecruiterSubcribe";
 
 export const recruiterRoutes = [
   {
@@ -49,5 +51,13 @@ export const recruiterRoutes = [
   {
     path: "/search-cv",
     component: <SearchResultCV />,
+  },
+  {
+    path: "recruiter/card",
+    component: <CardManagement />,
+  },
+  {
+    path: "recruiter/subscribe",
+    component: <RecruiterSubcribe />,
   },
 ];

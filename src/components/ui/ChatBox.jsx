@@ -27,7 +27,7 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
     const hasMarkedAsRead = useRef(false);
     const hasMinimizedOnce = useRef(false);
     const wsService = WebSocketService.getInstance();
-    
+
     useEffect(() => {
         if (!user?.id) {
             console.error('User ID is missing');
@@ -47,8 +47,14 @@ const ChatBox = ({ profileId, userId, displayName, conversationId, isMinimized, 
         }
 
         const conversationTopic = TOPICS.CONVERSATION(conversationId.toString());
+
         const handleNewMessage = (data) => {
-            setMessages((prevMessages) => [...prevMessages, data]);
+            setMessages((prevMessages) => {
+                if (prevMessages.some((msg) => msg.messageId === data.messageId)) {
+                    return prevMessages;
+                }
+                return [...prevMessages, data];
+            });
         };
 
         const metaTopic = TOPICS.CONVERSATION_DATA(conversationId.toString());

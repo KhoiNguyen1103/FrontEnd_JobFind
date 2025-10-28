@@ -20,11 +20,12 @@ export const addCompanyReview = createAsyncThunk(
   "companyReview/create",
   async (reviewData, { rejectWithValue }) => {
     try {
-      const response = await companyReviewApi.createReview(reviewData);
+      const response = await companyReviewApi.addReview(reviewData);
       toast.success("Gửi đánh giá thành công");
       return response;
     } catch (error) {
-      toast.error("Không thể gửi đánh giá");
+      toast.error("Bạn đã bình luận rồi! bình luận của bạn đang xét duyệt");
+      console.log(error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -32,12 +33,9 @@ export const addCompanyReview = createAsyncThunk(
 
 export const updateCompanyReview = createAsyncThunk(
   "companyReview/update",
-  async ({ reviewId, updateData }, { rejectWithValue }) => {
+  async (updateData, { rejectWithValue }) => {
     try {
-      const response = await companyReviewApi.updateReview(
-        reviewId,
-        updateData
-      );
+      const response = await companyReviewApi.updateReview(updateData);
       toast.success("Cập nhật đánh giá thành công");
       return response;
     } catch (error) {
@@ -55,6 +53,7 @@ export const deleteCompanyReview = createAsyncThunk(
       toast.success("Xoá đánh giá thành công");
       return reviewId;
     } catch (error) {
+      console.error(error);
       toast.error("Không thể xoá đánh giá");
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -119,17 +118,19 @@ const companyReviewSlice = createSlice({
 
       // Update
       .addCase(updateCompanyReview.fulfilled, (state, action) => {
-        const index = state.reviews.findIndex(
-          (r) => r._id === action.payload._id
-        );
-        if (index !== -1) {
-          state.reviews[index] = action.payload;
-        }
+        // const index = state.reviews.findIndex(
+        //   (r) => r.reviewId === action.payload.reviewId
+        // );
+        // if (index !== -1) {
+        //   state.reviews[index] = action.payload;
+        // }
       })
 
       // Delete
       .addCase(deleteCompanyReview.fulfilled, (state, action) => {
-        state.reviews = state.reviews.filter((r) => r._id !== action.payload);
+        state.reviews = state.reviews.filter(
+          (r) => r.reviewId !== action.payload
+        );
       });
   },
 });

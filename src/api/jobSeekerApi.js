@@ -15,13 +15,18 @@ const jobSeekerApi = {
     return axiosClient.get(url);
   },
 
-  addWorkExperience: (userId, workExpRequest) => {
-    const url = `/jobseeker/addWorkExperience?userId=${userId}`;
+  addWorkExperience: (jobSeekerId, workExpRequest) => {
+    const url = `/jobseeker/addWorkExperience?jobSeekerId=${jobSeekerId}`;
     return axiosClient.post(url, workExpRequest);
   },
 
-  updateWorkExperience: (userId, workExpRequest) => {
-    const url = `/jobseeker/updateWorkExperience?userId=${userId}`;
+  deleteWorkExperience: (jobSeekerId, workExpId) => {
+    const url = `/jobseeker/deleteWorkExperience?jobSeekerId=${jobSeekerId}&workExperienceId=${workExpId}`;
+    return axiosClient.delete(url);
+  },
+
+  updateWorkExperience: (jobSeekerId, workExpRequest) => {
+    const url = `/jobseeker/updateWorkExperience?jobSeekerId=${jobSeekerId}`;
     return axiosClient.post(url, workExpRequest);
   },
 

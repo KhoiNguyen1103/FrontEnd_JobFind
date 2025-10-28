@@ -2,11 +2,13 @@ import { faMessage, faEye } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
 import { openChatBox } from '../../redux/slices/chatBoxSlice';
+import conversationApi from "../../api/conversationApi";
 
 const CVItem = ({ profile }) => {
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
@@ -30,10 +32,21 @@ const CVItem = ({ profile }) => {
     }
   };
 
-  const handleOpenChat = () => {
-    const displayName = `${firstName} ${lastName}`;
-    dispatch(openChatBox({ profileId, userId, displayName }));
-  };
+  async function handleOpenChat() {
+    try {
+      const conversationId = await conversationApi.conversationIdByParticipantId(profile.userId, user.id);
+      if (conversationId > 0) {
+        const displayName = `${firstName} ${lastName}`;
+        console.log("conversationId", conversationId);
+        dispatch(openChatBox({ conversationId, profileId, userId, displayName }));
+      } else {
+        const displayName = `${firstName} ${lastName}`;
+        dispatch(openChatBox({ profileId, userId, displayName }));
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu từ API:", error);
+    }
+  }
 
   return (
     <div className="p-6 bg-white rounded-xl shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300">

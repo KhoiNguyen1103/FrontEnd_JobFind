@@ -24,8 +24,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
 import JobDetailModal from "./JobDetailModal";
 import ApplicationListModal from "./ApplicationListModal.JSX";
+import JobsListModal from "./JobsListModal";
 
-// Register Chart.js components
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const AdminDashboard = () => {
@@ -37,7 +37,8 @@ const AdminDashboard = () => {
     const [openApplicationsModal, setOpenApplicationsModal] = useState(false); // Trạng thái modal ứng tuyển
     const [jobApplications, setJobApplications] = useState([]);
     const [approvalFilter, setApprovalFilter] = useState("all");
-
+    const [selectedCompanyId, setSelectedCompanyId] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
     // Tab state
     const [activeTab, setActiveTab] = useState("Dashboard");
 
@@ -133,10 +134,12 @@ const AdminDashboard = () => {
     };
 
     const filteredJobs = jobs.filter((job) => {
-        if (approvalFilter === "approved") return job.isApproved;
-        if (approvalFilter === "pending") return !job.isApproved;
-        return true;
-    })
+        if (approvalFilter === "approved") return job.isApproved === true;
+        if (approvalFilter === "pending") return job.isApproved === false && (!job.note || job.note.trim() === "");
+        if (approvalFilter === "rejected") return job.isApproved === false && job.note && job.note.trim() !== "" && job.isPending === false;
+        if (approvalFilter === "review") return job.isApproved === false && job.note && job.note.trim() !== "" && job.isPending === true;
+        return true; // "all"
+    });
 
     const handleOpenJobModal = (job) => {
         setSelectedJob(job);
@@ -194,6 +197,29 @@ const AdminDashboard = () => {
     const handleLogout = () => {
         dispatch(logout());
     };
+
+    const handleRowClick = async (companyId) => {
+        setSelectedCompanyId(companyId);
+        try {
+            const response = await jobApi.getByCompanyId(companyId, companyId);
+            setJobs(response);
+            setModalOpen(true);
+        } catch (error) {
+            console.error('Error fetching jobs:', error);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedCompanyId(null);
+        setJobs([]);
+    };
+
+    const handleJobSelect = (job) => {
+        setSelectedJob(job);
+        setOpenJobModal(true);
+    };
+
 
     return (
         <div className="flex h-screen bg-gray-100 text-gray-900">
@@ -528,6 +554,24 @@ const AdminDashboard = () => {
                                 >
                                     Chờ duyệt
                                 </Button>
+                                <Button
+                                    variant={approvalFilter === "rejected" ? "contained" : "outlined"}
+                                    onClick={() => {
+                                        setApprovalFilter("rejected");
+                                        setJobPage(1);
+                                    }}
+                                >
+                                    Đã từ chối
+                                </Button>
+                                <Button
+                                    variant={approvalFilter === "review" ? "contained" : "outlined"}
+                                    onClick={() => {
+                                        setApprovalFilter("review");
+                                        setJobPage(1);
+                                    }}
+                                >
+                                    Duyệt lại
+                                </Button>
                             </div>
                             <Table>
                                 <TableHead>
@@ -552,10 +596,22 @@ const AdminDashboard = () => {
                                             <TableCell>{job.company?.companyName || "N/A"}</TableCell>
                                             <TableCell>
                                                 <span
-                                                    className={`px-3 py-1 text-sm font-medium rounded-full ${job.isApproved ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                                                    className={`px-3 py-1 text-sm font-medium rounded-full ${job.isApproved
+                                                        ? "bg-green-100 text-green-700"
+                                                        : !job.note || job.note.trim() === ""
+                                                            ? "bg-yellow-100 text-yellow-700"
+                                                            : job.isPending
+                                                                ? "bg-orange-100 text-orange-700"
+                                                                : "bg-red-100 text-red-700"
                                                         }`}
                                                 >
-                                                    {job.isApproved ? "Đã duyệt" : "Chờ duyệt"}
+                                                    {job.isApproved
+                                                        ? "🟢 Đã duyệt"
+                                                        : !job.note || job.note.trim() === ""
+                                                            ? "⏳ Chờ duyệt"
+                                                            : job.isPending
+                                                                ? "🔄 Duyệt lại"
+                                                                : "❌ Đã từ chối"}
                                                 </span>
                                             </TableCell>
                                             <TableCell>{job.location}</TableCell>
@@ -563,7 +619,6 @@ const AdminDashboard = () => {
                                         </TableRow>
                                     ))}
                                 </TableBody>
-
                             </Table>
                             <div className="flex justify-between items-center mt-4">
                                 <div>
@@ -592,62 +647,69 @@ const AdminDashboard = () => {
                 )}
 
                 {activeTab === "Công Ty" && (
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h6" className="font-bold mb-4">Danh Sách Công Ty</Typography>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>ID</TableCell>
-                                        <TableCell>Tên Công Ty</TableCell>
-                                        <TableCell>Logo</TableCell>
-                                        <TableCell>Số điện thoại</TableCell>
-                                        <TableCell>Email</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {paginate(companies, companyPage).map((company) => (
-                                        <TableRow key={company.companyId}>
-                                            <TableCell>{company.companyId}</TableCell>
-                                            <TableCell>{company.companyName}</TableCell>
-                                            <TableCell>
-                                                <img
-                                                    src={company.logoPath}
-                                                    alt="Logo công ty"
-                                                    className="w-14 h-14 object-contain rounded"
-                                                />
-                                            </TableCell>
-
-                                            <TableCell>{company.phoneNumber}</TableCell>
-                                            <TableCell>{company.email}</TableCell>
+                    <>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6" className="font-bold mb-4">Danh Sách Công Ty</Typography>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>ID</TableCell>
+                                            <TableCell>Tên Công Ty</TableCell>
+                                            <TableCell>Logo</TableCell>
+                                            <TableCell>Số điện thoại</TableCell>
+                                            <TableCell>Email</TableCell>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                            <div className="flex justify-between items-center mt-4">
-                                <div>
-                                    <Button
-                                        onClick={() => setCompanyPage((prev) => Math.max(prev - 1, 1))}
-                                        disabled={companyPage === 1}
-                                        variant="outlined"
-                                    >
-                                        Previous
-                                    </Button>
-                                    <Button
-                                        onClick={() => setCompanyPage((prev) => prev + 1)}
-                                        disabled={companyPage * itemsPerPage >= companies.length}
-                                        variant="outlined"
-                                        className="ml-2"
-                                    >
-                                        Next
+                                    </TableHead>
+                                    <TableBody>
+                                        {paginate(companies, companyPage).map((company) => (
+                                            <TableRow
+                                                key={company.companyId}
+                                                onClick={() => handleRowClick(company.companyId)}
+                                                style={{ cursor: 'pointer' }}
+                                                hover
+                                            >
+                                                <TableCell>{company.companyId}</TableCell>
+                                                <TableCell>{company.companyName}</TableCell>
+                                                <TableCell>
+                                                    <img
+                                                        src={company.logoPath}
+                                                        alt="Logo công ty"
+                                                        className="w-14 h-14 object-contain rounded"
+                                                    />
+                                                </TableCell>
+                                                <TableCell>{company.phoneNumber}</TableCell>
+                                                <TableCell>{company.email}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                <div className="flex justify-between items-center mt-4">
+                                    <div>
+                                        <Button
+                                            onClick={() => setCompanyPage((prev) => Math.max(prev - 1, 1))}
+                                            disabled={companyPage === 1}
+                                            variant="outlined"
+                                        >
+                                            Previous
+                                        </Button>
+                                        <Button
+                                            onClick={() => setCompanyPage((prev) => prev + 1)}
+                                            disabled={companyPage * itemsPerPage >= companies.length}
+                                            variant="outlined"
+                                            className="ml-2"
+                                        >
+                                            Next
+                                        </Button>
+                                    </div>
+                                    <Button onClick={fetchCompanies} variant="contained" color="primary">
+                                        Cập nhật
                                     </Button>
                                 </div>
-                                <Button onClick={fetchCompanies} variant="contained" color="primary">
-                                    Cập nhật
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                        <JobsListModal open={modalOpen} onClose={handleCloseModal} jobs={jobs} onJobSelect={handleJobSelect}/>
+                    </>
                 )}
 
                 {activeTab === "Người Tìm Việc" && (

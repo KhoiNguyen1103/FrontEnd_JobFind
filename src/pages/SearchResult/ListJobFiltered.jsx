@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import JobItemv2 from "../../components/ui/JobItemv2";
 
 const ListJob = () => {
-  // const filterJobs = useSelector((state) => state.jobs.filterJobs);
   const jobs = useSelector((state) => state.jobs.renderJobs);
   console.log(jobs);
 

@@ -4,7 +4,7 @@ const chatBoxSlice = createSlice({
     name: 'chatBox',
     initialState: {
         chatBoxes: [],
-        totalUnreadCount: 0, // Khởi tạo totalUnreadCount là số để tránh lỗi undefined
+        totalUnreadCount: 0, 
     },
     reducers: {
         openChatBox: (state, action) => {
