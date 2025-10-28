@@ -1,19 +1,28 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { deleteCV } from "../../redux/slices/JSKerProfileSlice";
 import PropTypes from "prop-types";
-const UploadedCVs = ({ cvs, handleDeleteCv }) => {
-  // console.log("cvs", cvs);
+import { useDispatch, useSelector } from "react-redux";
+const UploadedCVs = () => {
+  const dispatch = useDispatch();
+  const cvsRedux = useSelector((state) => state.jobSeekerProfile.cvs);
+  console.log("cvsRedux", cvsRedux);
+  const handleDeleteCV = async (cvId) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa CV này không?")) {
+      dispatch(deleteCV(cvId));
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-4 bg-white px-4 min-h-[72px] justify-between">
-      {cvs.length === 0 ? (
+      {cvsRedux.length === 0 ? (
         <p className="self-start text-[#111811] text-sm font-medium leading-normal">
           không có cv
         </p>
       ) : (
         <>
           {/* Thông tin CV */}
-          {cvs.map((cv, index) => (
+          {cvsRedux.map((cv, index) => (
             <div
               key={index}
               className="flex items-center justify-between gap-4 w-full"
@@ -40,15 +49,20 @@ const UploadedCVs = ({ cvs, handleDeleteCv }) => {
               {/* Nút hành động: Upload + Download */}
               <div className="flex items-center gap-2 shrink-0">
                 {/* Nút Download */}
-                <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-green-600 text-[#111811] text-sm font-medium leading-normal w-fit">
-                  <span className="truncate">
-                    <FontAwesomeIcon icon={faDownload} className="text-white" />
-                  </span>
-                </button>
+                <a
+                  href={`${cv.resumePath}`}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-green-600 text-[#111811] text-sm font-medium leading-normal w-fit"
+                >
+                  <FontAwesomeIcon icon={faDownload} className="text-white" />
+                </a>
+
                 {/* Nút Xóa */}
                 <button
                   className="flex min-w-[50px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-red-500 text-[#111811] text-sm font-medium leading-normal w-fit"
-                  onClick={() => handleDeleteCv(cv.resumeId)}
+                  onClick={() => handleDeleteCV(cv.resumeId)}
                 >
                   <span className="truncate">
                     <FontAwesomeIcon icon={faTrash} className="text-white" />
@@ -61,11 +75,6 @@ const UploadedCVs = ({ cvs, handleDeleteCv }) => {
       )}
     </div>
   );
-};
-
-UploadedCVs.propTypes = {
-  cvs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  handleDeleteCv: PropTypes.func.isRequired,
 };
 
 export default UploadedCVs;

@@ -4,6 +4,8 @@ import { useRef } from "react";
 const ProfileHeader = ({
   avatar,
   setAvatar,
+  avatarPreview,
+  setAvatarPreview,
   firstName,
   setFirstName,
   lastName,
@@ -23,8 +25,8 @@ const ProfileHeader = ({
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      const imageUrl = URL.createObjectURL(file);
-      setAvatar(imageUrl); // cập nhật avatar từ cha
+      setAvatar(file); // Lưu file để upload
+      setAvatarPreview(URL.createObjectURL(file)); // Lưu URL để hiển thị
     }
   };
 
@@ -34,7 +36,7 @@ const ProfileHeader = ({
         {/* Avatar */}
         <div
           className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-[70px] cursor-pointer relative"
-          style={{ backgroundImage: `url('${avatar}')` }}
+          style={{ backgroundImage: `url('${avatarPreview}')` }}
           onClick={handleAvatarClick}
           title={isEditMode ? "Click để đổi ảnh đại diện" : ""}
         >
@@ -62,21 +64,27 @@ const ProfileHeader = ({
                 type="text"
                 className="text-[#111811] text-base font-medium border rounded px-2 py-1 mb-1"
                 value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={(e) => {
+                  return setFirstName(e.target.value);
+                }}
                 placeholder="Họ"
               />
               <input
                 type="text"
                 className="text-[#111811] text-base font-medium border rounded px-2 py-1 mb-1"
                 value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={(e) => {
+                  return setLastName(e.target.value);
+                }}
                 placeholder="Tên"
               />
               <input
                 type="text"
                 className="text-[#638863] text-sm font-normal border rounded px-2 py-1"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => {
+                  return setAddress(e.target.value);
+                }}
                 placeholder="Địa chỉ"
               />
             </>
@@ -92,37 +100,20 @@ const ProfileHeader = ({
           )}
         </div>
       </div>
-
-      {/* Icon cây viết chỉ hiển thị khi không edit */}
-      {!isEditMode && (
-        <div className="shrink-0">
-          <div className="text-[#111811] flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24px"
-              height="24px"
-              fill="currentColor"
-              viewBox="0 0 256 256"
-            >
-              <path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z" />
-            </svg>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-ProfileHeader.propTypes = {
-  avatar: PropTypes.string,
-  setAvatar: PropTypes.func,
-  firstName: PropTypes.string,
-  setFirstName: PropTypes.func,
-  lastName: PropTypes.string,
-  setLastName: PropTypes.func,
-  address: PropTypes.string,
-  setAddress: PropTypes.func,
-  isEditMode: PropTypes.bool,
-};
+// ProfileHeader.propTypes = {
+//   avatar: PropTypes.string,
+//   setAvatar: PropTypes.func,
+//   firstName: PropTypes.string,
+//   setFirstName: PropTypes.func,
+//   lastName: PropTypes.string,
+//   setLastName: PropTypes.func,
+//   address: PropTypes.string,
+//   setAddress: PropTypes.func,
+//   isEditMode: PropTypes.bool,
+// };
 
 export default ProfileHeader;

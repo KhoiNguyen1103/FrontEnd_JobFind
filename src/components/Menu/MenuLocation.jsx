@@ -14,10 +14,12 @@ import {
 
 const MenuLocation = () => {
   const dispatch = useDispatch();
-  const locations = useSelector(selectSearchLocations);
-  const citySelected = useSelector((state) => state.locations.citySelected);
 
-  // Tìm kiếm theo tên tỉnh/thành phố
+  // load data từ redux
+  const locations = useSelector(selectSearchLocations);
+  const citySelected = useSelector((state) => state.location.citySelected);
+
+  // state
   const [searchCityText, setSearchCityText] = useState("");
 
   // Xử lý khi nhập tìm kiếm
@@ -28,19 +30,13 @@ const MenuLocation = () => {
   };
 
   // Chọn hoặc bỏ chọn tỉnh/thành
-  const handleAddCity = (city) => {
+  const toggleCity = (city) => {
     dispatch(saveCitySelected(city));
   };
-
-  // Đọc selected cities từ localStorage khi component load
-  useEffect(() => {
-    localStorage.setItem("selectedCities", JSON.stringify(citySelected));
-  }, [citySelected]);
 
   // Bỏ chọn tất cả
   const uncheckAll = () => {
     dispatch(clearCitysSelected());
-    localStorage.removeItem("selectedCities"); // Xóa trong localStorage khi bỏ chọn tất cả
   };
 
   return (
@@ -68,7 +64,7 @@ const MenuLocation = () => {
               <input
                 type="checkbox"
                 checked={citySelected.includes(city.name)}
-                onChange={() => handleAddCity(city)}
+                onChange={() => toggleCity(city)}
                 className="text-xl cursor-pointer"
                 style={{ width: "0.8em", height: "0.8em" }}
               />

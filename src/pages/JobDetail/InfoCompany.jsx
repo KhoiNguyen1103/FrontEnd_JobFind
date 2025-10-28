@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
 const InfoCompany = ({ job }) => {
+  // console.log(job);
   return (
     <div>
       {/* Thông tin công ty */}
@@ -25,7 +26,14 @@ const InfoCompany = ({ job }) => {
           </div>
           <div>
             <p className="ps-4 font-bold text-lg">
-              <Link to={"/company/" + job.company.companyName + "?id=" + job.company.companyId}>
+              <Link
+                to={
+                  "/company/" +
+                  job.company.companyName +
+                  "?id=" +
+                  job.company.companyId
+                }
+              >
                 {job.company.companyName}
               </Link>
             </p>
@@ -41,10 +49,6 @@ const InfoCompany = ({ job }) => {
           </div>
         </div>
         <div className="flex items-center pt-4">
-          <FontAwesomeIcon
-            icon={faLocationDot}
-            className="text-slate-500 pe-2"
-          />
           <p className="text-slate-500 pe-2">Địa điểm: </p>
           <p>{job.location}</p>
         </div>
@@ -74,7 +78,7 @@ const InfoCompany = ({ job }) => {
           </div>
           <div>
             <p className="text-slate-500">Học vấn</p>
-            <p className="font-bold">{job.educationLevel}</p>
+            <p className="font-bold">{job.educationLevel || "Đại học"}</p>
           </div>
         </div>
 

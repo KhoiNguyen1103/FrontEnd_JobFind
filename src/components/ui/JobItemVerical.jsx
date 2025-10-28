@@ -20,6 +20,7 @@ const JobItemVertical = ({ job }) => {
     navigate(`/job-detail/${slug}?id=${job.jobId}`);
   };
 
+  // format experience
   // Navigate to applications page for this job
   const navigateToApplications = () => {
     navigate(`/applications/${job.jobId}`);
@@ -55,7 +56,9 @@ const JobItemVertical = ({ job }) => {
             {job.location || "Hồ Chí Minh"}
           </p>
           <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.yearOfExperience || 5} năm kinh nghiệm
+            {job.yearsOfExperience
+              ? formatData.formatExperience(job.yearsOfExperience)
+              : "Không yêu cầu kinh nghiệm"}
           </p>
         </div>
       </div>

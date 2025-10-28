@@ -1,5 +1,6 @@
 // axiosClient.js (SỬA)
 import axios from "axios";
+import qs from "qs";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const axiosClient = axios.create({
@@ -8,6 +9,7 @@ const axiosClient = axios.create({
   //   "content-type": "application/json",
   // },
   paramsSerializer: (params) => new URLSearchParams(params).toString(),
+  // paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
 });
 
 axiosClient.interceptors.request.use(async (config) => {

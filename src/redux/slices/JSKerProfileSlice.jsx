@@ -1,6 +1,7 @@
 // src/redux/slices/jobSeekerProfileSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import jobSeekerApi from "../../api/jobSeekerApi";
+import resumeApi from "../../api/resumeApi";
 
 export const fetchJobSeekerProfileByUserId = createAsyncThunk(
   "jobSeekerProfile/fetchByUserId",
@@ -16,8 +17,50 @@ export const fetchJobSeekerProfileByUserId = createAsyncThunk(
   }
 );
 
+// Thunk để xóa CV theo id
+export const deleteCV = createAsyncThunk(
+  "jobSeekerProfile/deleteCV",
+  async (cvId, thunkAPI) => {
+    try {
+      await resumeApi.deleteResume(cvId);
+      return cvId;
+    } catch (error) {
+      console.error("Lỗi khi xóa CV:", error);
+      return thunkAPI.rejectWithValue("Xóa CV thất bại");
+    }
+  }
+);
+
+// Thunk để thêm CV
+export const addCV = createAsyncThunk(
+  "jobSeekerProfile/addCV",
+  async (file, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const userId = state.jobSeekerProfile.user?.id;
+
+      if (!userId) throw new Error("Không tìm thấy ID người dùng");
+
+      const formData = new FormData();
+      const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+      formData.append("resumeName", nameWithoutExtension);
+      formData.append("resume", file);
+
+      await resumeApi.cretaeResume(userId, formData);
+      await thunkAPI.dispatch(fetchJobSeekerProfileByUserId(userId));
+    } catch (error) {
+      console.error("Lỗi khi thêm CV:", error);
+      return thunkAPI.rejectWithValue("Thêm CV thất bại");
+    }
+  }
+);
+
 const initialState = {
   profile: null,
+  user: localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null,
+  cvs: [],
   loading: false,
   error: null,
 };
@@ -40,9 +83,23 @@ const jobSeekerProfileSlice = createSlice({
       .addCase(fetchJobSeekerProfileByUserId.fulfilled, (state, action) => {
         state.loading = false;
         state.profile = action.payload;
+        state.cvs = action.payload.resumeList || [];
       })
       .addCase(fetchJobSeekerProfileByUserId.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ================ Xóa CV =================
+      .addCase(deleteCV.fulfilled, (state, action) => {
+        const deletedId = action.payload;
+        state.cvs = state.cvs.filter((cv) => cv.resumeId !== deletedId);
+      })
+      .addCase(deleteCV.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      // ================ Thêm CV =================
+      .addCase(addCV.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

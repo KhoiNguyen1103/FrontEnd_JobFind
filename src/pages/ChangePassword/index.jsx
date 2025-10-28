@@ -1,18 +1,38 @@
 import { useState } from "react";
+import userApi from "../../api/userApi";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const user = useSelector((state) => state.auth.user);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       alert("Mật khẩu mới không khớp!");
       return;
     }
     // Gửi yêu cầu thay đổi mật khẩu lên server
-    console.log("Đổi mật khẩu thành công!");
+    try {
+      await userApi.changePassword({
+        userId: user.id,
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+        changeType: "UPDATE",
+      });
+
+      toast.success("Đổi mật khẩu thành công!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error("Lỗi đổi mật khẩu:", error);
+      toast.error(error?.response?.data?.message || "Đổi mật khẩu thất bại!");
+    }
   };
 
   return (

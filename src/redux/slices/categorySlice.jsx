@@ -17,7 +17,7 @@ export const fetchCategories = createAsyncThunk(
 const initialState = {
   categories: [],
   selectedCategories: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 
@@ -25,25 +25,26 @@ const categorySlice = createSlice({
   name: "category",
   initialState,
   reducers: {
-    saveCategory: (state, action) => {
-      const category = action.payload;
-      const exists = state.selectedCategories.find(
-        (item) => item.jobCategoryId === category.jobCategoryId
-      );
-      if (exists) {
-        state.selectedCategories = state.selectedCategories.filter(
-          (item) => item.jobCategoryId !== category.jobCategoryId
-        );
-      } else {
-        state.selectedCategories = [...state.selectedCategories, category];
-      }
-      // localStorage.setItem("categories", JSON.stringify(action.payload));
-    },
-    clearSelectedCategories: (state) => {
-      state.selectedCategories = [];
+    setCategories: (state, action) => {
+      state.categories = action.payload;
     },
     setSelectedCategories: (state, action) => {
       state.selectedCategories = action.payload;
+    },
+    toggleCategories: (state, action) => {
+      const category = action.payload;
+      const exists = state.selectedCategories.some(
+        (item) => item.jobCategoryId === category.jobCategoryId
+      );
+
+      state.selectedCategories = exists
+        ? state.selectedCategories.filter(
+            (item) => item.jobCategoryId !== category.jobCategoryId
+          )
+        : [...state.selectedCategories, category];
+    },
+    clearSelectedCategories: (state) => {
+      state.selectedCategories = [];
     },
   },
   extraReducers: (builder) => {
@@ -63,7 +64,11 @@ const categorySlice = createSlice({
   },
 });
 
-export const { saveCategory, clearSelectedCategories, setSelectedCategories } =
-  categorySlice.actions;
+export const {
+  setCategories,
+  toggleCategories,
+  clearSelectedCategories,
+  setSelectedCategories,
+} = categorySlice.actions;
 
 export default categorySlice.reducer;

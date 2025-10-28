@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // import { useState, useEffect } from "react";
 import Sidebar from "./SideBar";
 import ProfileHeader from "./ProfileHeader";
@@ -7,17 +7,26 @@ import WorkExperience from "./WorkExperience";
 import UploadedCVs from "./UploadedCVs";
 // import resumeApi from "../../api/resumeApi";
 import { useEffect, useRef, useState } from "react";
-import resumeApi from "../../api/resumeApi";
 import { toast } from "react-toastify";
+import resumeApi from "../../api/resumeApi";
 import userApi from "../../api/userApi";
+import { addCV } from "../../redux/slices/JSKerProfileSlice";
 
 const PersonalInfoForm = () => {
+  const dispatch = useDispatch();
+  // lấy data từ redux
+  const user = useSelector((state) => state.auth.user);
   const profileJSK = useSelector((state) => state.jobSeekerProfile.profile);
+
   const loading = useSelector((state) => state.jobSeekerProfile.loading); // Lấy trạng thái loading từ redux
   const upLoadCvsRef = useRef(null);
 
   const [avatar, setAvatar] = useState(
     "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+  );
+  const [avatarPreview, setAvatarPreview] = useState(
+    avatar ||
+      "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
   );
   const [isEditMode, setIsEditMode] = useState(false);
   const [firstName, setFirstName] = useState("");
@@ -27,7 +36,6 @@ const PersonalInfoForm = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [skills, setSkills] = useState([]);
-  const [cvs, setCvs] = useState([]); // Khởi tạo với danh sách CV từ profileJSK
 
   useEffect(() => {
     if (profileJSK) {
@@ -35,6 +43,11 @@ const PersonalInfoForm = () => {
         profileJSK.avatar ||
           "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
       );
+      setAvatarPreview(
+        profileJSK.avatar ||
+          "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+      );
+
       setFirstName(profileJSK.firstName || "");
       setLastName(profileJSK.lastName || "");
       setAddress(profileJSK.address || "123 Gò Vấp, Hồ Chí Minh");
@@ -42,12 +55,8 @@ const PersonalInfoForm = () => {
       setPhone(profileJSK.phone || "");
       setEmail(profileJSK.email || "");
       setSkills(profileJSK.skills || []);
-      setCvs(profileJSK.resumeList || []);
     }
   }, [profileJSK]);
-
-  // console.log("profileJSK", profileJSK);
-  // console.log("fullName", fullName);
 
   const handleAddSkill = (newSkill) => {
     setSkills((prev) => [...prev, newSkill]);
@@ -55,49 +64,10 @@ const PersonalInfoForm = () => {
 
   const handleUploadFiles = async (files) => {
     if (!files || files.length === 0) return;
-
     const file = files[0]; // Chỉ lấy file đầu tiên
-    const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
 
-    const fileObject = {
-      resumeName: nameWithoutExtension,
-      resume: file,
-    };
-    console.log("files", fileObject);
-
-    try {
-      const formData = new FormData();
-      formData.append("resumeName", fileObject.resumeName);
-      formData.append("resume", fileObject.resume);
-
-      const user = JSON.parse(localStorage.getItem("user"));
-      const profileId = user?.id; // Lấy profileId từ localStorage
-      if (!profileId) {
-        console.error("Không tìm thấy profileId trong localStorage");
-        return;
-      }
-
-      const response = await resumeApi.cretaeResume(profileId, formData); // profileJSK.id là profileId
-      console.log("Upload thành công:", response.data);
-
-      setCvs((prev) => [...prev, fileObject]); // Chỉ thêm vào state khi upload thành công
-    } catch (error) {
-      toast.error("Upload thất bại. Có vẻ file đã tồn tại trong hệ thống.", {
-        autoClose: 1000,
-      });
-      console.error("Upload thất bại:", error);
-    }
-  };
-
-  const handleDeleteCv = async (resumeId) => {
-    try {
-      const response = await resumeApi.deleteResume(resumeId);
-      console.log("Xóa thành công:", response.data);
-      setCvs((prev) => prev.filter((cv) => cv.resumeId !== resumeId)); // Cập nhật lại danh sách CV sau khi xóa
-    } catch (error) {
-      toast.error("Xóa thất bại", { autoClose: 1000 });
-      console.error("Xóa thất bại:", error);
-    }
+    // Gọi Redux thunk addCV để upload và cập nhật store
+    dispatch(addCV(file));
   };
 
   const handleButtonClick = () => {
@@ -105,27 +75,43 @@ const PersonalInfoForm = () => {
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
+    // Ưu tiên phone nếu có
+    const finalPhone = phone ? phone : profileJSK.phone;
 
-    if (avatar) formData.append("avatar", avatar); // avatar là File
+    // Kiểm tra định dạng số điện thoại
+    const phoneRegex = /^\d{10,11}$/;
+    if (!phoneRegex.test(finalPhone)) {
+      alert("Số điện thoại phải có 10 hoặc 11 chữ số.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userId", user.id);
+    formData.append("phoneNumber", finalPhone);
+
+    if (avatar) formData.append("avatar", avatar);
     if (firstName) formData.append("firstName", firstName);
     if (lastName) formData.append("lastName", lastName);
     if (address) formData.append("address", address);
-    if (phone) formData.append("phone", phone);
-    if (email) formData.append("email", email);
 
-    if (skills && skills.length > 0) {
-      skills.forEach((skill) => {
-        formData.append("skills", skill); // giả sử skill là mảng chuỗi
-      });
+    // console log data
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
     }
+
+    // if (skills && skills.length > 0) {
+    //   skills.forEach((skill) => {
+    //     formData.append("skills", skill); // giả sử skill là mảng chuỗi
+    //   });
+    // }
 
     try {
       const response = await userApi.updateProfile(formData); // API nhận multipart/form-data
       console.log("Cập nhật thành công:", response);
       alert("Cập nhật thành công!");
     } catch (err) {
-      alert("Lỗi khi cập nhật: " + err.message);
+      console.error("Lỗi khi cập nhật:", err);
+      alert("Lỗi khi cập nhật: " + err);
     }
   };
 
@@ -156,13 +142,7 @@ const PersonalInfoForm = () => {
       }}
     >
       <div className="layout-container flex h-full grow flex-col">
-        <div className="gap-1 px-6 flex flex-1 justify-between py-5">
-          {/* Satrt: Side bar */}
-          <div className="w-[200px] flex flex-col gap-1">
-            <Sidebar />
-          </div>
-          {/* End: Sidebar */}
-
+        <div className="gap-1 px-6 flex flex-1 justify-center py-5">
           {/* Start: Content section */}
           <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
             {/* Start: Nút Chỉnh sửa */}
@@ -204,6 +184,8 @@ const PersonalInfoForm = () => {
               isEditMode={isEditMode}
               avatar={avatar}
               setAvatar={setAvatar}
+              avatarPreview={avatarPreview}
+              setAvatarPreview={setAvatarPreview}
               firstName={firstName}
               setFirstName={setFirstName}
               lastName={lastName}
@@ -224,7 +206,9 @@ const PersonalInfoForm = () => {
                     type="text"
                     className="border border-gray-300 px-2 py-1 rounded-md text-sm"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      return setPhone(e.target.value);
+                    }}
                   />
                 ) : (
                   <p className="text-[#111811] text-sm font-normal leading-normal">
@@ -244,6 +228,8 @@ const PersonalInfoForm = () => {
                     className="border border-gray-300 px-2 py-1 rounded-md text-sm"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    readOnly
+                    disabled
                   />
                 ) : (
                   <p className="text-[#111811] text-sm font-normal leading-normal">
@@ -307,12 +293,7 @@ const PersonalInfoForm = () => {
                   {/* end: bút upload cvs */}
                 </div>
 
-                <UploadedCVs
-                  // cvs={profileJSK?.resumeList}
-                  cvs={cvs}
-                  isEditMode={isEditMode}
-                  handleDeleteCv={handleDeleteCv}
-                />
+                <UploadedCVs />
               </div>
             </div>
           </div>

@@ -32,6 +32,7 @@ import {
 } from "./redux/slices/jobSlice";
 import { fetchApplicationByJSK } from "./redux/slices/applySlice";
 import ChatBox from "./components/ui/ChatBox";
+import { setJobsRaw } from "./redux/slices/filterJobSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -44,21 +45,31 @@ function App() {
     // Load jobCategory
     dispatch(fetchCategories());
 
-    // Load profile cho job seeker
-    if (user && user.role === "JOBSEEKER") {
-      // Load savedJobs
-      dispatch(fetchSavedJobs(user.userId));
-      // Load job seeker profile
-      dispatch(fetchJobSeekerProfileByUserId(user.id));
-      // Load application
-      dispatch(fetchApplicationByJSK(user.id));
-      // Load jobs proposed
-      dispatch(fetchJobsPropposeByJSKId(user.id));
+    if (user) {
+      // Load profile cho job seeker
+      if (user.role === "JOBSEEKER") {
+        // Load savedJobs
+        dispatch(fetchSavedJobs(user.userId));
+        // Load job seeker profile
+        dispatch(fetchJobSeekerProfileByUserId(user.id));
+        // Load application
+        dispatch(fetchApplicationByJSK(user.id));
+        // Load jobs proposed
+        dispatch(fetchJobsPropposeByJSKId(user.id)).then((res) => {
+          if (res.meta.requestStatus === "fulfilled") {
+            console.log("load filterjob propose");
+            dispatch(setJobsRaw({ jobs: res.payload, context: "recommend" })); // Gửi sang filterJobsSlice
+          }
+        });
+      }
     } else {
       // Nếu chưa đăng nhập thì load tất cả jobs lên
-      dispatch(fetchAllJobs());
+      dispatch(fetchAllJobs()).then((res) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          dispatch(setJobsRaw({ jobs: res.payload, context: "recommend" })); // Gửi sang filterJobsSlice
+        }
+      });
     }
-
   }, [dispatch, user]);
 
   const location = useLocation();
@@ -92,7 +103,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-      // style={{ backgroundColor: "#e7eee7" }}
+        // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}

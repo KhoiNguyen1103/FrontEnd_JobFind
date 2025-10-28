@@ -7,7 +7,7 @@ import {
   faAngleDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { filterJob } from "../../redux/slices/jobSlice";
+import { filterJobs, resetFilter } from "../../redux/slices/filterJobSlice";
 import Pagination from "../../components/ui/Pagination";
 import JobItemVertical from "../../components/ui/JobItemVerical";
 
@@ -41,11 +41,11 @@ const filtersJob = [
     name: "Kinh nghiệm",
     options: [
       { id: "000", name: "Tất cả" },
-      { id: "EX01", name: "Thực tập" },
-      { id: "EX02", name: "Mới tốt nghiệp" },
-      { id: "EX03", name: "1-2 năm" },
-      { id: "EX04", name: "3-5 năm" },
-      { id: "EX05", name: "Trên 5 năm" },
+      { id: "EX01", name: "1-2" },
+      { id: "EX02", name: "2-3" },
+      { id: "EX03", name: "3-4" },
+      { id: "EX04", name: "4-5" },
+      { id: "EX05", name: "5-100" },
     ],
   },
   {
@@ -60,7 +60,7 @@ const filtersJob = [
     ],
   },
   {
-    id: "WORKE_TYPE",
+    id: "WORKTYPE",
     name: "Hình thức làm việc",
     options: [
       { id: "000", name: "Tất cả" },
@@ -80,12 +80,12 @@ const BestJob = () => {
     name: "Tất cả",
   });
   const [filteredJobs, setFilteredJobs] = useState([]);
-  // console.log("filter selected: ", filterSelected);
-  // console.log("filter selected options: ", filterSelected.options);
 
   // lấy data từ redux
   const jobsRedux = useSelector((state) => state.jobs.jobs);
-  const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
+  // const filterJobsRedux = useSelector((state) => state.jobs.filterJobs);
+  const filterJobsRedux = useSelector((state) => state.filterJob.jobsFiltered);
+  console.log("filterJobsRedux", filterJobsRedux);
   const loading = useSelector((state) => state.jobs.loading);
 
   // Phân trang
@@ -105,10 +105,12 @@ const BestJob = () => {
     setFilterSelected(filter);
     setFilterItemSelected(filter.options[0]);
     setIsOpenFilter(false);
+    dispatch(resetFilter());
   };
 
   const toggleFilterOption = (option) => {
     setFilterItemSelected(option);
+    dispatch(filterJobs({ [filterSelected.id]: option.name }));
   };
 
   // Đóng model bộ lọc khi click bên ngoài
@@ -182,22 +184,29 @@ const BestJob = () => {
 
             {/* menu filter selector */}
             {isOpenFilter && (
-              <div className="absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 py-2 mt-0.5">
-                {filtersJob.map((filter) => (
-                  <div
-                    key={filter.id}
-                    className="px-2 py-2 cursor-pointer hover:bg-slate-300"
-                    onClick={() => toggleFilter(filter)}
-                  >
-                    <span
-                      className={
-                        filterSelected.id == filter.id ? "text-primary" : ""
-                      }
+              <div className="min-w-[200px] absolute top-full right-0 rounded-md bg-white shadow-inner border border-slate-300 py-2 mt-0.5">
+                {filtersJob
+                  .filter(
+                    (f) =>
+                      f.id === "LOCATION" ||
+                      f.id === "EXPERIENCE" ||
+                      f.id === "WORKTYPE"
+                  )
+                  .map((filter) => (
+                    <div
+                      key={filter.id}
+                      className="px-2 py-2 cursor-pointer hover:bg-slate-300"
+                      onClick={() => toggleFilter(filter)}
                     >
-                      {filter.name}
-                    </span>
-                  </div>
-                ))}
+                      <span
+                        className={
+                          filterSelected.id == filter.id ? "text-primary" : ""
+                        }
+                      >
+                        {filter.name}
+                      </span>
+                    </div>
+                  ))}
               </div>
             )}
             {/* end: menu selector */}
@@ -230,7 +239,15 @@ const BestJob = () => {
                   }`}
                   onClick={() => toggleFilterOption(filterOption)}
                 >
-                  <span className="text-sm">{filterOption.name}</span>
+                  <span className="text-sm">
+                    {filterSelected.id === "EXPERIENCE"
+                      ? filterOption.name === "5-100"
+                        ? "Trên 5 năm"
+                        : filterOption.name === "Tất cả"
+                        ? "Tất cả"
+                        : filterOption.name + " năm"
+                      : filterOption.name}
+                  </span>
                 </div>
               ))}
             </div>
