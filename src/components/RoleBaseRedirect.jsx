@@ -14,6 +14,8 @@ const RoleBasedRedirect = () => {
     return <Navigate to="/recruiter/home" replace />;
   } else if (user.role === "JOBSEEKER") {
     return <Navigate to="/" replace />;
+  } else if (user.role === "ADMIN") {
+    return <Navigate to="/admin" replace />;
   } else {
     // Nếu role không hợp lệ, chuyển về trang login
     return <Navigate to="/login" replace />;

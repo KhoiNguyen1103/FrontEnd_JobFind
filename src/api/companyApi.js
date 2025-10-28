@@ -1,6 +1,11 @@
 import axiosClient from './axiosClient';
 
 const companyApi = {
+  getAll: () => {
+    const url = '/company/all';
+    return axiosClient.get(url);
+  },
+
   getById: (companyId) => {
     const url = `/company/${companyId}`;
     return axiosClient.get(url);

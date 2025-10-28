@@ -1,6 +1,10 @@
 import axiosClient from "./axiosClient";
 
 const jobSeekerApi = {
+  getAll: () => {
+    const url = '/jobseeker/all';
+    return axiosClient.get(url);
+  },
   getProfileByUserId: (userId) => {
     const url = `/jobseeker/getProfileByUserId?userId=${userId}`;
     return axiosClient.get(url);
@@ -43,7 +47,7 @@ const jobSeekerApi = {
     });
 
     locationList.forEach(loc => {
-      params.append('location', loc); 
+      params.append('location', loc);
     });
 
     if (companyId) {

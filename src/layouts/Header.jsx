@@ -14,17 +14,18 @@ import MenuMessage from "../components/Menu/MenuMessage";
 import MenuUser from "../components/Menu/MenuUser";
 import WebSocketService from "../services/WebSocketService";
 import conversationApi from "../api/conversationApi";
+import notificationApi from "../api/notificationApi";
 import { TOPICS } from "../data/topics";
 import { setTotalUnreadCount } from "../redux/slices/chatBoxSlice";
+import { setNotificationUnreadCount } from "../redux/slices/notificationSlice";
 
 const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
   // Lấy data từ redux
-  const totalUnreadCount = useSelector(
-    (state) => state.chatBox.totalUnreadCount
-  );
+  const totalUnreadCount = useSelector((state) => state.chatBox.totalUnreadCount);
+  const notificationUnreadCount = useSelector((state) => state.notification.notificationUnreadCount);
   let user = useSelector((state) => state.auth.user);
 
   if (!user || user === null) {
@@ -39,28 +40,51 @@ const Header = () => {
       if (!wsService.isConnected()) {
         wsService.connect(user.id);
       }
-      // Subscribe tổng unread count
+
+      // Subscribe tổng unread count (tin nhắn)
       const unreadCountTopic = TOPICS.UNREAD_COUNT(user.id.toString());
       const handleUnreadCountUpdate = (data) => {
         console.log(`📊 Nhận tổng unread count từ ${unreadCountTopic}:`, data);
-        dispatch(setTotalUnreadCount(data));
+        const count = typeof data === "number" ? data : 0;
+        dispatch(setTotalUnreadCount(count));
       };
       wsService.subscribe(unreadCountTopic, handleUnreadCountUpdate);
 
-      // Lấy totalUnreadCount lần đầu từ API
+      // Subscribe số thông báo chưa đọc
+      const notificationTopic = TOPICS.NOTIFICATION(user.id.toString());
+      const handleNotificationUnreadUpdate = (data) => {
+        console.log(`📊 Nhận notification từ ${notificationTopic}:`, data);
+        const unreadCount = typeof data.unreadCount === "number" ? data.unreadCount : notificationUnreadCount + 1;
+        dispatch(setNotificationUnreadCount(unreadCount));
+      };
+      wsService.subscribe(notificationTopic, handleNotificationUnreadUpdate);
+
+      // Lấy totalUnreadCount lần đầu từ API (tin nhắn)
       conversationApi
         .countUnreadConversations(user.id)
         .then((response) => {
           console.log("📥 Nhận totalUnreadCount từ API:", response);
-          dispatch(setTotalUnreadCount(response));
+          const count = typeof response === "number" ? response : 0;
+          dispatch(setTotalUnreadCount(count));
         })
         .catch((error) => console.error("Error fetching unread count:", error));
 
+      // Lấy notificationUnreadCount lần đầu từ API
+      notificationApi
+        .countUnreadNotifications(user.id)
+        .then((response) => {
+          console.log("📥 Nhận notificationUnreadCount từ API:", response);
+          const count = typeof response === "number" ? response : 0;
+          dispatch(setNotificationUnreadCount(count));
+        })
+        .catch((error) => console.error("Error fetching notification unread count:", error));
+
       return () => {
         wsService.unsubscribe(unreadCountTopic, handleUnreadCountUpdate);
+        wsService.unsubscribe(notificationTopic, handleNotificationUnreadUpdate);
       };
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, notificationUnreadCount]);
 
   // Bật / tắt model thông báo
   const [isOpenModelNotification, setIsOpenModelNotification] = useState(false);
@@ -176,12 +200,12 @@ const Header = () => {
             <div className="btn-header" onClick={openModelNotification}>
               <FontAwesomeIcon icon={faBell} className="text-xl text-primary" />
             </div>
-            {text && (
+            {notificationUnreadCount > 0 && (
               <div
-                className="absolute top-0 right-4 p-2 bg-red-600 rounded-full flex items-center justify-center text-white text-xs"
+                className="absolute top-0 right-3 bg-red-600 rounded-full flex items-center justify-center text-white text-xs"
                 style={{ width: "18px", height: "18px" }}
               >
-                {text}
+                {notificationUnreadCount}
               </div>
             )}
             {isOpenModelNotification && (

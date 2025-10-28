@@ -1,6 +1,11 @@
 import axiosClient from "./axiosClient";
 
 const applicationApi = {
+  getAll: () => {
+    const url = '/application/all';
+    return axiosClient.get(url);
+  },
+
   applyForJob: (applicationRequest) => {
     const url = "/application/apply";
     return axiosClient.post(url, applicationRequest);

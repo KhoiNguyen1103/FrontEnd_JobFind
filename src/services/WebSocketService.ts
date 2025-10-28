@@ -68,6 +68,7 @@ class WebSocketService {
         this.subscribedConversationIds.clear();
         this.userId = userId;
 
+        // Subscribe to unread count topic
         const unreadCountTopic = TOPICS.UNREAD_COUNT(userId.toString());
         const unreadCountSubscription = this.stompClient.subscribe(unreadCountTopic, (message) => {
             const data = JSON.parse(message.body);
@@ -78,6 +79,7 @@ class WebSocketService {
             this.subscriptions.push(unreadCountSubscription);
         }
 
+        // Subscribe to conversation meta topic
         const metaTopic = TOPICS.CONVERSATION_DATA(userId.toString());
         const metaSubscription = this.stompClient.subscribe(metaTopic, (message) => {
             const data = JSON.parse(message.body);
@@ -88,6 +90,18 @@ class WebSocketService {
             this.subscriptions.push(metaSubscription);
         }
 
+        // Subscribe to notification topic
+        const notificationTopic = TOPICS.NOTIFICATION(userId.toString());
+        const notificationSubscription = this.stompClient.subscribe(notificationTopic, (message) => {
+            const data = JSON.parse(message.body);
+            console.log(`📩 Received from ${notificationTopic}:`, data);
+            this.eventEmitter.emit(notificationTopic, data);
+        });
+        if (notificationSubscription) {
+            this.subscriptions.push(notificationSubscription);
+        }
+
+        // Subscribe to conversation topics
         conversationIds.forEach((id) => {
             const conversationTopic = TOPICS.CONVERSATION(id.toString());
             const conversationSubscription = this.stompClient?.subscribe(conversationTopic, (message) => {
@@ -112,7 +126,13 @@ class WebSocketService {
             }
         });
 
-        console.log("✅ Subscribed to:", [unreadCountTopic, metaTopic, ...conversationIds.map(id => TOPICS.CONVERSATION(id.toString())), ...conversationIds.map(id => TOPICS.CONVERSATION_DATA(id.toString()))]);
+        console.log("✅ Subscribed to:", [
+            unreadCountTopic,
+            metaTopic,
+            notificationTopic,
+            ...conversationIds.map((id) => TOPICS.CONVERSATION(id.toString())),
+            ...conversationIds.map((id) => TOPICS.CONVERSATION_DATA(id.toString())),
+        ]);
     }
 
     subscribeToConversation(conversationId: number) {
@@ -153,7 +173,10 @@ class WebSocketService {
     }
 
     private extractConversationId(topic: string): string | null {
-        const match = topic.match(/\/topic\/conversation\/(\d+)/) || topic.match(/\/topic\/conversation-meta\/(\d+)/);
+        const match =
+            topic.match(/\/topic\/conversation\/(\d+)/) ||
+            topic.match(/\/topic\/conversation-meta\/(\d+)/) ||
+            topic.match(/\/topic\/notifications\/(\d+)/);
         return match ? match[1] : null;
     }
 

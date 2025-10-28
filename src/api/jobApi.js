@@ -1,6 +1,11 @@
 import axiosClient from "./axiosClient";
 
 const jobApi = {
+  getAll: () => {
+    const url = '/job/all';
+    return axiosClient.get(url);
+  },
+  
   create: (jobData) => {
     const url = "/job/create";
     return axiosClient.post(url, jobData);

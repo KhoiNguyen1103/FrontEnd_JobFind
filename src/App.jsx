@@ -15,6 +15,8 @@ import { recruiterRoutes } from "./routes/recruiterRoutes";
 // private routes
 import PrivateRoute from "./components/PrivateRoute";
 
+//admin route
+import  adminRoutes  from "./routes/adminRoutes"
 // layouts
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -33,6 +35,7 @@ import {
 import { fetchApplicationByJSK } from "./redux/slices/applySlice";
 import ChatBox from "./components/ui/ChatBox";
 import { setJobsRaw } from "./redux/slices/filterJobSlice";
+import AdminLogin from "./pageAdmin/AdminLogin";
 
 function App() {
   const dispatch = useDispatch();
@@ -79,6 +82,8 @@ function App() {
     "/recruiter/login",
     "/recruiter/register",
     "/overview",
+    "/admin/login",
+    "/admin"
   ].includes(location.pathname);
 
   const hiddenFooter = [
@@ -88,6 +93,8 @@ function App() {
     "/overview",
     "/recruiter/register",
     "/recruiter/login",
+    "/admin/login",
+    "/admin"
   ].includes(location.pathname);
 
   return (
@@ -103,7 +110,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-        // style={{ backgroundColor: "#e7eee7" }}
+      // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}
@@ -137,6 +144,20 @@ function App() {
               element={
                 <PrivateRoute allowedRoles={["ADMIN", "COMPANY"]}>
                   {route.component}
+                </PrivateRoute>
+              }
+            />
+          ))}
+
+          {/* Các route dành cho Admin */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          {adminRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <PrivateRoute allowedRoles={["ADMIN"]}>
+                  {route.element}
                 </PrivateRoute>
               }
             />
