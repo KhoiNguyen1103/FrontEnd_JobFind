@@ -3,11 +3,13 @@ import CompanyItem from "../../components/ui/CompanyItem";
 import { fetchCompanies } from "../../redux/slices/companySlide";
 import NotFoundItem from "../../components/ui/NotFoundItem";
 import { useEffect } from "react";
+import { isEmpty } from "lodash";
+import Spinner from "../../components/ui/Spinner";
 
 const Company = () => {
   const dispatch = useDispatch();
 
-  const companies = useSelector((state) => state.company.companies);
+  const { companies, loading } = useSelector((state) => state.company);
 
   useEffect(() => {
     dispatch(fetchCompanies());
@@ -20,15 +22,20 @@ const Company = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Danh sách công ty
         </h1>
-        <NotFoundItem title={"Hiện chưa có công ty nào"} />
       </div>
 
-      {/* Danh sách công ty */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {companies.map((item, index) => (
-          <CompanyItem key={index} item={item} />
+      {loading && <Spinner size="lg" />}
+
+      {!loading &&
+        (isEmpty(companies) ? (
+          <NotFoundItem title="Hiện chưa có công ty nào" />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {companies.map((item, index) => (
+              <CompanyItem key={index} item={item} />
+            ))}
+          </div>
         ))}
-      </div>
     </div>
   );
 };

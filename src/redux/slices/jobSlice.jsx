@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import jobApi from "../../api/jobApi";
 import jobs from "../../data/jobs";
+import fakeJobs from "../../components/dataFake/FakeJobs";
 
 // Thunk
 export const fetchJobsByCompanyId = createAsyncThunk(
@@ -152,7 +153,7 @@ const jobSlice = createSlice({
       const { CATEGORY, WORK_TYPE, DATE, LOCATION, SALARY, EXPERIENCE } =
         action.payload;
 
-      const now = new Date();
+      // const now = new Date();
       state.filterJobs = state.jobsByCompanyId.filter((job) => {
         const matchCategory = CATEGORY ? job.category === CATEGORY : true;
         const matchWorkType = WORK_TYPE ? job.workType === WORK_TYPE : true;

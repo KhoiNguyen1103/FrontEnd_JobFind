@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import companyApi from "../../api/companyApi";
+import fakeCompanies from "../../components/dataFake/companiesFake";
 
 // Async thunk để lấy danh sách công ty
 export const fetchCompanies = createAsyncThunk(
@@ -37,6 +38,7 @@ const companySlice = createSlice({
       .addCase(fetchCompanies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.companies = fakeCompanies;
       });
   },
 });

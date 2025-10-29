@@ -1,6 +1,3 @@
-import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const CompanyItem = ({ item }) => {
@@ -9,11 +6,8 @@ const CompanyItem = ({ item }) => {
     companyId,
     companyName,
     description,
-    email,
     industry: industries,
     logoPath,
-    phoneNumber,
-    website,
   } = item;
 
   const handleClick = () => {
@@ -41,17 +35,19 @@ const CompanyItem = ({ item }) => {
             {industries?.map((industry, index) => (
               <span
                 key={index}
-                className="mr-2 bg-green-600 rounded-full px-2 py-1 text-white"
+                className="mr-2 bg-primary rounded-full px-2 py-1 text-white"
               >
                 {industry.name}
                 {index < industries.length - 1 && ", "}
               </span>
             ))}
           </div>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2" dangerouslySetInnerHTML={{
-            __html: description || "Chưa có mô tả",
-          }}>
-          </p>
+          <p
+            className="text-gray-600 text-sm mb-4 line-clamp-2"
+            dangerouslySetInnerHTML={{
+              __html: description || "Chưa có mô tả",
+            }}
+          ></p>
         </div>
       </div>
     </div>

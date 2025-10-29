@@ -10,7 +10,7 @@ export const fetchReviewsByCompanyId = createAsyncThunk(
       const response = await companyReviewApi.getReviewsByCompanyId(companyId);
       return response;
     } catch (error) {
-      toast.error("Lỗi khi tải đánh giá công ty");
+      // toast.error("Lỗi khi tải đánh giá công ty");
       return rejectWithValue(error.response?.data || error.message);
     }
   }

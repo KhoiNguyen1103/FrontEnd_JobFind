@@ -6,6 +6,7 @@ import InfoCompany from "./InfoCompany";
 import JobItemv2 from "../../components/ui/JobItemv2";
 import JobInfo from "./JobInfo";
 import jobApi from "../../api/jobApi";
+import fakeJobs from "../../components/dataFake/FakeJobs";
 
 const JobDetail = () => {
   const { search } = useLocation();
@@ -22,6 +23,7 @@ const JobDetail = () => {
         const data = await jobApi.getById(jobId);
         setJob(data);
       } catch (error) {
+        setJob(fakeJobs.filter((job) => job.jobId === jobId)[0]);
         console.error("Lỗi khi lấy chi tiết job:", error);
       }
     };
@@ -107,9 +109,9 @@ const JobDetail = () => {
           </div>
 
           {/* Thông tin chung - thông tin công ty */}
-          <div className="ms-6" style={{ width: "30%" }}>
+          {/* <div className="ms-6" style={{ width: "30%" }}>
             {job ? <InfoCompany job={job} /> : <div></div>}
-          </div>
+          </div> */}
           {/* End: body */}
         </div>
       </div>

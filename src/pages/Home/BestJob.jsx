@@ -80,7 +80,6 @@ const BestJob = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const role = user?.role;
-  const jobsRedux = useSelector((state) => state.jobs.jobs);
   const filterJobsRedux = useSelector((state) => state.filterJob.jobsFiltered);
 
   const [isOpenFilter, setIsOpenFilter] = useState(false);

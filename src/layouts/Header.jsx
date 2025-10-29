@@ -24,8 +24,12 @@ const Header = () => {
   const location = useLocation();
 
   // Lấy data từ redux
-  const totalUnreadCount = useSelector((state) => state.chatBox.totalUnreadCount);
-  const notificationUnreadCount = useSelector((state) => state.notification.notificationUnreadCount);
+  const totalUnreadCount = useSelector(
+    (state) => state.chatBox.totalUnreadCount
+  );
+  const notificationUnreadCount = useSelector(
+    (state) => state.notification.notificationUnreadCount
+  );
   let user = useSelector((state) => state.auth.user);
 
   if (!user || user === null) {
@@ -54,7 +58,10 @@ const Header = () => {
       const notificationTopic = TOPICS.NOTIFICATION(user.id.toString());
       const handleNotificationUnreadUpdate = (data) => {
         console.log(`📊 Nhận notification từ ${notificationTopic}:`, data);
-        const unreadCount = typeof data.unreadCount === "number" ? data.unreadCount : notificationUnreadCount + 1;
+        const unreadCount =
+          typeof data.unreadCount === "number"
+            ? data.unreadCount
+            : notificationUnreadCount + 1;
         dispatch(setNotificationUnreadCount(unreadCount));
       };
       wsService.subscribe(notificationTopic, handleNotificationUnreadUpdate);
@@ -77,11 +84,16 @@ const Header = () => {
           const count = typeof response === "number" ? response : 0;
           dispatch(setNotificationUnreadCount(count));
         })
-        .catch((error) => console.error("Error fetching notification unread count:", error));
+        .catch((error) =>
+          console.error("Error fetching notification unread count:", error)
+        );
 
       return () => {
         wsService.unsubscribe(unreadCountTopic, handleUnreadCountUpdate);
-        wsService.unsubscribe(notificationTopic, handleNotificationUnreadUpdate);
+        wsService.unsubscribe(
+          notificationTopic,
+          handleNotificationUnreadUpdate
+        );
       };
     }
   }, [user, dispatch, notificationUnreadCount]);
@@ -151,9 +163,9 @@ const Header = () => {
     link = "/recruiter/login";
   }
 
-  const jobMarketPaths = ["/", "/search", "/company"]; 
+  const jobMarketPaths = ["/", "/search", "/company"];
   const isJobMarket = jobMarketPaths.some((path) => location.pathname === path);
-  console.log("pathname" + location.pathname)
+  console.log("pathname" + location.pathname);
 
   if (user?.role === "COMPANY") {
     if (isJobMarket) {
@@ -296,7 +308,7 @@ const Header = () => {
             Đăng ký
           </Link>
           <Link
-            to="/overview"
+            to="/recruiter/login"
             className="header-button border-2 border-solid px-4 py-2 rounded-md ml-4 text-white"
           >
             Đăng tuyển & tìm hồ sơ

@@ -11,7 +11,7 @@ import ButtonSave from "../../components/button/ButtonSave";
 import formatData from "../../untils/formatData";
 
 const JobInfo = ({ job }) => {
-  // console.log(job);
+  console.log(job);
   const userRole = useSelector((state) => state.auth?.user?.role || null);
   const { title, location, yearsOfExperience, deadline, expired } = job;
 
@@ -31,7 +31,6 @@ const JobInfo = ({ job }) => {
                 <span className="text-gray-500 border border-gray-300 rounded-md px-2 py-1 text-sm">
                   Hết hạn
                 </span>
-
               </>
             ) : (
               ""
@@ -119,12 +118,10 @@ const JobInfo = ({ job }) => {
                   <div className="ps-4">
                     <ButtonSave job={job} />
                   </div>
-
                 </>
               ) : (
                 ""
               )}
-
             </div>
           </>
         )}
@@ -160,7 +157,6 @@ const JobInfo = ({ job }) => {
           <p className="font-bold">Quyền lợi</p>
           <div dangerouslySetInnerHTML={{ __html: job.benefits }} />
         </div>
-
 
         {/* Việc làm liên quan */}
         <div className="mt-8">

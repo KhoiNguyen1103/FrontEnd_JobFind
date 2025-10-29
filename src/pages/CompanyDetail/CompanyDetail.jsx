@@ -17,7 +17,7 @@ import citys from "../../data/citys";
 import Pagination from "../../components/ui/Pagination";
 import companyApi from "../../api/companyApi";
 import JobItemv2 from "../../components/ui/JobItemv2";
-import jobApi from "../../api/jobApi";
+// import jobApi from "../../api/jobApi";
 import ReviewCompanyItem from "../../components/ui/ReviewCompanyItem";
 import { sortReviews } from "../../redux/slices/companyReviewSlice";
 import {
@@ -26,14 +26,15 @@ import {
   deleteCompanyReview,
 } from "../../redux/slices/companyReviewSlice";
 import {
-  filterJob,
+  // filterJob,
   fetchJobsByCompanyId,
-  applyAdvancedFilters,
+  // applyAdvancedFilters,
 } from "../../redux/slices/jobSlice";
 import CompanyReviewInput from "./CompanyReviewInput";
-import companyReviewApi from "../../api/companyReviewApi";
+// import companyReviewApi from "../../api/companyReviewApi";
 import { filterJobs } from "../../untils/filterJobs";
-import jobs from "../../data/jobs";
+import fakeCompanies from "../../components/dataFake/companiesFake";
+// import jobs from "../../data/jobs";
 
 const filters = [
   {
@@ -85,7 +86,7 @@ const CompanyDetail = () => {
 
   // selector from redux
   const user = JSON.parse(localStorage.getItem("user"));
-  const categoriesRedux = useSelector((state) => state.category.categories);
+  // const categoriesRedux = useSelector((state) => state.category.categories);
   const reviewsRedux = useSelector((state) => state.companyReview.reviews);
   const jobsByCompanyId = useSelector((state) => state.jobs.jobsByCompanyId);
   const applicationListByJSKReux = useSelector(
@@ -121,6 +122,9 @@ const CompanyDetail = () => {
           console.warn("Không có dữ liệu công ty phù hợp.");
         }
       } catch (error) {
+        setCompany(
+          fakeCompanies.filter((company) => company.companyId == companyId)[0]
+        );
         console.error("Lỗi khi lấy dữ liệu:", error);
       }
     };
@@ -133,9 +137,7 @@ const CompanyDetail = () => {
     // Lấy danh sách review của công ty
     const fetchReviews = async () => {
       try {
-        const response = await dispatch(
-          fetchReviewsByCompanyId(companyId)
-        ).unwrap();
+        await dispatch(fetchReviewsByCompanyId(companyId)).unwrap();
       } catch (error) {
         console.log("Lỗi khi lấy danh sách đánh giá:", error);
       }
@@ -213,18 +215,17 @@ const CompanyDetail = () => {
             <button
               className={`px-4 py-4 text-sm font-medium ${
                 activeTab === "jobs"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-primary border-b-2 border-primary"
                   : "text-gray-500 hover:text-gray-700"
               } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("jobs")}
             >
-              {/* Jobs ({company.jobCount}) */}
               Công việc ( {jobsByCompanyId.length || 0} công việc)
             </button>
             <button
               className={`px-4 py-4 text-sm font-medium ${
                 activeTab === "reviews"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-primary border-b-2 border-primary"
                   : "text-gray-500 hover:text-gray-700"
               } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("reviews")}

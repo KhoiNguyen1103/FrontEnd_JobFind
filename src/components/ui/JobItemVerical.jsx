@@ -22,9 +22,9 @@ const JobItemVertical = ({ job }) => {
 
   // format experience
   // Navigate to applications page for this job
-  const navigateToApplications = () => {
-    navigate(`/applications/${job.jobId}`);
-  };
+  // const navigateToApplications = () => {
+  //   navigate(`/applications/${job.jobId}`);
+  // };
 
   return (
     <div className="p-4 rounded-md border border-gray-300 bg-white border-primary flex flex-col h-full">

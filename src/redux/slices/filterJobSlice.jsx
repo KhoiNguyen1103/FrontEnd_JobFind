@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import fakeJobs from "../../components/dataFake/FakeJobs";
 
 // thunk
 
 const initialState = {
-  jobsRaw: [],
-  jobsFiltered: [],
+  jobsRaw: [...fakeJobs],
+  jobsFiltered: [...fakeJobs],
   context: "", // "recommend", "search", "company", "savedJob"
 };
 
