@@ -10,6 +10,13 @@ const resumeApi = {
     const url = `/resume/delete/${resumeId}`;
     return axiosClient.delete(url);
   },
+  autoCreateResume(profileId, resumeName) {
+    return axiosClient.post(`/resume/auto-create/${profileId}`, null, {
+      params: {
+        resumeName: resumeName,
+      },
+    });
+  },
 };
 
 export default resumeApi;

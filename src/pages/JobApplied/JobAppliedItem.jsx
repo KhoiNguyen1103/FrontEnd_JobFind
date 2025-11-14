@@ -68,8 +68,11 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
             <button className="bg-gray-400 py-1 px-4 rounded-lg">
               {{
                 PENDING: "Đang chờ",
-                REJECTED: "Bị từ chối",
                 REVIEWING: "Đang xem xét",
+                SHORTLISTED: "Đã vào danh sách ngắn",
+                REJECTED: "Bị từ chối",
+                INTERVIEWING: "Phỏng vấn",
+                HIRED: "Đã được tuyển dụng",
               }[job.status.at(-1)?.status] || "Đang chờ"}
             </button>
           </div>

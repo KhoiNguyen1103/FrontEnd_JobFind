@@ -10,7 +10,7 @@ import jobSeekerApi from "../../api/jobSeekerApi";
 import userApi from "../../api/userApi";
 import skillApi from "../../api/skillApi";
 import jobCategoryApi from "../../api/jobCategoryApi";
-import { addCV } from "../../redux/slices/JSKerProfileSlice";
+import { addCV, addAutoCV } from "../../redux/slices/JSKerProfileSlice";
 import { login } from "../../redux/slices/authSlice";
 
 const PersonalInfoForm = () => {
@@ -38,6 +38,10 @@ const PersonalInfoForm = () => {
   const [categoryMap, setCategoryMap] = useState(new Map());
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  //new
+  const [showCvPopup, setShowCvPopup] = useState(false);
+  const [cvName, setCvName] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,9 +50,7 @@ const PersonalInfoForm = () => {
           skillApi.getAll(),
           jobCategoryApi.getAll(),
         ]);
-        const skillMap = new Map(
-          skillsRes.map((s) => [s.skillId, s.name])
-        );
+        const skillMap = new Map(skillsRes.map((s) => [s.skillId, s.name]));
         const categoryMap = new Map(
           categoriesRes.map((c) => [c.jobCategoryId, c.name])
         );
@@ -60,7 +62,7 @@ const PersonalInfoForm = () => {
           setAvatar(profileJSK.avatar || "");
           setAvatarPreview(
             profileJSK.avatar ||
-            "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
+              "https://i.pinimg.com/736x/8f/1c/a2/8f1ca2029e2efceebd22fa05cca423d7.jpg"
           );
           setAvatarChanged(false);
           setNewAvatar(null);
@@ -72,31 +74,32 @@ const PersonalInfoForm = () => {
           setEmail(profileJSK.email || "");
           setBirthDay(profileJSK.birthDay || "");
 
-          const normalizedSkills = profileJSK.skills
-            ?.map((s) => {
-              if (typeof s === "object") {
-                let skillId = s.skillId ?? s.id;
-                if (!skillId && s.name) {
-                  skillId = Array.from(skillMap.entries()).find(
-                    ([, name]) => name.toLowerCase() === s.name.toLowerCase()
-                  )?.[0];
+          const normalizedSkills =
+            profileJSK.skills
+              ?.map((s) => {
+                if (typeof s === "object") {
+                  let skillId = s.skillId ?? s.id;
+                  if (!skillId && s.name) {
+                    skillId = Array.from(skillMap.entries()).find(
+                      ([, name]) => name.toLowerCase() === s.name.toLowerCase()
+                    )?.[0];
+                  }
+                  if (skillId && skillMap.has(skillId)) {
+                    return skillId;
+                  }
+                  console.warn(`Skill object not found in skillMap:`, s);
+                  return null;
                 }
-                if (skillId && skillMap.has(skillId)) {
+                const skillId = Array.from(skillMap.keys()).find(
+                  (id) => skillMap.get(id).toLowerCase() === s.toLowerCase()
+                );
+                if (skillId) {
                   return skillId;
                 }
-                console.warn(`Skill object not found in skillMap:`, s);
+                console.warn(`Skill string not found in skillMap: ${s}`);
                 return null;
-              }
-              const skillId = Array.from(skillMap.keys()).find(
-                (id) => skillMap.get(id).toLowerCase() === s.toLowerCase()
-              );
-              if (skillId) {
-                return skillId;
-              }
-              console.warn(`Skill string not found in skillMap: ${s}`);
-              return null;
-            })
-            .filter((id) => id != null) || [];
+              })
+              .filter((id) => id != null) || [];
           setSkills(normalizedSkills);
 
           setWorkExperiences(
@@ -109,7 +112,8 @@ const PersonalInfoForm = () => {
                       let skillId = s.skillId ?? s.id;
                       if (!skillId && s.name) {
                         skillId = Array.from(skillMap.entries()).find(
-                          ([, name]) => name.toLowerCase() === s.name.toLowerCase()
+                          ([, name]) =>
+                            name.toLowerCase() === s.name.toLowerCase()
                         )?.[0];
                       }
                       if (skillId && skillMap.has(skillId)) {
@@ -140,7 +144,8 @@ const PersonalInfoForm = () => {
                       return null;
                     }
                     const catId = Array.from(categoryMap.keys()).find(
-                      (id) => categoryMap.get(id).toLowerCase() === c.toLowerCase()
+                      (id) =>
+                        categoryMap.get(id).toLowerCase() === c.toLowerCase()
                     );
                     if (catId) {
                       return catId;
@@ -206,11 +211,10 @@ const PersonalInfoForm = () => {
         categories: workExp.categories.filter((id) => id != null && !isNaN(id)),
       };
       await jobSeekerApi.addWorkExperience(user.userId, workExpRequest);
-      setWorkExperiences((prev) => [
-        ...prev,
-        { ...workExp, id: Date.now() },
-      ]);
-      toast.success("Thêm kinh nghiệm làm việc thành công!", { autoClose: 1000 });
+      setWorkExperiences((prev) => [...prev, { ...workExp, id: Date.now() }]);
+      toast.success("Thêm kinh nghiệm làm việc thành công!", {
+        autoClose: 1000,
+      });
     } catch (err) {
       toast.error("Lỗi khi thêm kinh nghiệm: " + err.message);
     }
@@ -219,10 +223,15 @@ const PersonalInfoForm = () => {
   const handleUpdateWorkExperience = async (index, updatedWorkExp) => {
     try {
       if (updatedWorkExp === null) {
-        console.log("vv0 " + JSON.stringify(workExperiences[index].id))
-        await jobSeekerApi.deleteWorkExperience(user.id, workExperiences[index].id);
+        console.log("vv0 " + JSON.stringify(workExperiences[index].id));
+        await jobSeekerApi.deleteWorkExperience(
+          user.userId,
+          workExperiences[index].id
+        );
         setWorkExperiences((prev) => prev.filter((_, i) => i !== index));
-        toast.success("Xóa kinh nghiệm làm việc thành công!", { autoClose: 1000 });
+        toast.success("Xóa kinh nghiệm làm việc thành công!", {
+          autoClose: 1000,
+        });
         return;
       }
       const workExpRequest = {
@@ -234,13 +243,17 @@ const PersonalInfoForm = () => {
         startDate: updatedWorkExp.startDate,
         endDate: updatedWorkExp.endDate,
         skills: updatedWorkExp.skills.filter((id) => id != null && !isNaN(id)),
-        categories: updatedWorkExp.categories.filter((id) => id != null && !isNaN(id)),
+        categories: updatedWorkExp.categories.filter(
+          (id) => id != null && !isNaN(id)
+        ),
       };
-      await jobSeekerApi.updateWorkExperience(user.id, workExpRequest);
+      await jobSeekerApi.updateWorkExperience(user.userId, workExpRequest);
       setWorkExperiences((prev) =>
         prev.map((exp, i) => (i === index ? updatedWorkExp : exp))
       );
-      toast.success("Cập nhật kinh nghiệm làm việc thành công!", { autoClose: 1000 });
+      toast.success("Cập nhật kinh nghiệm làm việc thành công!", {
+        autoClose: 1000,
+      });
     } catch (err) {
       toast.error("Lỗi khi cập nhật kinh nghiệm: " + err.message);
     }
@@ -254,6 +267,9 @@ const PersonalInfoForm = () => {
     try {
       await dispatch(addCV(file)).unwrap();
       toast.success("Đã upload CV!", { autoClose: 600 });
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // delay nhẹ để toast hiển thị
     } catch (error) {
       const errorCode = error?.errorCode;
       const message = error?.message;
@@ -275,7 +291,9 @@ const PersonalInfoForm = () => {
   const handleSave = async () => {
     const phoneRegex = /^\d{10,11}$/;
     if (!phoneRegex.test(phone)) {
-      toast.error("Số điện thoại phải có 10 hoặc 11 chữ số.", { autoClose: 1000 });
+      toast.error("Số điện thoại phải có 10 hoặc 11 chữ số.", {
+        autoClose: 1000,
+      });
       return;
     }
 
@@ -366,13 +384,41 @@ const PersonalInfoForm = () => {
     );
   }
 
+  //new
+  const handleConfirmCreateCV = async () => {
+    if (!cvName.trim()) {
+      toast.error("Vui lòng nhập tên CV!");
+      return;
+    }
+
+    console.log("Tạo CV:", cvName);
+
+    try {
+      const result = await dispatch(addAutoCV(cvName)).unwrap();
+
+      toast.success("Tạo CV thành công!");
+
+      setShowCvPopup(false);
+      setCvName("");
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); // delay nhẹ để toast hiển thị
+    } catch (error) {
+      console.error("Lỗi tạo CV:", error);
+      toast.error(error.message || "Tạo CV thất bại!");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-800">Thông tin cá nhân</h1>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Thông tin cá nhân
+              </h1>
               <div className="flex gap-3">
                 {isEditMode ? (
                   <>
@@ -390,15 +436,59 @@ const PersonalInfoForm = () => {
                     </button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => setIsEditMode(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition transform"
-                  >
-                    Chỉnh sửa
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setIsEditMode(true)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition transform"
+                    >
+                      Chỉnh sửa
+                    </button>
+
+                    {/* Nút tạo CV */}
+                    <button
+                      onClick={() => setShowCvPopup(true)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 hover:scale-105 transition transform"
+                    >
+                      Tạo CV
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
+
+            {showCvPopup && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div className="bg-white w-[90%] max-w-md p-6 rounded-xl shadow-xl">
+                  <h2 className="text-xl font-bold mb-4 text-gray-800">
+                    Nhập tên CV
+                  </h2>
+
+                  <input
+                    type="text"
+                    value={cvName}
+                    onChange={(e) => setCvName(e.target.value)}
+                    placeholder="Ví dụ: CV_Backend_2025"
+                    className="w-full p-3 border rounded-lg mb-4 focus:ring-2 focus:ring-blue-500"
+                  />
+
+                  <div className="flex justify-end gap-3">
+                    <button
+                      onClick={() => setShowCvPopup(false)}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                    >
+                      Hủy
+                    </button>
+
+                    <button
+                      onClick={handleConfirmCreateCV}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      Tạo CV
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <ProfileHeader
               profileJSK={profileJSK}
@@ -437,7 +527,9 @@ const PersonalInfoForm = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-4 items-center">
-                <label className="text-gray-600 font-medium">Số điện thoại</label>
+                <label className="text-gray-600 font-medium">
+                  Số điện thoại
+                </label>
                 <div className="col-span-3">
                   {isEditMode ? (
                     <input
@@ -447,7 +539,9 @@ const PersonalInfoForm = () => {
                       onChange={(e) => setPhone(e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-800">(+84) {phone || "Chưa cập nhật"}</p>
+                    <p className="text-gray-800">
+                      (+84) {phone || "Chưa cập nhật"}
+                    </p>
                   )}
                 </div>
               </div>
@@ -480,7 +574,9 @@ const PersonalInfoForm = () => {
                       onChange={(e) => setAddress(e.target.value)}
                     />
                   ) : (
-                    <p className="text-gray-800">{address || "Chưa cập nhật"}</p>
+                    <p className="text-gray-800">
+                      {address || "Chưa cập nhật"}
+                    </p>
                   )}
                 </div>
               </div>
@@ -497,7 +593,9 @@ const PersonalInfoForm = () => {
                       max={new Date().toISOString().split("T")[0]}
                     />
                   ) : (
-                    <p className="text-gray-800">{birthDay || "Chưa cập nhật"}</p>
+                    <p className="text-gray-800">
+                      {birthDay || "Chưa cập nhật"}
+                    </p>
                   )}
                 </div>
               </div>
@@ -516,7 +614,9 @@ const PersonalInfoForm = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-4">
-                <label className="text-gray-600 font-medium">Kinh nghiệm làm việc</label>
+                <label className="text-gray-600 font-medium">
+                  Kinh nghiệm làm việc
+                </label>
                 <div className="col-span-3">
                   <WorkExperience
                     isEditMode={isEditMode}
@@ -530,7 +630,9 @@ const PersonalInfoForm = () => {
               </div>
 
               <div className="grid grid-cols-4 gap-4">
-                <label className="text-gray-600 font-medium">CV đã upload</label>
+                <label className="text-gray-600 font-medium">
+                  CV đã upload
+                </label>
                 <div className="col-span-3">
                   <button
                     className="px-4 py-2 mb-2 bg-gray-600 text-white rounded-lg hover:bg-blue-700 hover:scale-105 transition transform"

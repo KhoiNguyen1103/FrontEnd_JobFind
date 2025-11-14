@@ -37,7 +37,7 @@ export const addCV = createAsyncThunk(
   async (file, thunkAPI) => {
     try {
       const state = thunkAPI.getState();
-      const userId = state.jobSeekerProfile.user?.id;
+      const userId = state.jobSeekerProfile.user?.userId;
 
       if (!userId) throw new Error("Không tìm thấy ID người dùng");
 
@@ -47,12 +47,42 @@ export const addCV = createAsyncThunk(
       formData.append("resume", file);
 
       await resumeApi.createResume(userId, formData);
-      await thunkAPI.dispatch(fetchJobSeekerProfileByUserId(userId));
     } catch (error) {
       const errorData = error.response?.data;
       return thunkAPI.rejectWithValue({
         errorCode: errorData?.errorCode,
         message: errorData?.message,
+      });
+    }
+  }
+);
+
+export const addAutoCV = createAsyncThunk(
+  "jobSeekerProfile/addAutoCV",
+  async (resumeName, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const userId = state.jobSeekerProfile.user?.userId;
+
+      if (!userId) throw new Error("Không tìm thấy ID người dùng");
+
+      const response = await resumeApi.autoCreateResume(userId, resumeName);
+
+      return response.data; // hoặc response nếu axiosClient không bọc .data
+    } catch (error) {
+      console.log("🔥 addAutoCV error raw:", error);
+      const errData = error.response?.data;
+
+      // Gộp tất cả khả năng để luôn có message
+      const message =
+        errData?.message ||
+        errData?.error ||
+        error.message ||
+        "Tạo CV thất bại";
+
+      return thunkAPI.rejectWithValue({
+        errorCode: errData?.errorCode,
+        message,
       });
     }
   }

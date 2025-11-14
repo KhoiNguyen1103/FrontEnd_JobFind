@@ -41,7 +41,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
         className="grow ps-4 h-full cursor-pointer"
         onClick={navigateToJobDetail}
       >
-        <p className="font-bold pb-2">{job.title}</p>
+        <p className="font-bold pb-2">{job.title || job.jobName}</p>
         <p className="pb-2 text-gray-900">
           {job.company?.companyName || job.companyName}
         </p>
@@ -59,7 +59,7 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
                   .replace("-", " - ")} năm`
               : job.yearsOfExperience?.match(/^\d+\+$/)
               ? `Trên ${job.yearsOfExperience.replace("+", "")} năm`
-              : "Không yêu cầu kinh nghiệm"}
+              : ""}
           </span>
         </div>
         {/* Ngày đăng - ngày end */}

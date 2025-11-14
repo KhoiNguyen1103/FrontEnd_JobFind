@@ -21,9 +21,9 @@ const LoginForm = () => {
 
   // Theo dõi trạng thái form
   const [formData, setFormData] = useState({
-    email: "nguyenvanan@gmail.com",
+    email: "khavosh121@gmail.com",
     // password: "StrongPass@123",
-    password: "Test#123",
+    password: "Password123",
   });
 
   const handleChange = (e) => {

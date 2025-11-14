@@ -8,10 +8,14 @@ const Footer = () => {
         {/* Hero Footer */}
         <div className="bg-gradient-to-r from-green-50 to-white rounded-2xl shadow-md p-8 text-center">
           <Link to="/">
-            <img src={logo} alt="JobFind Logo" className="h-28 mx-auto mb-4" />
+            <img
+              src={logo}
+              alt="CareerConnect Logo"
+              className="h-28 mx-auto mb-4"
+            />
           </Link>
           <p className="text-gray-600 text-lg mb-4">
-            Kết nối cơ hội, xây dựng sự nghiệp với JobFind
+            Kết nối cơ hội, xây dựng sự nghiệp với Career Connect
           </p>
           <div className="flex justify-center space-x-6 text-gray-600">
             <p>
@@ -23,7 +27,7 @@ const Footer = () => {
             <p>
               <strong>Email:</strong>{" "}
               <a
-                href="mailto:hotro@JobFind.vn"
+                href="mailto:hotro@careerconnect.vn"
                 className="text-primary hover:underline"
               >
                 lienhe@JobConnect.com

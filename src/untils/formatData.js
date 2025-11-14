@@ -38,6 +38,12 @@ const formatData = {
       const max = parseInt(match[2], 10);
       return `${min} - ${max} năm`;
     }
+    // Trường hợp "2"
+    const singleMatch = experience.match(/(\d+)/);
+    if (singleMatch) {
+      const year = parseInt(singleMatch[1], 10);
+      return `${year} năm`;
+    }
   },
 };
 

@@ -20,7 +20,7 @@ const ButtonUnsaved = ({ job }) => {
   const handleUnSaveJob = async () => {
     // Call API to unsave job
     try {
-      await savedJobApi.unsave(job.jobId, user.id);
+      await savedJobApi.unsave(job.jobId, user.userId);
       dispatch(removeSavedJob(job.jobId));
       toast.success("Bỏ lưu job thành công", { autoClose: 1000 });
     } catch (error) {

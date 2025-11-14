@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 const JobSaved = () => {
   const savedJobs = useSelector((state) => state.savedJob.savedJobs);
+  // console.log("savedJobs:", savedJobs);
   return (
     <div className="py-8">
       <div className="container mx-auto">

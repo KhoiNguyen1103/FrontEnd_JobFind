@@ -97,7 +97,7 @@ const SignUpForm = () => {
         className="bg-white shadow-md rounded-xl p-8 w-full max-w-4xl border border-gray-200"
       >
         <h2 className="text-2xl font-bold text-center mb-6 text-primary">
-          Chào mừng bạn đến với JobFind
+          Chào mừng bạn đến với Career Connect
         </h2>
         <p className="text-center text-gray-500 mb-6">
           Cùng xây dựng hồ sơ nổi bật và nhận cơ hội nghề nghiệp lý tưởng
