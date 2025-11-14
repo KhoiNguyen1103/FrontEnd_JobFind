@@ -3,7 +3,7 @@ import axiosClient from "./axiosClient";
 const companyReviewApi = {
   // Lấy danh sách review theo companyId
   getReviewsByCompanyId: (companyId) => {
-    const url = `/company/review/getListReviews/companyId?companyId=${companyId}`;
+    const url = `/company/review/getListReviews/${companyId}`;
     return axiosClient.get(url);
   },
 
