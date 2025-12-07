@@ -2,13 +2,18 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector, useDispatch } from "react-redux";
-import { saveJobseeker, unsaveJobseeker } from "../../redux/slices/savedJobseekerSlice";
+import {
+  saveJobseeker,
+  unsaveJobseeker,
+} from "../../redux/slices/savedJobseekerSlice";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
 const ButtonSaveJobSeeker = ({ profileId }) => {
   const dispatch = useDispatch();
-  const savedJobSeekers = useSelector(state => state.savedJobseeker.savedList);
+  const savedJobSeekers = useSelector(
+    (state) => state.savedJobseeker.savedList
+  );
   const [isSaved, setIsSaved] = useState(false);
 
   const user = localStorage.getItem("user");
@@ -18,7 +23,9 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
   const numericProfileId = Number(profileId);
 
   useEffect(() => {
-    const saved = savedJobSeekers.some(item => item.profileId === numericProfileId);
+    const saved = savedJobSeekers.some(
+      (item) => item.profileId === numericProfileId
+    );
     setIsSaved(saved);
   }, [savedJobSeekers, numericProfileId]);
 
@@ -33,11 +40,9 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
     if (isSaved) {
       dispatch(unsaveJobseeker({ profileId: numericProfileId, companyId }));
       toast.success("Đã bỏ lưu thành công!", { autoClose: 500 });
-
     } else {
       dispatch(saveJobseeker({ profileId: numericProfileId, companyId }));
       toast.success("Lưu thành công!", { autoClose: 500 });
-
     }
   };
 
@@ -49,7 +54,7 @@ const ButtonSaveJobSeeker = ({ profileId }) => {
     >
       <FontAwesomeIcon
         icon={isSaved ? faHeartSolid : faHeart}
-        className="h-6 w-6 text-green-600 hover:text-green-700"
+        className="h-6 w-6 text-blue-700 hover:text-blue-800"
       />
     </button>
   );

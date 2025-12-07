@@ -9,8 +9,8 @@ import ReviewCompanyItem from "../../components/ui/ReviewCompanyItem";
 import Pagination from "../../components/ui/Pagination";
 import { fetchJobsByCompanyId } from "../../redux/slices/jobSlice";
 import { fetchReviewsByCompanyId } from "../../redux/slices/companyReviewSlice";
-import { FiCamera, FiX } from 'react-icons/fi';
-import TipTapEditor from '../../untils/tipTapEditorHelper';
+import { FiCamera, FiX } from "react-icons/fi";
+import TipTapEditor from "../../untils/tipTapEditorHelper";
 
 const RecruiterCompanyProfile = () => {
   const dispatch = useDispatch();
@@ -32,7 +32,10 @@ const RecruiterCompanyProfile = () => {
   const jobsPerPage = 4;
   const totalPages = Math.ceil(jobsByCompanyId.length / jobsPerPage);
   const startIndex = (currentPage - 1) * jobsPerPage;
-  const currentJobs = jobsByCompanyId.slice(startIndex, startIndex + jobsPerPage);
+  const currentJobs = jobsByCompanyId.slice(
+    startIndex,
+    startIndex + jobsPerPage
+  );
 
   // Lấy thông tin công ty
   useEffect(() => {
@@ -95,12 +98,15 @@ const RecruiterCompanyProfile = () => {
     const id = userObject?.id;
 
     const avatarChanged = newAvatar && newAvatar instanceof File;
-    const changedFields = Object.entries(editData).reduce((acc, [key, value]) => {
-      if (company[key] !== value) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
+    const changedFields = Object.entries(editData).reduce(
+      (acc, [key, value]) => {
+        if (company[key] !== value) {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {}
+    );
 
     const hasChanges =
       Object.keys(changedFields).length > 0 ||
@@ -113,9 +119,11 @@ const RecruiterCompanyProfile = () => {
     }
 
     const formData = new FormData();
-    ["companyName", "phoneNumber", "website", "description"].forEach((field) => {
-      formData.append(field, editData[field] ?? company[field] ?? "");
-    });
+    ["companyName", "phoneNumber", "website", "description"].forEach(
+      (field) => {
+        formData.append(field, editData[field] ?? company[field] ?? "");
+      }
+    );
     formData.append("userId", id);
     if (avatarChanged) {
       formData.append("logoPath", newAvatar);
@@ -129,7 +137,9 @@ const RecruiterCompanyProfile = () => {
       const updatedUser = {
         ...userObject,
         phone: editData.phoneNumber,
-        avatar: avatarChanged ? URL.createObjectURL(newAvatar) : company.logoPath,
+        avatar: avatarChanged
+          ? URL.createObjectURL(newAvatar)
+          : company.logoPath,
       };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setIsModalOpen(false);
@@ -165,28 +175,31 @@ const RecruiterCompanyProfile = () => {
       {/* Tabs */}
       <div className="flex border-b border-gray-200 mb-6">
         <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === "info"
-            ? "text-green-600 border-b-2 border-green-600"
-            : "text-gray-500 hover:text-gray-700"
-            } cursor-pointer whitespace-nowrap`}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === "info"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+          } cursor-pointer whitespace-nowrap`}
           onClick={() => setActiveTab("info")}
         >
           Thông tin công ty
         </button>
         <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === "jobs"
-            ? "text-green-600 border-b-2 border-green-600"
-            : "text-gray-500 hover:text-gray-700"
-            } cursor-pointer whitespace-nowrap`}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === "jobs"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+          } cursor-pointer whitespace-nowrap`}
           onClick={() => setActiveTab("jobs")}
         >
           Công việc ({jobsByCompanyId.length || 0})
         </button>
         <button
-          className={`px-4 py-2 text-sm font-medium ${activeTab === "reviews"
-            ? "text-green-600 border-b-2 border-green-600"
-            : "text-gray-500 hover:text-gray-700"
-            } cursor-pointer whitespace-nowrap`}
+          className={`px-4 py-2 text-sm font-medium ${
+            activeTab === "reviews"
+              ? "text-blue-600 border-b-2 border-blue-600"
+              : "text-gray-500 hover:text-gray-700"
+          } cursor-pointer whitespace-nowrap`}
           onClick={() => setActiveTab("reviews")}
         >
           Đánh giá ({reviewsRedux.length || 0})
@@ -205,12 +218,16 @@ const RecruiterCompanyProfile = () => {
               />
               <div className="flex flex-col">
                 {company.vip && (
-                  <span className="text-sm font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-md mt-2">VIP</span>
+                  <span className="text-sm font-bold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-md mt-2">
+                    VIP
+                  </span>
                 )}
               </div>
             </div>
 
-            <h1 className="text-2xl font-bold text-gray-800">{company.companyName}</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              {company.companyName}
+            </h1>
             <div
               className="text-gray-600 mt-2 text-base"
               dangerouslySetInnerHTML={{ __html: company.description }}
@@ -218,7 +235,7 @@ const RecruiterCompanyProfile = () => {
 
             <button
               onClick={openEditModal}
-              className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              className="mt-6 px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800"
             >
               Cập nhật thông tin
             </button>
@@ -226,7 +243,9 @@ const RecruiterCompanyProfile = () => {
 
           <div className="w-full md:w-1/3 flex flex-col gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-700 mb-2">Thông tin công ty</h2>
+              <h2 className="text-lg font-semibold text-gray-700 mb-2">
+                Thông tin công ty
+              </h2>
               <p className="text-gray-600 text-base mb-1">
                 <span className="font-medium">Website: </span>
                 <a
@@ -249,7 +268,9 @@ const RecruiterCompanyProfile = () => {
             </div>
 
             <div>
-              <h2 className="text-lg font-semibold text-gray-700">Ngành nghề</h2>
+              <h2 className="text-lg font-semibold text-gray-700">
+                Ngành nghề
+              </h2>
               <div className="flex flex-wrap gap-2 mt-1">
                 {company.industry.map((ind, index) => (
                   <span
@@ -302,7 +323,9 @@ const RecruiterCompanyProfile = () => {
       {/* Tab: Đánh giá */}
       {activeTab === "reviews" && (
         <div className="bg-white/70 rounded-xl shadow-md p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Đánh giá công ty</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Đánh giá công ty
+          </h2>
           <div className="space-y-4">
             {reviewsRedux.length > 0 ? (
               reviewsRedux.map((review) => (
@@ -322,7 +345,9 @@ const RecruiterCompanyProfile = () => {
             {/* Avatar + camera icon */}
             <div className="flex justify-center mb-4 relative">
               <img
-                src={newAvatar ? URL.createObjectURL(newAvatar) : company.logoPath}
+                src={
+                  newAvatar ? URL.createObjectURL(newAvatar) : company.logoPath
+                }
                 alt="Logo công ty"
                 className="w-24 h-24 object-contain rounded-full border-2 border-gray-300"
               />
@@ -350,43 +375,59 @@ const RecruiterCompanyProfile = () => {
 
             {/* Các field */}
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tên công ty</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tên công ty
+              </label>
               <input
                 type="text"
-                value={editData.companyName || ''}
-                onChange={(e) => setEditData({ ...editData, companyName: e.target.value })}
+                value={editData.companyName || ""}
+                onChange={(e) =>
+                  setEditData({ ...editData, companyName: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 mb-2"
               />
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
                 type="email"
-                value={company.email || ''}
+                value={company.email || ""}
                 disabled
                 className="w-full border rounded px-3 py-2 mb-2 bg-gray-100"
               />
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Số điện thoại
+              </label>
               <input
                 type="text"
-                value={editData.phoneNumber || ''}
-                onChange={(e) => setEditData({ ...editData, phoneNumber: e.target.value })}
+                value={editData.phoneNumber || ""}
+                onChange={(e) =>
+                  setEditData({ ...editData, phoneNumber: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 mb-2"
               />
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Ngành nghề</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Ngành nghề
+              </label>
               <select
-                value={selectedIndustryId || ''}
-                onChange={(e) => setSelectedIndustryId(Number(e.target.value) || null)}
+                value={selectedIndustryId || ""}
+                onChange={(e) =>
+                  setSelectedIndustryId(Number(e.target.value) || null)
+                }
                 className="w-full border rounded px-3 py-2 mb-2"
               >
-                <option value="" disabled>Chọn ngành nghề</option>
+                <option value="" disabled>
+                  Chọn ngành nghề
+                </option>
                 {industryList.map((industry) => (
                   <option key={industry.industryId} value={industry.industryId}>
                     {industry.name}
@@ -396,19 +437,25 @@ const RecruiterCompanyProfile = () => {
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Website
+              </label>
               <input
                 type="text"
-                value={editData.website || ''}
-                onChange={(e) => setEditData({ ...editData, website: e.target.value })}
+                value={editData.website || ""}
+                onChange={(e) =>
+                  setEditData({ ...editData, website: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 mb-2"
               />
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mô tả
+              </label>
               <TipTapEditor
-                content={editData.description || ''}
+                content={editData.description || ""}
                 onChange={handleEditorChange("description")}
               />
             </div>

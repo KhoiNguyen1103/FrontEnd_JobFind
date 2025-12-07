@@ -41,17 +41,19 @@ const CompanyItem = ({ item }) => {
             {industries?.map((industry, index) => (
               <span
                 key={index}
-                className="mr-2 bg-green-600 rounded-full px-2 py-1 text-white"
+                className="mr-2 bg-blue-700 rounded-full px-2 py-1 text-white"
               >
                 {industry.name}
                 {index < industries.length - 1 && ", "}
               </span>
             ))}
           </div>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2" dangerouslySetInnerHTML={{
-            __html: description || "Chưa có mô tả",
-          }}>
-          </p>
+          <p
+            className="text-gray-600 text-sm mb-4 line-clamp-2"
+            dangerouslySetInnerHTML={{
+              __html: description || "Chưa có mô tả",
+            }}
+          ></p>
         </div>
       </div>
     </div>

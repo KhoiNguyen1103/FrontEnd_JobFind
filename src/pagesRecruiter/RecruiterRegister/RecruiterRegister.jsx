@@ -98,7 +98,10 @@ const RecruiterRegister = () => {
       toast.success("Vui lòng kiểm tra email để nhận OTP", { autoClose: 3000 });
       setShowOtpModal(true);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!", { autoClose: 3000 });
+      toast.error(
+        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!",
+        { autoClose: 3000 }
+      );
     } finally {
       setLoading(false);
     }
@@ -121,7 +124,9 @@ const RecruiterRegister = () => {
         navigate("/recruiter/login");
       }, 3000);
     } catch (error) {
-      toast.error("OTP không đúng, vui lòng kiểm tra lại hộp thư", { autoClose: 2000 });
+      toast.error("OTP không đúng, vui lòng kiểm tra lại hộp thư", {
+        autoClose: 2000,
+      });
     } finally {
       setIsVerifying(false);
     }
@@ -135,7 +140,9 @@ const RecruiterRegister = () => {
       await authApi.resendOtp(formData.email);
       toast.success("OTP mới đã được gửi!", { autoClose: 3000 });
     } catch (error) {
-      toast.error("Gửi lại OTP thất bại. Vui lòng thử lại!", { autoClose: 2000 });
+      toast.error("Gửi lại OTP thất bại. Vui lòng thử lại!", {
+        autoClose: 2000,
+      });
       setIsResendDisabled(false);
       setCountdown(0);
     }
@@ -283,7 +290,7 @@ const RecruiterRegister = () => {
           </p>
           <button
             type="submit"
-            className="bg-green-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-700"
+            className="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700"
             disabled={loading}
           >
             {loading ? "Đang xử lý..." : "Đăng ký"}
@@ -304,7 +311,9 @@ const RecruiterRegister = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-md">
             <h3 className="text-xl font-bold mb-4">Xác minh OTP</h3>
-            <p className="mb-4">Vui lòng nhập mã OTP được gửi đến email {formData.email}</p>
+            <p className="mb-4">
+              Vui lòng nhập mã OTP được gửi đến email {formData.email}
+            </p>
             <input
               type="text"
               value={otp}
@@ -317,14 +326,22 @@ const RecruiterRegister = () => {
               <button
                 onClick={handleResendOtp}
                 disabled={isResendDisabled}
-                className={`text-blue-600 font-medium ${isResendDisabled ? "opacity-50 cursor-not-allowed" : "hover:underline"}`}
+                className={`text-blue-600 font-medium ${
+                  isResendDisabled
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:underline"
+                }`}
               >
                 Gửi lại OTP {isResendDisabled && `(${countdown}s)`}
               </button>
               <button
                 onClick={handleVerifyOtp}
                 disabled={isVerifying}
-                className={`bg-green-600 text-white px-4 py-2 rounded-md font-semibold ${isVerifying ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
+                className={`bg-green-600 text-white px-4 py-2 rounded-md font-semibold ${
+                  isVerifying
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-green-700"
+                }`}
               >
                 {isVerifying ? "Đang xác minh..." : "Xác minh"}
               </button>

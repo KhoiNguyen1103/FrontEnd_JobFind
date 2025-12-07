@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 import CVItem from "../../components/ui/CVItem";
 import Pagination from "../../components/ui/Pagination";
-import { transformJobSeekerData } from '../../untils/jobSeekerHelpers';
-import { useDispatch, useSelector } from 'react-redux';
+import { transformJobSeekerData } from "../../untils/jobSeekerHelpers";
+import { useDispatch, useSelector } from "react-redux";
 
 const RecruiterProfileSaved = () => {
-  const savedJobSeekers = useSelector(state => state.savedJobseeker.savedList);
+  const savedJobSeekers = useSelector(
+    (state) => state.savedJobseeker.savedList
+  );
   const [jobSeekers, setJobSeekers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -25,7 +27,6 @@ const RecruiterProfileSaved = () => {
 
   useEffect(() => {
     const fetchSavedJobSeekers = async () => {
-
       try {
         setLoading(true);
         const response = await savedJobSeekerApi.getListSaved(companyId);
@@ -64,7 +65,7 @@ const RecruiterProfileSaved = () => {
             <p className="text-primary font-semibold text-xl">
               Danh sách CV yêu thích
             </p>
-            <p className="text-green-500 hover:underline cursor-pointer">
+            <p className="text-blue-500 hover:underline cursor-pointer">
               Xem thêm
             </p>
           </div>

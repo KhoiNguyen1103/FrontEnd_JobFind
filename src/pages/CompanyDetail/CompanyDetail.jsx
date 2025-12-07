@@ -213,7 +213,7 @@ const CompanyDetail = () => {
             <button
               className={`px-4 py-4 text-sm font-medium ${
                 activeTab === "jobs"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
               } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("jobs")}
@@ -224,7 +224,7 @@ const CompanyDetail = () => {
             <button
               className={`px-4 py-4 text-sm font-medium ${
                 activeTab === "reviews"
-                  ? "text-green-600 border-b-2 border-green-600"
+                  ? "text-blue-600 border-b-2 border-blue-600"
                   : "text-gray-500 hover:text-gray-700"
               } cursor-pointer !rounded-button whitespace-nowrap`}
               onClick={() => setActiveTab("reviews")}

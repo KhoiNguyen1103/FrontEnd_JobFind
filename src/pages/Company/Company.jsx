@@ -20,7 +20,7 @@ const Company = () => {
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Danh sách công ty
         </h1>
-        <NotFoundItem title={"Hiện chưa có công ty nào"} />
+        {/* <NotFoundItem title={"Hiện chưa có công ty nào"} /> */}
       </div>
 
       {/* Danh sách công ty */}

@@ -32,21 +32,25 @@ const ChangePassword = () => {
     if (newPassword && newPassword.length < 8) {
       newErrors.newPassword = "Mật khẩu mới phải có ít nhất 8 ký tự";
     } else if (newPassword && !/[A-Z]/.test(newPassword)) {
-      newErrors.newPassword = "Mật khẩu mới phải chứa ít nhất một chữ cái in hoa";
+      newErrors.newPassword =
+        "Mật khẩu mới phải chứa ít nhất một chữ cái in hoa";
     } else if (newPassword && !/[0-9]/.test(newPassword)) {
       newErrors.newPassword = "Mật khẩu mới phải chứa ít nhất một số";
     } else if (newPassword && !/[!@#$%^&*]/.test(newPassword)) {
-      newErrors.newPassword = "Mật khẩu mới phải chứa ít nhất một ký tự đặc biệt";
+      newErrors.newPassword =
+        "Mật khẩu mới phải chứa ít nhất một ký tự đặc biệt";
     }
 
     // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp nhau không
     if (newPassword && confirmPassword && newPassword !== confirmPassword) {
-      newErrors.confirmPassword = "Mật khẩu mới và xác nhận mật khẩu không khớp";
+      newErrors.confirmPassword =
+        "Mật khẩu mới và xác nhận mật khẩu không khớp";
     }
 
     // Kiểm tra mật khẩu mới không được trùng với mật khẩu hiện tại
     if (newPassword && currentPassword && newPassword === currentPassword) {
-      newErrors.newPassword = "Mật khẩu mới không được trùng với mật khẩu hiện tại";
+      newErrors.newPassword =
+        "Mật khẩu mới không được trùng với mật khẩu hiện tại";
     }
 
     setErrors(newErrors);
@@ -58,7 +62,9 @@ const ChangePassword = () => {
 
     // Kiểm tra validate trước khi gửi
     if (!validateForm()) {
-      toast.error("Vui lòng kiểm tra lại thông tin nhập vào!", { autoClose: 500 });
+      toast.error("Vui lòng kiểm tra lại thông tin nhập vào!", {
+        autoClose: 500,
+      });
       return;
     }
 
@@ -71,7 +77,9 @@ const ChangePassword = () => {
         changeType: "UPDATE",
       });
 
-      toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại." , { autoClose: 500 });
+      toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.", {
+        autoClose: 500,
+      });
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -79,17 +87,21 @@ const ChangePassword = () => {
       dispatch(logout()); // Đăng xuất sau khi đổi mật khẩu thành công
     } catch (error) {
       // Xử lý lỗi từ server
-      toast.error("Sai mật khẩu cũ!" , { autoClose: 500 });
+      toast.error("Sai mật khẩu cũ!", { autoClose: 500 });
       console.error("Lỗi đổi mật khẩu:", error);
     }
   };
 
   return (
     <div className="bg-gray-100 p-6 max-w-lg mx-auto my-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Thay đổi mật khẩu đăng nhập</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        Thay đổi mật khẩu đăng nhập
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="block text-gray-700 font-medium">Email đăng nhập</label>
+          <label className="block text-gray-700 font-medium">
+            Email đăng nhập
+          </label>
           <input
             type="email"
             value={user.email}
@@ -98,22 +110,32 @@ const ChangePassword = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="block text-gray-700 font-medium">Mật khẩu hiện tại</label>
+          <label className="block text-gray-700 font-medium">
+            Mật khẩu hiện tại
+          </label>
           <input
             type="password"
-            className={`w-full p-2 border rounded ${errors.currentPassword ? "border-red-500" : "border-gray-300"} bg-blue-100`}
+            className={`w-full p-2 border rounded ${
+              errors.currentPassword ? "border-red-500" : "border-gray-300"
+            } bg-blue-100`}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
           />
           {errors.currentPassword && (
-            <p className="text-red-500 text-sm mt-1">{errors.currentPassword}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.currentPassword}
+            </p>
           )}
         </div>
         <div className="mb-3">
-          <label className="block text-gray-700 font-medium">Mật khẩu mới</label>
+          <label className="block text-gray-700 font-medium">
+            Mật khẩu mới
+          </label>
           <input
             type="password"
-            className={`w-full p-2 border rounded ${errors.newPassword ? "border-red-500" : "border-gray-300"}`}
+            className={`w-full p-2 border rounded ${
+              errors.newPassword ? "border-red-500" : "border-gray-300"
+            }`}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
@@ -122,20 +144,26 @@ const ChangePassword = () => {
           )}
         </div>
         <div className="mb-3">
-          <label className="block text-gray-700 font-medium">Nhập lại mật khẩu mới</label>
+          <label className="block text-gray-700 font-medium">
+            Nhập lại mật khẩu mới
+          </label>
           <input
             type="password"
-            className={`w-full p-2 border rounded ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`}
+            className={`w-full p-2 border rounded ${
+              errors.confirmPassword ? "border-red-500" : "border-gray-300"
+            }`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.confirmPassword}
+            </p>
           )}
         </div>
         <button
           type="submit"
-          className="bg-green-500 text-white font-semibold p-2 rounded w-full hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="bg-blue-500 text-white font-semibold p-2 rounded w-full hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Lưu
         </button>

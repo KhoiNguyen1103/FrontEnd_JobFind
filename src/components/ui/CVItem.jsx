@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
 import ButtonSaveJobSeeker from "../button/ButtonSaveJobSeeker";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux';
-import { openChatBox } from '../../redux/slices/chatBoxSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { openChatBox } from "../../redux/slices/chatBoxSlice";
 import conversationApi from "../../api/conversationApi";
 
 const CVItem = ({ profile }) => {
@@ -34,11 +34,17 @@ const CVItem = ({ profile }) => {
 
   async function handleOpenChat() {
     try {
-      const conversationId = await conversationApi.conversationIdByParticipantId(profile.userId, user.id);
+      const conversationId =
+        await conversationApi.conversationIdByParticipantId(
+          profile.userId,
+          user.id
+        );
       if (conversationId > 0) {
         const displayName = `${firstName} ${lastName}`;
         console.log("conversationId", conversationId);
-        dispatch(openChatBox({ conversationId, profileId, userId, displayName }));
+        dispatch(
+          openChatBox({ conversationId, profileId, userId, displayName })
+        );
       } else {
         const displayName = `${firstName} ${lastName}`;
         dispatch(openChatBox({ profileId, userId, displayName }));
@@ -76,7 +82,7 @@ const CVItem = ({ profile }) => {
               <ButtonSaveJobSeeker profileId={profileId} />
               <button
                 onClick={handleOpenChat}
-                className="text-green-600 hover:text-green-700"
+                className="text-blue-700 hover:text-blue-800"
               >
                 <FontAwesomeIcon icon={faMessage} className="h-5 w-5" />
               </button>

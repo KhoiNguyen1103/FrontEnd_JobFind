@@ -314,7 +314,7 @@ const ChatBox = ({
       }`}
       style={{ right: `${4 + index * 320}px` }}
     >
-      <div className="flex items-center justify-between p-3 bg-green-600 text-white rounded-t-xl">
+      <div className="flex items-center justify-between p-3 bg-blue-700 text-white rounded-t-xl">
         <div className="flex items-center space-x-2">
           <span
             className="text-sm font-semibold truncate max-w-[200px] hover:cursor-pointer"
@@ -410,7 +410,7 @@ const ChatBox = ({
                         <div
                           className={`max-w-[70%] p-3 rounded-lg ${
                             msg.senderId === user.id
-                              ? "bg-green-600 text-white"
+                              ? "bg-blue-700 text-white"
                               : "bg-gray-200 text-black"
                           }`}
                         >
@@ -448,7 +448,7 @@ const ChatBox = ({
                               )}
                             </div>
                           )}
-                          <div className="text-xs text-gray-600 mt-1">
+                          <div className="text-xs text-white-200 mt-1">
                             {new Date(msg.sentAt).toLocaleTimeString("vi-VN", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -503,7 +503,7 @@ const ChatBox = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current.click()}
-                className="text-gray-500 hover:text-green-600"
+                className="text-gray-500 hover:text-blue-700"
                 disabled={uploading}
               >
                 <FontAwesomeIcon icon={faPaperclip} size="lg" />
@@ -521,13 +521,13 @@ const ChatBox = ({
                 onFocus={handleMarkAsRead}
                 placeholder="Nhập tin nhắn..."
                 rows={1}
-                className="flex-1 resize-none p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-300 max-h-[6rem] overflow-y-auto"
+                className="flex-1 resize-none p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 max-h-[6rem] overflow-y-auto"
                 disabled={uploading}
               />
               <div className="flex justify-end">
                 {uploading ? (
                   <svg
-                    className="animate-spin h-5 w-5 text-green-600"
+                    className="animate-spin h-5 w-5 text-blue-600"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -549,7 +549,7 @@ const ChatBox = ({
                 ) : (
                   <button
                     type="submit"
-                    className={`text-green-600 hover:text-green-700 ${
+                    className={`text-blue-600 hover:text-blue-700 ${
                       !newMessage.trim() && !selectedFile
                         ? "opacity-50 cursor-not-allowed"
                         : ""

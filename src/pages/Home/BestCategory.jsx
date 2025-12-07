@@ -32,7 +32,7 @@ const BestCategory = () => {
 
               <div className="flex-1 flex flex-col justify-center items-center p-2">
                 <span className="font-bold">{item.name}</span>
-                <p className="text-primary text-sm">{item.count} việc làm</p>
+                <p className="text-primary text-sm">{item.count} Việc làm</p>
               </div>
             </div>
           </Link>
