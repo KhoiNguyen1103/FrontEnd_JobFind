@@ -172,7 +172,7 @@ const BestJob = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <h1 className="text-primary text-3xl font-bold">
-            {role === "COMPANY" ? "Danh Sách Công Việc" : "Việc Làm Tốt Nhất"}
+            {role === "COMPANY" ? "Danh Sách Công Việc" : "Việc Làm Nổi Bật"}
           </h1>
           <div>
             <p className="pe-4 underline text-sm cursor-pointer hover:no-underline">

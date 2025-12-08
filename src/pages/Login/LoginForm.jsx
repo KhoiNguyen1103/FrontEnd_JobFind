@@ -69,11 +69,11 @@ const LoginForm = () => {
         className="bg-white shadow-md rounded-xl p-8 w-full max-w-md border border-gray-200"
       >
         <h2 className="text-2xl font-bold text-center mb-4 text-primary">
-          Chào mừng bạn đã quay trở lại
+          Chào mừng bạn quay trở lại với CareerConnect
         </h2>
         <p className="text-center text-gray-500 mb-6">
-          Cùng xây dựng một hồ sơ nổi bật và nhận được các cơ hội sự nghiệp lý
-          tưởng
+          Hãy tạo nên một hồ sơ thật ấn tượng và mở ra những cơ hội nghề nghiệp
+          lý tưởng
         </p>
 
         {/* Email */}
