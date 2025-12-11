@@ -11,6 +11,11 @@ import ButtonUnsaved from "../button/ButtonUnsaved";
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import TextSalary from "./TextSalary";
+import BadgeKinhNghiem from "./BadgeKinhNghiem";
+import BadgeDiaDiem from "./BadgeDiaDiem";
+import BadgeTypeJob from "./BadgeTypeJob";
 
 const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   const navigate = useNavigate();
@@ -26,75 +31,70 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
     scrollTop();
   };
 
+  const logoSection = (
+    <img
+      src={job.company?.logoPath || job.companyLogo || "/logo_no_bg.png"}
+      alt="logo"
+      className="h-24 w-24 object-cover rounded"
+    />
+  );
+
+  const ngayDangNgayHetHan = (
+    <div
+      className="flex justify-between cursor-pointer"
+      onClick={navigateToJobDetail}
+    >
+      <p className="flex items-center gap-1">
+        📅 <span className="font-medium">Ngày Đăng:</span>{" "}
+        {formatDateTime(
+          job.postedAt?.slice(0, 10) || job.created?.slice(0, 10)
+        )}
+      </p>
+      <p className="flex items-center gap-1">
+        ⏰ <span className="font-medium">Hết hạn:</span>{" "}
+        {formatDateTime(job.deadline)}
+      </p>
+    </div>
+  );
+
   return (
-    <div className="flex justify-between border border-slate-200 rounded-lg p-4 mb-4 h-[200px]">
-      <div className="cursor-pointer" onClick={navigateToJobDetail}>
-        <img
-          src={job.company?.logoPath || job.companyLogo || "/logo_no_bg.png"}
-          alt="logo"
-          className="h-32 w-32 object-cover"
-        />
-      </div>
-
-      {/* Thông tin job */}
-      <div
-        className="grow ps-4 h-full cursor-pointer"
-        onClick={navigateToJobDetail}
-      >
-        <p className="font-bold pb-2">{job.title || job.jobName}</p>
-        <p className="pb-2 text-gray-900">
-          {job.company?.companyName || job.companyName}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
-            {job.location}
-          </span>
-          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
-            {job.jobType}
-          </span>
-          <span className="bg-slate-200 py-1 px-2 text-sm rounded-md whitespace-nowrap">
-            {job.yearsOfExperience?.match(/^\d+\s*-\s*\d+$/)
-              ? `${job.yearsOfExperience
-                  .replace(/\s*/g, "")
-                  .replace("-", " - ")} năm`
-              : job.yearsOfExperience?.match(/^\d+\+$/)
-              ? `Trên ${job.yearsOfExperience.replace("+", "")} năm`
-              : ""}
-          </span>
+    <div className="flex flex-col border border-slate-200 rounded-lg p-4 mb-4 gap-4">
+      <div className="flex ">
+        <div
+          className="cursor-pointer flex justify-center items-center"
+          onClick={navigateToJobDetail}
+        >
+          {logoSection}
         </div>
-        {/* Ngày đăng - ngày end */}
-        <div className="pt-6 flex flex-col justify-center items-start text-sm text-gray-500 min-w-[120px]">
-          <p className="flex items-center gap-1">
-            📅 <span className="font-medium">Ngày Đăng:</span>{" "}
-            {formatDateTime(
-              job.postedAt?.slice(0, 10) || job.created?.slice(0, 10)
-            )}
-          </p>
-          <p className="flex items-center gap-1">
-            ⏰ <span className="font-medium">Hết hạn:</span>{" "}
-            {formatDateTime(job.deadline)}
-          </p>
+
+        <div className="flex flex-col justify-between ms-4">
+          <div>
+            <p className="font-bold text-lg">{job.title || job.jobName}</p>
+            <p className="text-gray-900">
+              {job.company?.companyName || job.companyName}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <BadgeDiaDiem diaDiem={job?.location} />
+            <BadgeTypeJob typeJob={job?.jobType} />
+            <BadgeKinhNghiem soNamKinhNghiem={job?.yearsOfExperience} />
+          </div>
         </div>
       </div>
 
-      {/* Button */}
-      <div className="flex flex-col justify-between items-end h-full">
-        <p className="text-primary font-bold">
-          {new Intl.NumberFormat("de-DE").format(job.salaryMin / 1000000) +
-            " - " +
-            new Intl.NumberFormat("de-DE").format(job.salaryMax / 1000000) +
-            " triệu"}
-        </p>
-        {userRole === "COMPANY" ? (
-          <div></div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2">
-              <ButtonApply isApply={isApply} jobId={job.jobId} />
-              {iconHeart && <ButtonSave job={job} />}
-              {isButtonSave && <ButtonUnsaved job={job} />}
-            </div>
-          </>
+      {ngayDangNgayHetHan}
+
+      <hr className="bg-slate-700" />
+
+      <div className="flex justify-between items-center">
+        <TextSalary salaryMin={job.salaryMin} salaryMax={job.salaryMax} />
+
+        {userRole !== "COMPANY" && (
+          <div className="flex items-center gap-2 mt-2">
+            <ButtonApply isApply={isApply} jobId={job.jobId} />
+            {iconHeart && <ButtonSave job={job} />}
+            {isButtonSave && <ButtonUnsaved job={job} />}
+          </div>
         )}
       </div>
     </div>

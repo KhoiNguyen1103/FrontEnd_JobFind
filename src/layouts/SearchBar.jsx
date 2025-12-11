@@ -24,6 +24,7 @@ const SearchBar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const pathname = location?.pathname;
 
   // load data từ redux
   const user = useSelector((state) => state.auth.user);
@@ -139,107 +140,132 @@ const SearchBar = () => {
     navigate(`/search?${queryParams.toString()}`);
   };
 
+  const danhMucNghe = (
+    <>
+      <div
+        className="ps-4 flex items-center justify-between bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
+        style={{ width: "250px" }}
+        onClick={() => setIsOpenCategory(!isOpenCategory)}
+      >
+        <FontAwesomeIcon icon={faList} />
+        <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
+        <FontAwesomeIcon icon={faAngleDown} />
+      </div>
+
+      {/* Menu danh mục nghề */}
+      <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
+        {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
+      </div>
+    </>
+  );
+
+  const searchInput = (
+    <>
+      <input
+        type="text"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        placeholder={
+          auth_role === "COMPANY" &&
+          !["/", "/search", "/company"].includes(location.pathname)
+            ? "Tìm kiếm CV..."
+            : "Nhập công việc..."
+        }
+        className="text-gray-800 outline-none px-2"
+      />
+      {searchText && (
+        <button
+          type="button"
+          onClick={() => setSearchText("")}
+          className="text-gray-400"
+        >
+          <FontAwesomeIcon icon={faCircleXmark} className="text-2xl" />
+        </button>
+      )}
+    </>
+  );
+
+  const diaDiem = (
+    <>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 justify-between text-gray-600 cursor-pointer"
+      >
+        <div className="flex items-center space-x-2">
+          <FontAwesomeIcon icon={faLocationDot} className="text-xl flex-none" />
+          <span className="ml-2 flex-none">
+            {citysSelected.length === 0
+              ? "Địa điểm"
+              : citysSelected[0] +
+                (citysSelected.length > 1
+                  ? ` (+${citysSelected.length - 1})`
+                  : "")}
+          </span>
+        </div>
+        <FontAwesomeIcon icon={faAngleDown} />
+      </div>
+      {isOpen && (
+        <div className="absolute top-10 right-0">
+          <MenuLocation setIsOpen={setIsOpen} />
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div
-      className="flex flex-col md:flex-row justify-center items-center py-6 px-4 z-50"
+      className="py-6 px-4 z-50"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="relative container flex justify-between items-center rounded-full shadow-lg bg-white">
-        <div className="relative" ref={refCategory}>
-          {/* Label danh mục nghề */}
-          <div
-            className="ps-4 flex items-center justify-between flex-nowrap bg-slate-200 cursor-pointer py-4 pe-4 rounded-s-full"
-            style={{ width: "250px" }}
-            onClick={() => setIsOpenCategory(!isOpenCategory)}
-          >
-            <FontAwesomeIcon icon={faList} />
-            <p>Danh mục nghề {"(" + categoriesSelected?.length + ")"}</p>
-            <FontAwesomeIcon icon={faAngleDown} />
-          </div>
-          {/* end: label danh mục nghề */}
-
-          {/* Menu danh mục nghề */}
-          <div className="absolute top-full left-0 mt-4 bg-white shadow-md rounded-lg">
-            {isOpenCategory && <MenuCategory setIsOpen={setIsOpenCategory} />}
-          </div>
-          {/* end: Menu danh mục nghề */}
-        </div>
-
-        {/* Search text input */}
-        <div className="flex grow justify-between items-center bg-white rounded-l-full px-4 py-3 w-3/5">
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder={
-              auth_role === "COMPANY" &&
-              !["/", "/search", "/company"].includes(location.pathname)
-                ? "Tìm kiếm CV..."
-                : "Nhập công việc..."
-            }
-            className="w-full text-gray-800 outline-none p-1"
-          />
-          {searchText && (
-            <button
-              type="button"
-              onClick={() => setSearchText("")}
-              className="text-gray-400"
-            >
-              <FontAwesomeIcon icon={faCircleXmark} className="text-2xl" />
-            </button>
+      <div className="max-w-4xl mx-auto">
+        <div className="relative flex justify-between items-center rounded-full shadow-lg bg-white">
+          {pathname !== "/" && (
+            <div className="relative" ref={refCategory}>
+              {danhMucNghe}
+            </div>
           )}
-        </div>
-        {/* end: Search text input */}
 
-        {/* Phân cách */}
-        <div className="border-l h-6 mx-3"></div>
+          <div className="flex grow justify-between items-center px-4 py-4 bg-white rounded-l-full">
+            {searchInput}
+          </div>
 
-        {/* Chọn địa điểm */}
-        <div className="relative w-1/5" ref={ref}>
-          <div
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center justify-between text-gray-600 cursor-pointer"
+          {/* Phân cách */}
+          <div className="border-l h-6 mx-3"></div>
+
+          <div className="relative w-48" ref={ref}>
+            {diaDiem}
+          </div>
+
+          {/* Phân cách */}
+          <div className="border-l h-6 mx-3"></div>
+
+          {/* Nút tìm kiếm */}
+          <button
+            className="btn-search text-white flex items-center justify-center py-3 me-1 px-4 rounded-full"
+            onClick={handleButtonSearch}
           >
-            <div className="flex items-center space-x-2">
-              <FontAwesomeIcon
-                icon={faLocationDot}
-                className="text-xl flex-none"
+            <FontAwesomeIcon icon={faMagnifyingGlass} className="pe-2" />
+            Tìm kiếm
+          </button>
+        </div>
+        {pathname === "/" && (
+          <div className="flex gap-2 mt-2">
+            <div className="w-72 bg-white rounded-lg">
+              <MenuCategory />
+            </div>
+            <div className="flex-1">
+              <img
+                src={"/Banner1.png"}
+                alt="logo"
+                className="h-full object-fill rounded"
               />
-              <span className="ml-2 flex-none">
-                {citysSelected.length === 0
-                  ? "Địa điểm"
-                  : citysSelected[0] +
-                    (citysSelected.length > 1
-                      ? ` (+${citysSelected.length - 1})`
-                      : "")}
-              </span>
             </div>
-            <FontAwesomeIcon icon={faAngleDown} />
           </div>
-          {isOpen && (
-            <div className="absolute top-10 right-0">
-              <MenuLocation setIsOpen={setIsOpen} />
-            </div>
-          )}
-        </div>
-        {/* end: Chọn địa điểm */}
-
-        {/* Phân cách */}
-        <div className="border-l h-6 mx-3"></div>
-
-        {/* Nút tìm kiếm */}
-        <button
-          className="btn-search text-white flex items-center justify-center py-2 rounded-full me-3"
-          style={{ width: "10%" }}
-          onClick={handleButtonSearch}
-        >
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="pe-2" />
-          Tìm kiếm
-        </button>
+        )}
       </div>
     </div>
   );

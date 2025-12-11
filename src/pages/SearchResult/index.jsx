@@ -6,6 +6,7 @@ import JobItemv2 from "../../components/ui/JobItemv2";
 import { filterJobs } from "../../untils/filterJobs";
 import NotFoundItem from "../../components/ui/NotFoundItem";
 import Spinner from "../../components/ui/Spinner";
+import ButtonCircle from "../../components/button/ButtonCircle";
 
 const filters = [
   {
@@ -125,6 +126,23 @@ const SearchResult = () => {
     });
   };
 
+  // phân trang job
+  const [page, setPage] = useState(1);
+  const itemPerPage = 6;
+  const pageCount = Math.ceil(jobs?.length / itemPerPage);
+  const skipCount = (page - 1) * itemPerPage;
+  const handleNextPage = () => {
+    setPage((prev) => {
+      if (page < pageCount) return prev + 1;
+    });
+  };
+
+  const handlePrevPage = () => {
+    setPage((prev) => {
+      if (page > 1) return prev - 1;
+    });
+  };
+
   return (
     <div className="container mx-auto py-4">
       <div className="flex justify-between">
@@ -171,11 +189,44 @@ const SearchResult = () => {
             </div>
           ) : jobs.length > 0 ? (
             <div>
-              <p className="text-2xl py-3">{jobs.length} công việc hiện có</p>
+              <div className="flex justify-between items-center">
+                <p className="text-lg py-3 font-bold">
+                  {jobs.length} công việc hiện có
+                </p>
+                <div className="flex gap-2 justify-center items-center px-2">
+                  <ButtonCircle
+                    direction="left"
+                    onClick={handlePrevPage}
+                    disabled={page === 1}
+                  />
+                  {page} / {pageCount}
+                  <ButtonCircle
+                    direction="right"
+                    onClick={handleNextPage}
+                    disabled={page === pageCount}
+                  />
+                </div>
+              </div>
 
-              {jobs.map((job) => (
-                <JobItemv2 job={job} key={job.jobId} isApply={false} />
-              ))}
+              <div className="grid grid-cols-2 gap-4">
+                {jobs?.slice(skipCount, skipCount + itemPerPage).map((job) => (
+                  <JobItemv2 job={job} key={job.jobId} isApply={false} />
+                ))}
+              </div>
+
+              <div className="flex gap-2 justify-center items-center px-2">
+                <ButtonCircle
+                  direction="left"
+                  onClick={handlePrevPage}
+                  disabled={page === 1}
+                />
+                {page} / {pageCount}
+                <ButtonCircle
+                  direction="right"
+                  onClick={handleNextPage}
+                  disabled={page === pageCount}
+                />
+              </div>
             </div>
           ) : (
             <div className="flex justify-center items-center h-full">

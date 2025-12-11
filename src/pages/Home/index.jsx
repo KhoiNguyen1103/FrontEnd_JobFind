@@ -231,7 +231,6 @@ const Home = () => {
       {/* Nội dung chính */}
       <div>
         <BestJob />
-        <BestCategory />
       </div>
     </div>
   );

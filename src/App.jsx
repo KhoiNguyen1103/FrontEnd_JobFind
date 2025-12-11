@@ -16,7 +16,7 @@ import { recruiterRoutes } from "./routes/recruiterRoutes";
 import PrivateRoute from "./components/PrivateRoute";
 
 //admin route
-import  adminRoutes  from "./routes/adminRoutes"
+import adminRoutes from "./routes/adminRoutes";
 // layouts
 import Header from "./layouts/Header";
 import Footer from "./layouts/Footer";
@@ -36,6 +36,7 @@ import { fetchApplicationByJSK } from "./redux/slices/applySlice";
 import ChatBox from "./components/ui/ChatBox";
 import { setJobsRaw } from "./redux/slices/filterJobSlice";
 import AdminLogin from "./pageAdmin/AdminLogin";
+import ChatBoxAI from "./components/ui/ChatBoxAI";
 
 function App() {
   const dispatch = useDispatch();
@@ -83,7 +84,7 @@ function App() {
     "/recruiter/register",
     "/overview",
     "/admin/login",
-    "/admin"
+    "/admin",
   ].includes(location.pathname);
 
   const hiddenFooter = [
@@ -94,7 +95,7 @@ function App() {
     "/recruiter/register",
     "/recruiter/login",
     "/admin/login",
-    "/admin"
+    "/admin",
   ].includes(location.pathname);
 
   return (
@@ -110,7 +111,7 @@ function App() {
       {/* Content */}
       <div
         className="flex-grow"
-      // style={{ backgroundColor: "#e7eee7" }}
+        // style={{ backgroundColor: "#e7eee7" }}
       >
         <Routes>
           {/* Role-based redirect route */}
@@ -171,6 +172,7 @@ function App() {
       {/* Footer */}
       {!hiddenFooter && <Footer className="justify-end" />}
       <ToastContainer />
+      {(!user || user.role === "JOBSEEKER") && <ChatBoxAI />}
       <div id="chatbox-root" />
       {chatBoxes.map((chat, index) => (
         <ChatBox

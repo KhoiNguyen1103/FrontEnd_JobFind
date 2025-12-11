@@ -1,22 +1,23 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   toggleCategories,
   clearSelectedCategories,
 } from "../../redux/slices/categorySlice";
+import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const MenuCategory = ({ setIsOpen }) => {
+const MenuCategory = () => {
   const dispatch = useDispatch();
   // load data từ redux và local storage
-  const { categories, error } = useSelector((state) => state.category);
+  const { categories } = useSelector((state) => state.category);
   const selectedCategories = useSelector(
     (state) => state.category.selectedCategories
   );
 
   // react hook
   const [searchText, setSearchText] = useState("");
-  const [searchCategories, setSearchCategories] = useState([]);
 
   // handle search category
   const filteredCategories = categories.filter((category) =>
@@ -34,19 +35,25 @@ const MenuCategory = ({ setIsOpen }) => {
   };
 
   return (
-    <div className="min-w-[300px]">
-      <input
-        type="text"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        placeholder="Tìm kiếm danh mục..."
-        className="w-full p-2 mb-2 border rounded-md outline-none"
-      />
+    <div>
+      <div className="flex justify-between items-center gap-2">
+        <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Tìm kiếm danh mục..."
+          className="flex-1 p-2 rounded-md outline-none"
+        />
+        <FontAwesomeIcon
+          icon={faArrowRotateRight}
+          className="text-xl text-red-600 pe-2 cursor-pointer hover:scale-110 transition-all"
+          onClick={handleClear}
+        />
+      </div>
 
-      <div
-        className="overflow-y-auto"
-        style={{ height: "300px", scrollbarWidth: "none" }}
-      >
+      <hr />
+
+      <div className="overflow-y-auto h-52" style={{ scrollbarWidth: "none" }}>
         <div className="border-r-2">
           {filteredCategories.map((category) => (
             <div
@@ -66,15 +73,6 @@ const MenuCategory = ({ setIsOpen }) => {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="p-4">
-        <p
-          className="text-slate-300 cursor-pointer flex items-center"
-          onClick={handleClear}
-        >
-          Bỏ chọn tất cả
-        </p>
       </div>
     </div>
   );

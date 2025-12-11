@@ -6,17 +6,12 @@ import {
   faCalendarAlt,
   faPaperPlane,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ApplicationModalJSK from "../Menu/ApplicationModalJSK";
 import ApplyModal from "../ui/ModalApply";
-import { use } from "react";
 
-const ButtonApply = ({ jobId, job }) => {
-  // console.log("jobId: ", jobId);
-  const navigate = useNavigate();
-
+const ButtonApply = ({ jobId }) => {
   // load data từ redux vaf localstorage
   const jobsApplied = useSelector((state) => state.application.list);
   const user = useSelector((state) => state.auth.user);
@@ -73,17 +68,14 @@ const ButtonApply = ({ jobId, job }) => {
         className="py-1 px-2 justify-center active:opacity-80 rounded-md bg-primary text-white font-sm cursor-pointer flex items-center w-full h-full"
         onClick={handleClick}
       >
-        {isApply ? (
-          <div className="flex items-center">
-            <p className="px-4">Xem tình trạng ứng tuyển </p>
-            <FontAwesomeIcon icon={faArrowRightFromBracket} />
-          </div>
-        ) : (
-          <>
-            <FontAwesomeIcon icon={faPaperPlane} className="pe-4" />
-            <p className="ps-2">Ứng tuyển</p>
-          </>
-        )}
+        <div className="flex items-center">
+          <p className="px-4 text-sm">
+            {isApply ? "Xem đơn ứng tuyển" : "Ứng tuyển"}{" "}
+          </p>
+          <FontAwesomeIcon
+            icon={isApply ? faArrowRightFromBracket : faPaperPlane}
+          />
+        </div>
       </div>
       {isModalApplicationJSKOpen && (
         <ApplicationModalJSK

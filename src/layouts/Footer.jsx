@@ -3,16 +3,12 @@ import logo from "../assets/logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 pt-12">
+    <footer className="bg-gray-50 mt-8">
       <div className="w-full">
         {/* Hero Footer */}
-        <div className="bg-gradient-to-r from-green-50 to-white rounded-2xl shadow-md p-8 text-center">
+        <div className="bg-gradient-to-r from-green-50 to-white rounded-2xl shadow-md p-2 text-center">
           <Link to="/">
-            <img
-              src={logo}
-              alt="CareerConnect Logo"
-              className="h-28 mx-auto mb-4"
-            />
+            <img src={logo} alt="CareerConnect Logo" className="h-24 mx-auto" />
           </Link>
           <p className="text-gray-600 text-lg mb-4">
             Kết nối cơ hội, xây dựng sự nghiệp với Career Connect
@@ -30,7 +26,7 @@ const Footer = () => {
                 href="mailto:hotro@careerconnect.vn"
                 className="text-primary hover:underline"
               >
-                lienhe@JobConnect.com
+                lienhe@CareerConnect.com
               </a>
             </p>
           </div>

@@ -20,13 +20,13 @@ const SignUpForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    firstName: "Nguyễn Xuân",
-    lastName: "Khôi",
-    phone: "0147258369",
-    address: "123 Gò Vấp, Hồ Chí Minh",
-    email: "khoi@gmail.com",
-    password: "StrongPass@123",
-    confirmPassword: "StrongPass@123",
+    firstName: "Đào Thanh",
+    lastName: "Phú",
+    phone: "0979667431",
+    address: "Hồ Chí Minh",
+    email: "thanhphu23@gmail.com",
+    password: "Password123",
+    confirmPassword: "Password123",
   });
 
   const [errors, setErrors] = useState({});

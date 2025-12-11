@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const currentUser = useSelector((state) => state.auth.user); // lấy user từ redux hoặc context
-  // console.log(currentUser);
+  console.log("ádasda");
 
   if (!currentUser) {
     // Nếu chưa đăng nhập, redirect về login
