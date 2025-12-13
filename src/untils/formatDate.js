@@ -21,3 +21,15 @@ export const formatDateTime = (dateString) => {
     (hasTime ? ` ${hours}:${minutes}:${seconds}` : "")
   );
 };
+
+export function daysLeft(deadline) {
+  const now = new Date();
+  const end = new Date(deadline);
+  const diff = end - now;
+
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+  if (days < 0) return "Đã hết hạn";
+  if (days === 0) return "Hôm nay";
+  return `Còn ${days} ngày`;
+}

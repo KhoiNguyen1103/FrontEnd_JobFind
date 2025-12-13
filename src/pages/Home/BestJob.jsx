@@ -16,6 +16,7 @@ import Pagination from "../../components/ui/Pagination";
 import JobItemVertical from "../../components/ui/JobItemVerical";
 import jobApi from "../../api/jobApi";
 import NotFoundItem from "../../components/ui/NotFoundItem";
+import Spinner from "../../components/ui/Spinner";
 
 const filtersJob = [
   {
@@ -180,7 +181,6 @@ const BestJob = () => {
             </p>
           </div>
         </div>
-
         {/* Bộ lọc và danh sách option */}
         <div className="pt-6 flex justify-between">
           {/* Bộ lọc chính */}
@@ -274,7 +274,6 @@ const BestJob = () => {
             />
           </div>
         </div>
-
         {/* Danh sách job */}
         <div
           className={
@@ -284,9 +283,9 @@ const BestJob = () => {
           }
         >
           {isLoading ? (
-            <p className="text-center text-2xl text-slate-400 py-6">
-              Đang tải...
-            </p>
+            <>
+              <Spinner />
+            </>
           ) : currentJobs.length > 0 ? (
             currentJobs.map((job, index) => (
               <JobItemVertical key={job.jobId || index} job={job} />

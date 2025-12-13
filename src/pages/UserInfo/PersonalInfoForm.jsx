@@ -41,6 +41,12 @@ const PersonalInfoForm = () => {
   //new
   const [showCvPopup, setShowCvPopup] = useState(false);
   const [cvName, setCvName] = useState("");
+  const [summary, setSummary] = useState("");
+  const [careerObjective, setCareerObjective] = useState("");
+
+  const [educations, setEducations] = useState([]);
+  const [certifications, setCertifications] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -391,23 +397,75 @@ const PersonalInfoForm = () => {
       return;
     }
 
-    console.log("Tạo CV:", cvName);
-
     try {
-      const result = await dispatch(addAutoCV(cvName)).unwrap();
+      await dispatch(
+        addAutoCV({
+          resumeName: cvName.trim(),
+          summary,
+          careerObjective,
+          educations,
+          certifications,
+          projects,
+        })
+      ).unwrap();
 
       toast.success("Tạo CV thành công!");
 
       setShowCvPopup(false);
+
+      // reset form
       setCvName("");
+      setSummary("");
+      setCareerObjective("");
+      setEducations([]);
+      setCertifications([]);
+      setProjects([]);
 
       setTimeout(() => {
         window.location.reload();
-      }, 500); // delay nhẹ để toast hiển thị
+      }, 500);
     } catch (error) {
       console.error("Lỗi tạo CV:", error);
-      toast.error(error.message || "Tạo CV thất bại!");
+      toast.error(error?.message || "Tạo CV thất bại!");
     }
+  };
+
+  const parseProjectLine = (line) => {
+    const raw = line.trim();
+    if (!raw) return null;
+
+    // tách link theo "|" hoặc " - "
+    let main = raw;
+    let link = "";
+
+    if (raw.includes("|")) {
+      const parts = raw.split("|");
+      main = parts[0].trim();
+      link = (parts[1] || "").trim();
+    } else if (raw.includes(" - http")) {
+      const idx = raw.indexOf(" - http");
+      main = raw.slice(0, idx).trim();
+      link = raw.slice(idx + 3).trim(); // bỏ " - "
+    }
+
+    // tách name: description
+    let name = main;
+    let description = "";
+    if (main.includes(":")) {
+      const [n, ...rest] = main.split(":");
+      name = n.trim();
+      description = rest.join(":").trim();
+    } else {
+      // nếu không có ":" thì coi cả dòng là tên, mô tả rỗng
+      name = main;
+      description = "";
+    }
+
+    return {
+      name,
+      description,
+      link,
+    };
   };
 
   return (
@@ -458,30 +516,86 @@ const PersonalInfoForm = () => {
 
             {showCvPopup && (
               <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                <div className="bg-white w-[90%] max-w-md p-6 rounded-xl shadow-xl">
+                <div className="bg-white w-[95%] max-w-2xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-[90vh]">
                   <h2 className="text-xl font-bold mb-4 text-gray-800">
-                    Nhập tên CV
+                    Tạo CV tự động
                   </h2>
 
+                  {/* Resume name */}
                   <input
                     type="text"
                     value={cvName}
                     onChange={(e) => setCvName(e.target.value)}
-                    placeholder="Ví dụ: CV_Backend_2025"
-                    className="w-full p-3 border rounded-lg mb-4 focus:ring-2 focus:ring-blue-500"
+                    placeholder="Tên CV (VD: CV_Backend_2025)"
+                    className="w-full p-3 border rounded-lg mb-3"
+                  />
+
+                  {/* Summary */}
+                  <textarea
+                    value={summary}
+                    onChange={(e) => setSummary(e.target.value)}
+                    placeholder="Tóm tắt bản thân"
+                    className="w-full p-3 border rounded-lg mb-3 h-24"
+                  />
+
+                  {/* Career Objective */}
+                  <textarea
+                    value={careerObjective}
+                    onChange={(e) => setCareerObjective(e.target.value)}
+                    placeholder="Mục tiêu nghề nghiệp"
+                    className="w-full p-3 border rounded-lg mb-3 h-24"
+                  />
+
+                  {/* Education */}
+                  <textarea
+                    placeholder="Học vấn (mỗi dòng 1 mục)"
+                    onChange={(e) =>
+                      setEducations(
+                        e.target.value.split("\n").map((line) => ({
+                          school: line,
+                        }))
+                      )
+                    }
+                    className="w-full p-3 border rounded-lg mb-3 h-20"
+                  />
+
+                  {/* Certifications */}
+                  <textarea
+                    placeholder="Chứng chỉ (mỗi dòng 1 mục)"
+                    onChange={(e) =>
+                      setCertifications(
+                        e.target.value.split("\n").map((line) => ({
+                          name: line,
+                        }))
+                      )
+                    }
+                    className="w-full p-3 border rounded-lg mb-3 h-20"
+                  />
+
+                  {/* Projects */}
+                  <textarea
+                    placeholder={`Dự án (mỗi dòng 1 dự án)\nVD: CareerConnect: Web tuyển dụng | http://github.com/...`}
+                    onChange={(e) => {
+                      const lines = e.target.value.split("\n");
+                      const parsed = lines
+                        .map(parseProjectLine)
+                        .filter(Boolean);
+                      setProjects(parsed);
+                    }}
+                    className="w-full p-3 border rounded-lg mb-4 h-28"
                   />
 
                   <div className="flex justify-end gap-3">
                     <button
                       onClick={() => setShowCvPopup(false)}
-                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                      className="px-4 py-2 bg-gray-500 text-white rounded-lg"
                     >
                       Hủy
                     </button>
 
                     <button
                       onClick={handleConfirmCreateCV}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg"
                     >
                       Tạo CV
                     </button>

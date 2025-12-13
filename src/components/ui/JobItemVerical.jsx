@@ -6,6 +6,9 @@ import createSlug from "../../untils/createSlug";
 import ButtonSave from "../button/ButtonSave";
 import ButtonApply from "../button/ButtonApply";
 import formatData from "../../untils/formatData";
+import BadgeDiaDiem from "./BadgeDiaDiem";
+import BadgeKinhNghiem from "./BadgeKinhNghiem";
+import TextSalary from "./TextSalary";
 
 const JobItemVertical = ({ job }) => {
   const navigate = useNavigate();
@@ -47,19 +50,13 @@ const JobItemVertical = ({ job }) => {
       {/* Tag: địa điểm, lương */}
       <div className="flex justify-between items-center pt-2 text-sm whitespace-nowrap">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
+          <span className="py-1 px-2 text-xs font-bold whitespace-nowrap rounded-full bg-rose-400">
             {formatData.formatSalary(job.salaryMin) +
               " - " +
               formatData.formatSalary(job.salaryMax)}
-          </p>
-          <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.location || "Hồ Chí Minh"}
-          </p>
-          <p className="py-1 px-2 rounded-full bg-slate-200 cursor-pointer">
-            {job.yearsOfExperience
-              ? formatData.formatExperience(job.yearsOfExperience)
-              : "Không yêu cầu kinh nghiệm"}
-          </p>
+          </span>
+          <BadgeDiaDiem diaDiem={job?.location} />
+          <BadgeKinhNghiem soNamKinhNghiem={job?.yearsOfExperience} />
         </div>
       </div>
 

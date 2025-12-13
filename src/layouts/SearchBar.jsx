@@ -8,15 +8,9 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useLocation } from "react-router-dom";
-
-// image
 import background from "../assets/bg_search_section.jpg";
-
-// component
 import MenuLocation from "../components/Menu/MenuLocation";
 import MenuCategory from "../components/Menu/MenuCategory";
-
-// redux
 import { useSelector, useDispatch } from "react-redux";
 import { setSelectedCategories } from "../redux/slices/categorySlice";
 
@@ -214,7 +208,7 @@ const SearchBar = () => {
 
   return (
     <div
-      className="py-6 px-4 z-50"
+      className="py-6 px-4 z-10"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",

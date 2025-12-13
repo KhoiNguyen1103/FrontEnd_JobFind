@@ -58,7 +58,10 @@ const ApplyModal = ({ onClose, jobId }) => {
         // Tạo FormData
 
         const formData = new FormData();
-        const nameWithoutExtension = selectedCV.name.split('.').slice(0, -1).join('.'); // Lấy tên file không có phần mở rộng
+        const nameWithoutExtension = selectedCV.name
+          .split(".")
+          .slice(0, -1)
+          .join("."); // Lấy tên file không có phần mở rộng
         formData.append("resumeName", nameWithoutExtension);
         formData.append("resume", selectedCV);
 
@@ -85,7 +88,9 @@ const ApplyModal = ({ onClose, jobId }) => {
         );
 
         if (!newlyUploadedResume) {
-          throw new Error("Không tìm thấy CV vừa tải lên trong danh sách. Vui lòng thử lại.");
+          throw new Error(
+            "Không tìm thấy CV vừa tải lên trong danh sách. Vui lòng thử lại."
+          );
         }
 
         resumeId = newlyUploadedResume.resumeId;
@@ -108,18 +113,20 @@ const ApplyModal = ({ onClose, jobId }) => {
       dispatch(addApplication(response)); // Cập nhật danh sách ứng tuyển trong Redux
       setTimeout(() => {
         onClose();
-        window.location.reload(); 
-      }, 500); 
+        window.location.reload();
+      }, 500);
     } catch (error) {
       console.error("Lỗi khi nộp hồ sơ:", error);
-      toast.error(error.message || "Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển.");
+      toast.error(
+        error.message || "Đã có lỗi xảy ra trong quá trình nộp hồ sơ ứng tuyển."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
       <div className="bg-white w-1/2 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold text-white text-center bg-primary rounded-t-lg p-4">
           Ứng tuyển
@@ -194,10 +201,11 @@ const ApplyModal = ({ onClose, jobId }) => {
                 {(jobSeekerKer?.resumeList || []).map((cv) => (
                   <div
                     key={cv.resumeId}
-                    className={`p-2 border rounded cursor-pointer ${selectedCV?.resumeId === cv.resumeId
-                      ? "bg-green-100"
-                      : "hover:bg-gray-100"
-                      }`}
+                    className={`p-2 border rounded cursor-pointer ${
+                      selectedCV?.resumeId === cv.resumeId
+                        ? "bg-green-100"
+                        : "hover:bg-gray-100"
+                    }`}
                     onClick={() => handleSelectExistingCV(cv)}
                   >
                     📄 {cv.resumeName || "CV chưa đặt tên"}
@@ -224,10 +232,11 @@ const ApplyModal = ({ onClose, jobId }) => {
           <button
             onClick={handleSubmit}
             disabled={!selectedCV || isSubmitting}
-            className={`px-4 py-2 rounded-lg text-white ${selectedCV && !isSubmitting
-              ? "bg-green-500 hover:bg-green-600"
-              : "bg-gray-400 cursor-not-allowed"
-              }`}
+            className={`px-4 py-2 rounded-lg text-white ${
+              selectedCV && !isSubmitting
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
             {isSubmitting ? "Đang nộp..." : "Nộp hồ sơ ứng tuyển"}
           </button>

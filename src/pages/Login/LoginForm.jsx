@@ -23,7 +23,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     // password: "StrongPass@123",
-    password: "",
+    password: "Password123",
   });
 
   const handleChange = (e) => {

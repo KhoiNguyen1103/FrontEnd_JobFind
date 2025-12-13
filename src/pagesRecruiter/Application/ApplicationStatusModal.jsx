@@ -364,7 +364,7 @@ const ApplicationStatusModal = ({
                       className="text-blue-600 hover:underline flex items-center gap-2"
                     >
                       <FontAwesomeIcon icon={faFileAlt} />
-                      Xem resume
+                      Xem CV
                     </a>
                   </div>
                 ) : (

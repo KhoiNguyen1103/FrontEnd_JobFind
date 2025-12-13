@@ -6,6 +6,7 @@ import InfoCompany from "./InfoCompany";
 import JobItemv2 from "../../components/ui/JobItemv2";
 import JobInfo from "./JobInfo";
 import jobApi from "../../api/jobApi";
+import JobItemv3 from "../../components/ui/JobItemv3";
 
 const JobDetail = () => {
   const { search } = useLocation();
@@ -37,8 +38,11 @@ const JobDetail = () => {
         const response = await jobApi.getByCategory(
           job.categories[0].jobCategoryId
         );
-        console.log(response);
-        const data = response.filter((item) => item.jobId !== jobId);
+        // sort giảm dần theo deadline
+        const data = response
+          .filter((item) => item.jobId !== jobId)
+          .sort((a, b) => new Date(b.deadline) - new Date(a.deadline));
+
         setRelativeJobs(data);
       } catch (error) {
         console.error("Lỗi khi lấy công việc liên quan:", error);
@@ -51,6 +55,7 @@ const JobDetail = () => {
     }
   }, [job, jobId]);
 
+  console.log(relatedJobs);
   return (
     <div className="py-4" style={{ background: "#f5f5f5" }}>
       <div className="container mx-auto">
@@ -85,18 +90,26 @@ const JobDetail = () => {
         {/* Body */}
         <div className="flex justify-between pt-6">
           {/* Thông tin job - mô tả công việc */}
-          <div style={{ width: "70%" }}>
+          <div style={{ width: "65%" }}>{job && <JobInfo job={job} />}</div>
+
+          {/* Thông tin chung - thông tin công ty */}
+          <div className="ms-6" style={{ width: "35%" }}>
             {job ? (
               <>
-                <JobInfo job={job} />
+                <InfoCompany job={job} />
 
-                {/* Công việc liên quan */}
-                <div className="bg-white p-4 mt-4">
-                  {relatedJobs.map((relatedJob) => (
-                    <JobItemv2
+                <div className="bg-white mt-2 px-2 pb-2">
+                  <div className="mt-8 p-2">
+                    <div className="flex items-center">
+                      <p className="font-bold">Việc làm liên quan</p>
+                    </div>
+                  </div>
+                  {relatedJobs?.slice(0, 5).map((relatedJob) => (
+                    <JobItemv3
                       key={relatedJob.title}
                       job={relatedJob}
                       iconHeart={true}
+                      className={"w-full"}
                     />
                   ))}
                 </div>
@@ -104,11 +117,6 @@ const JobDetail = () => {
             ) : (
               <div></div>
             )}
-          </div>
-
-          {/* Thông tin chung - thông tin công ty */}
-          <div className="ms-6" style={{ width: "30%" }}>
-            {job ? <InfoCompany job={job} /> : <div></div>}
           </div>
           {/* End: body */}
         </div>

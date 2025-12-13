@@ -10,8 +10,10 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ApplicationModalJSK from "../Menu/ApplicationModalJSK";
 import ApplyModal from "../ui/ModalApply";
+import clsx from "clsx";
 
-const ButtonApply = ({ jobId }) => {
+const ButtonApply = ({ jobId, text, className }) => {
+  console.log(className);
   // load data từ redux vaf localstorage
   const jobsApplied = useSelector((state) => state.application.list);
   const user = useSelector((state) => state.auth.user);
@@ -65,12 +67,15 @@ const ButtonApply = ({ jobId }) => {
   return (
     <>
       <div
-        className="py-1 px-2 justify-center active:opacity-80 rounded-md bg-primary text-white font-sm cursor-pointer flex items-center w-full h-full"
+        className={clsx(
+          "py-1 px-2 justify-center active:opacity-80 rounded-md bg-blue-500 text-white font-sm cursor-pointer flex items-center w-full h-full",
+          className
+        )}
         onClick={handleClick}
       >
         <div className="flex items-center">
           <p className="px-4 text-sm">
-            {isApply ? "Xem đơn ứng tuyển" : "Ứng tuyển"}{" "}
+            {text ? text : isApply ? "Xem đơn ứng tuyển" : "Ứng tuyển"}{" "}
           </p>
           <FontAwesomeIcon
             icon={isApply ? faArrowRightFromBracket : faPaperPlane}

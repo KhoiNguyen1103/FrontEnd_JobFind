@@ -1,16 +1,10 @@
-import PropTypes from "prop-types";
-import jobPropTypes from "../../untils/propTypes/jobPropTypes";
-
-// component
 import ButtonApply from "../../components/button/ButtonApply";
 import ButtonSave from "../../components/button/ButtonSave";
 import ButtonUnsaved from "../../components/button/ButtonUnsaved";
-
-// redux
 import { useNavigate } from "react-router-dom";
 import createSlug from "../../untils/createSlug";
 
-const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
+const JobItem123 = ({ job, iconHeart, isButtonSave }) => {
   const navigate = useNavigate();
 
   const scrollTop = () => {
@@ -82,6 +76,4 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
   );
 };
 
-JobItemv2.propTypes = {};
-
-export default JobItemv2;
+export default JobItem123;

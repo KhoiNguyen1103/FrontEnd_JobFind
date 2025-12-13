@@ -2,6 +2,8 @@ import {
   faLocationDot,
   faClock,
   faDollarSign,
+  faGraduationCap,
+  faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
@@ -9,9 +11,10 @@ import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 import ButtonApply from "../../components/button/ButtonApply";
 import ButtonSave from "../../components/button/ButtonSave";
 import formatData from "../../untils/formatData";
+import { isEmpty } from "lodash";
+import SectionHeader from "../../components/ui/SectionHeader";
 
-const JobInfo = ({ job }) => {
-  // console.log(job);
+const JobInfo = ({ job = {} }) => {
   const userRole = useSelector((state) => state.auth?.user?.role || null);
   const { title, location, yearsOfExperience, deadline, expired } = job;
 
@@ -19,6 +22,7 @@ const JobInfo = ({ job }) => {
   const jobsApplied = useSelector((state) => state.application.list);
   const isApplied = jobsApplied.some((item) => item.job?.jobId === job.jobId);
 
+  if (isEmpty(job)) return null;
   return (
     <div>
       {/* Thông tin job */}
@@ -31,7 +35,6 @@ const JobInfo = ({ job }) => {
                 <span className="text-gray-500 border border-gray-300 rounded-md px-2 py-1 text-sm">
                   Hết hạn
                 </span>
-
               </>
             ) : (
               ""
@@ -119,12 +122,10 @@ const JobInfo = ({ job }) => {
                   <div className="ps-4">
                     <ButtonSave job={job} />
                   </div>
-
                 </>
               ) : (
                 ""
               )}
-
             </div>
           </>
         )}
@@ -132,45 +133,63 @@ const JobInfo = ({ job }) => {
       {/* end: ứng tuyển ngay - lưu tin */}
       {/* end: thông tin job */}
 
-      {/* Start: Chi tiết tuyển dụng */}
+      {/* Chi tiết tuyển dụng */}
       <div className="p-6 rounded-lg bg-white mt-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <div className="bg-primary py-4 px-1 me-2"></div>
-            <p className="font-bold text-lg">Chi tiết tin tuyển dụng</p>
+        <SectionHeader text={"Chi tiết tuyển dụng"} />
+        {[
+          {
+            label: "Mô tả công việc",
+            value: job.description,
+          },
+          {
+            label: "Yêu cầu ứng viên",
+            value: job.requirements,
+          },
+          {
+            label: "Quyền lợi",
+            value: job.benefits,
+          },
+        ].map((item) => (
+          <div className="pt-4">
+            <p className="font-bold">{item.label}</p>
+            <div dangerouslySetInnerHTML={{ __html: item.value }} />
           </div>
-        </div>
-        {/* End: Header */}
+        ))}
+      </div>
 
-        {/* Mô tả công việc */}
-        <div className="pt-4">
-          <p className="font-bold">Mô tả công việc</p>
-          <div dangerouslySetInnerHTML={{ __html: job.description }} />
-        </div>
-
-        {/* Yêu cầu ứng viên */}
-        <div className="pt-4">
-          <p className="font-bold">Yêu cầu ứng viên</p>
-          <div dangerouslySetInnerHTML={{ __html: job.requirements }} />
-        </div>
-
-        {/* Quyền lợi */}
-        <div className="pt-4">
-          <p className="font-bold">Quyền lợi</p>
-          <div dangerouslySetInnerHTML={{ __html: job.benefits }} />
-        </div>
-
-
-        {/* Việc làm liên quan */}
-        <div className="mt-8">
-          <div className="flex items-center">
-            <div className="bg-primary py-4 px-1 me-2"></div>
-            <p className="font-bold text-lg">Việc làm liên quan</p>
-          </div>
+      <div className="p-4 rounded-lg bg-white mt-4">
+        <SectionHeader text={"Thông tin chung"} className={"pb-2"} />
+        <div className="flex justify-between">
+          {[
+            {
+              label: "Học vấn",
+              icon: faGraduationCap,
+              value: job.educationLevel,
+            },
+            {
+              label: "Hình thức làm việc",
+              icon: faUsers,
+              value: job.jobType,
+            },
+          ].map((item) => (
+            <div className="flex items-center">
+              <div
+                className="bg-primary flex justify-center items-center rounded-full me-4"
+                style={{ width: "40px", height: "40px" }}
+              >
+                <FontAwesomeIcon
+                  icon={item.icon}
+                  className="text-lg text-white"
+                />
+              </div>
+              <div>
+                <p className="text-slate-500">{item.label}</p>
+                <p className="font-bold">{item.value}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      {/* End: Chi tiết tuyển dụng */}
     </div>
   );
 };

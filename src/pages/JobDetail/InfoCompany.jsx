@@ -1,9 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faLocationDot,
-  faGraduationCap,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
+import { faGraduationCap, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
 
@@ -64,8 +60,7 @@ const InfoCompany = ({ job }) => {
       {/* end: thông tin công ty */}
 
       {/* thông tin chung */}
-      <div className="p-4 rounded-lg bg-white mt-4">
-        {/* Học vấn */}
+      {/* <div className="p-4 rounded-lg bg-white mt-4">
         <div className="flex items-center">
           <div
             className="bg-primary flex justify-center items-center rounded-full me-4"
@@ -82,7 +77,6 @@ const InfoCompany = ({ job }) => {
           </div>
         </div>
 
-        {/* Hình thức làm việc */}
         <div className="flex items-center pt-4">
           <div
             className="bg-primary flex justify-center items-center rounded-full me-4"
@@ -95,7 +89,7 @@ const InfoCompany = ({ job }) => {
             <p className="font-bold">{job.jobType}</p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

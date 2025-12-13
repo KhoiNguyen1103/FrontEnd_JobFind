@@ -16,8 +16,18 @@ import TextSalary from "./TextSalary";
 import BadgeKinhNghiem from "./BadgeKinhNghiem";
 import BadgeDiaDiem from "./BadgeDiaDiem";
 import BadgeTypeJob from "./BadgeTypeJob";
+import clsx from "clsx";
 
-const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
+const JobItemv2 = ({
+  job,
+  iconHeart,
+  isApply,
+  isButtonSave,
+  hasBadge = true,
+  hasTime = true,
+  type,
+  className,
+}) => {
   const navigate = useNavigate();
   const userRole = useSelector((state) => state.auth?.user?.role || null);
 
@@ -57,9 +67,54 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
     </div>
   );
 
+  const statusList = [
+    { value: "PENDING", label: "Đang chờ", color: "bg-gray-400 text-white" },
+    {
+      value: "REVIEWING",
+      label: "Đang xem xét",
+      color: "bg-blue-400 text-white",
+    },
+    {
+      value: "SHORTLISTED",
+      label: "Đã vào danh sách ngắn",
+      color: "bg-yellow-400 text-black",
+    },
+    { value: "REJECTED", label: "Bị từ chối", color: "bg-red-500 text-white" },
+    {
+      value: "INTERVIEWING",
+      label: "Phỏng vấn",
+      color: "bg-purple-500 text-white",
+    },
+    {
+      value: "HIRED",
+      label: "Đã thuê",
+      color: "bg-green-500 text-white",
+    },
+  ];
+
+  // Lấy status cuối
+  const currentStatus = job?.status?.at(-1)?.status ?? "PENDING";
+
+  // Tìm object tương ứng
+  const statusObj =
+    statusList.find((s) => s.value === currentStatus) || statusList[0];
+
+  const btnStatApply = (
+    <button className={`py-1 px-4 rounded-lg ${statusObj.color}`}>
+      {statusObj.label}
+    </button>
+  );
+
+  const isJobApplied = type === "JOB_APPLIED";
+
   return (
-    <div className="flex flex-col border border-slate-200 rounded-lg p-4 mb-4 gap-4">
-      <div className="flex ">
+    <div
+      className={clsx(
+        "flex flex-col border border-slate-200 rounded-lg p-4 mb-4 gap-4",
+        className
+      )}
+    >
+      <div className="flex">
         <div
           className="cursor-pointer flex justify-center items-center"
           onClick={navigateToJobDetail}
@@ -74,26 +129,42 @@ const JobItemv2 = ({ job, iconHeart, isApply, isButtonSave }) => {
               {job.company?.companyName || job.companyName}
             </p>
           </div>
-          <div className="flex flex-wrap gap-2 mt-2">
-            <BadgeDiaDiem diaDiem={job?.location} />
-            <BadgeTypeJob typeJob={job?.jobType} />
-            <BadgeKinhNghiem soNamKinhNghiem={job?.yearsOfExperience} />
-          </div>
+          {hasBadge && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              <BadgeDiaDiem diaDiem={job?.location} />
+              <BadgeTypeJob typeJob={job?.jobType} />
+              <BadgeKinhNghiem soNamKinhNghiem={job?.yearsOfExperience} />
+            </div>
+          )}
         </div>
       </div>
 
-      {ngayDangNgayHetHan}
+      {hasTime && ngayDangNgayHetHan}
 
       <hr className="bg-slate-700" />
 
       <div className="flex justify-between items-center">
         <TextSalary salaryMin={job.salaryMin} salaryMax={job.salaryMax} />
 
+        {/* btn */}
         {userRole !== "COMPANY" && (
           <div className="flex items-center gap-2 mt-2">
-            <ButtonApply isApply={isApply} jobId={job.jobId} />
-            {iconHeart && <ButtonSave job={job} />}
-            {isButtonSave && <ButtonUnsaved job={job} />}
+            {isJobApplied ? (
+              <>
+                <ButtonApply
+                  isApply={isApply}
+                  jobId={job.jobId}
+                  text={statusObj.label}
+                  className={statusObj.color}
+                />
+              </>
+            ) : (
+              <>
+                <ButtonApply isApply={isApply} jobId={job.jobId} />
+                {iconHeart && <ButtonSave job={job} />}
+                {isButtonSave && <ButtonSave job={job} />}
+              </>
+            )}
           </div>
         )}
       </div>

@@ -381,7 +381,7 @@ const ApplicationModalJSK = ({
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
-                      Resume đã nộp
+                      CV đã nộp
                     </h3>
                     {application.resumeApplied ? (
                       <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -392,7 +392,7 @@ const ApplicationModalJSK = ({
                           className="text-blue-600 hover:underline flex items-center gap-2"
                         >
                           <FontAwesomeIcon icon={faFileAlt} />
-                          Xem resume
+                          Xem CV
                         </a>
                       </div>
                     ) : (

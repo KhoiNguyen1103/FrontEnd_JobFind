@@ -1,9 +1,15 @@
-const Spinner = ({ className = "" }) => {
+import clsx from "clsx";
+
+const Spinner = ({ className = "", color = "blue-500", size = "5" }) => {
   return (
-    <div
-      className={`
-      ms-4 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ${className}`}
-    ></div>
+    <div className="flex justify-center items-center">
+      <div
+        className={clsx(
+          `w-${size} h-${size} border-2 border-${color} border-t-transparent rounded-full animate-spin`,
+          className
+        )}
+      ></div>
+    </div>
   );
 };
 

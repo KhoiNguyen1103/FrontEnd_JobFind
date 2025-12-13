@@ -3,25 +3,16 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useEffect, useState } from "react";
 import jobPropTypes from "../../untils/propTypes/jobPropTypes";
-
-// redux
 import { useDispatch, useSelector } from "react-redux";
 import { likeJob } from "../../redux/slices/jobSlice";
-
-// toastify
 import { toast } from "react-toastify";
-
-// service
 import { removeSavedJob } from "../../redux/slices/savedJobSlice";
-import savedJobSeekerApi from "../../api/savedJobSeekerApi";
 import savedJobApi from "../../api/savedJobApi";
 
 const ButtonSave = ({ job }) => {
-  // console.log("Job: ", job);
   const dispatch = useDispatch();
   //Lấy danh sách savedJobs từ redux
   const savedJobs = useSelector((state) => state.savedJob.savedJobs);
-  // console.log("savedJobs", savedJobs);
 
   // Lấy user
   const storedUser = JSON.parse(localStorage.getItem("user")); // Lấy user từ localStorage nếu có

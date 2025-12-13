@@ -22,9 +22,9 @@ const SignUpForm = () => {
   const [formData, setFormData] = useState({
     firstName: "Đào Thanh",
     lastName: "Phú",
-    phone: "0979667431",
+    phone: "0345678901",
     address: "Hồ Chí Minh",
-    email: "thanhphu23@gmail.com",
+    email: "thanhphu2003@gmail.com",
     password: "Password123",
     confirmPassword: "Password123",
   });
